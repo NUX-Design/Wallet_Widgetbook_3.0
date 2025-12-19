@@ -11,7 +11,8 @@ class ThemeProvider extends ChangeNotifier {
   ThemeMode get themeMode => _themeMode;
 
   void toggleTheme() {
-    _themeMode = _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+    _themeMode =
+        _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
     notifyListeners();
   }
 }
@@ -74,7 +75,12 @@ class MyApp extends StatelessWidget {
 class PreviewMobileCodeInput extends StatelessWidget {
   const PreviewMobileCodeInput({super.key});
 
-  DropdownMenuItem<Locale> _buildDropdownItem(BuildContext context, Locale locale, String text, String brightnessKey) {
+  DropdownMenuItem<Locale> _buildDropdownItem(
+    BuildContext context,
+    Locale locale,
+    String text,
+    String brightnessKey,
+  ) {
     return DropdownMenuItem(
       value: locale,
       child: Text(
@@ -98,7 +104,8 @@ class PreviewMobileCodeInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final brightnessKey = Theme.of(context).brightness == Brightness.light ? 'light' : 'dark';
+    final brightnessKey =
+        Theme.of(context).brightness == Brightness.light ? 'light' : 'dark';
     return Scaffold(
       backgroundColor: ThemeColors.get(brightnessKey, 'fill/base/300'),
       appBar: AppBar(
@@ -109,7 +116,9 @@ class PreviewMobileCodeInput extends StatelessWidget {
             builder: (context, themeProvider, _) {
               return IconButton(
                 icon: Icon(
-                  themeProvider.themeMode == ThemeMode.light ? Icons.dark_mode : Icons.light_mode,
+                  themeProvider.themeMode == ThemeMode.light
+                      ? Icons.dark_mode
+                      : Icons.light_mode,
                 ),
                 onPressed: () => themeProvider.toggleTheme(),
               );
@@ -132,18 +141,52 @@ class PreviewMobileCodeInput extends StatelessWidget {
                   child: DropdownButton<Locale>(
                     value: _getCurrentLocale(context),
                     isExpanded: true,
-                    icon: Icon(Icons.language, color: ThemeColors.get(brightnessKey, 'text/base/600')),
-                    dropdownColor: ThemeColors.get(brightnessKey, 'fill/base/200'),
+                    icon: Icon(
+                      Icons.language,
+                      color: ThemeColors.get(brightnessKey, 'text/base/600'),
+                    ),
+                    dropdownColor: ThemeColors.get(
+                      brightnessKey,
+                      'fill/base/200',
+                    ),
                     items: [
-                      _buildDropdownItem(context, const Locale('en'), 'English', brightnessKey),
-                      _buildDropdownItem(context, const Locale('th'), 'ภาษาไทย', brightnessKey),
-                      _buildDropdownItem(context, const Locale('zh'), '中文', brightnessKey),
-                      _buildDropdownItem(context, const Locale('ru'), 'Русский', brightnessKey),
-                      _buildDropdownItem(context, const Locale('my'), 'မြန်မာ', brightnessKey),
+                      _buildDropdownItem(
+                        context,
+                        const Locale('en'),
+                        'English',
+                        brightnessKey,
+                      ),
+                      _buildDropdownItem(
+                        context,
+                        const Locale('th'),
+                        'ภาษาไทย',
+                        brightnessKey,
+                      ),
+                      _buildDropdownItem(
+                        context,
+                        const Locale('zh'),
+                        '中文',
+                        brightnessKey,
+                      ),
+                      _buildDropdownItem(
+                        context,
+                        const Locale('ru'),
+                        'Русский',
+                        brightnessKey,
+                      ),
+                      _buildDropdownItem(
+                        context,
+                        const Locale('my'),
+                        'မြန်မာ',
+                        brightnessKey,
+                      ),
                     ],
                     onChanged: (Locale? newLocale) {
                       if (newLocale != null) {
-                        Provider.of<LocaleProvider>(context, listen: false).setLocale(newLocale);
+                        Provider.of<LocaleProvider>(
+                          context,
+                          listen: false,
+                        ).setLocale(newLocale);
                       }
                     },
                   ),
@@ -156,12 +199,57 @@ class PreviewMobileCodeInput extends StatelessWidget {
                   color: ThemeColors.get(brightnessKey, 'fill/base/100'),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: MobileCodeInput(
-                  onCountryCodeTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Country code selector tapped')),
-                    );
-                  },
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Normal State:',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    MobileCodeInput(
+                      onCountryCodeTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Country code selector tapped'),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Error State:',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    MobileCodeInput(
+                      hasError: true,
+                      errorText: 'เบอร์มือถือไม่ถูกต้อง',
+                      onCountryCodeTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Country code selector tapped'),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'With Initial Value:',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    MobileCodeInput(
+                      initialValue: '0812345678',
+                      onCountryCodeTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Country code selector tapped'),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ),
             ],

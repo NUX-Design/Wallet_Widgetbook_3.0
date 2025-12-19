@@ -13,6 +13,8 @@ class MobileCodeInput extends StatefulWidget {
   final String flagAsset;
   final VoidCallback? onCountryCodeTap;
   final int maxLength;
+  final String? errorText;
+  final bool hasError;
 
   const MobileCodeInput({
     super.key,
@@ -23,6 +25,8 @@ class MobileCodeInput extends StatefulWidget {
     this.flagAsset = 'lib/assets/images/flag_th.svg',
     this.onCountryCodeTap,
     this.maxLength = 10,
+    this.errorText,
+    this.hasError = false,
   });
 
   @override
@@ -77,6 +81,8 @@ class _MobileCodeInputState extends State<MobileCodeInput> {
     final borderColor =
         _hasFocus
             ? ThemeColors.get(brightnessKey, 'primary/400')
+            : widget.hasError
+            ? ThemeColors.get(brightnessKey, 'text/base/danger')
             : ThemeColors.get(brightnessKey, 'stroke/base/200');
     final backgroundColor = ThemeColors.get(brightnessKey, 'fill/base/300');
 
@@ -177,17 +183,43 @@ class _MobileCodeInputState extends State<MobileCodeInput> {
           ),
         ),
         const SizedBox(height: 4),
-        Align(
-          alignment: Alignment.centerRight,
-          child: Text(
-            '${_controller.text.length}/${widget.maxLength}',
-            style: GoogleFonts.notoSansThai(
-              fontSize: 15,
-              height: 1.33,
-              color: ThemeColors.get(brightnessKey, 'text/base/400'),
+        if (widget.hasError && widget.errorText != null)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  widget.errorText!,
+                  style: GoogleFonts.notoSansThai(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    height: 1.2,
+                    color: ThemeColors.get(brightnessKey, 'text/base/danger'),
+                  ),
+                ),
+              ),
+              Text(
+                '${_controller.text.length}/${widget.maxLength}',
+                style: GoogleFonts.notoSansThai(
+                  fontSize: 15,
+                  height: 1.33,
+                  color: ThemeColors.get(brightnessKey, 'text/base/400'),
+                ),
+              ),
+            ],
+          )
+        else
+          Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              '${_controller.text.length}/${widget.maxLength}',
+              style: GoogleFonts.notoSansThai(
+                fontSize: 15,
+                height: 1.33,
+                color: ThemeColors.get(brightnessKey, 'text/base/400'),
+              ),
             ),
           ),
-        ),
       ],
     );
   }

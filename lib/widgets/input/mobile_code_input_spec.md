@@ -68,8 +68,11 @@ Widget ต้องการ `ThemeColors` helper class ที่รองรั
 - แสดงไอคอน cancel-circle เมื่อมีข้อความใน input
 - กดเพื่อลบข้อความทั้งหมด
 - ซ่อนอัตโนมัติเมื่อไม่มีข้อความ
-- ขนาด 16×16px
-- สี: `stroke/base/600`
+- ขนาด 16×16px (container)
+- Design: Circle พร้อม X symbol (ขนาด 14.33px ในวงกลม 16px)
+- สี: `stroke/base/600` (#787878)
+- Stroke width: 1px
+- ไฟล์: `lib/assets/images/cancel-circle.svg`
 
 ### 3. Input Field
 - รับเฉพาะตัวเลข (0-9)
@@ -91,8 +94,8 @@ Widget ต้องการ `ThemeColors` helper class ที่รองรั
 - แสดงเมื่อ `errorText` ไม่เป็น null และ `hasError` เป็น true
 - อยู่ด้านล่าง input ชิดซ้าย
 - Gap 4px จาก input
-- Font: Noto Sans Thai, 15px, line-height 1.33
-- สี: `text/base/danger`
+- Font: Noto Sans Thai, 10px, 600 weight (semi-bold), line-height 1.2
+  - สี: `text/base/danger` (#FF2729)
 - แสดงพร้อมกับ digit counter (error message ซ้าย, counter ขวา)
 
 ### 6. State Management
