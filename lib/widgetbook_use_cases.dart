@@ -93,14 +93,44 @@ Widget buildItemListTransaction(BuildContext context) {
 // Announcement
 @widgetbook.UseCase(name: 'Default', type: AnnouncementStack)
 Widget buildAnnouncementStack(BuildContext context) {
-  return const AnnouncementStack();
+  return Localizations(
+    delegates: AppLocalizations.localizationsDelegates,
+    locale: const Locale('en'),
+    child: Builder(
+      builder:
+          (context) => Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: AnnouncementStack(
+              messages: [
+                'Your account has been verified successfully. All features are now fully accessible from 01/06/2022 at 8:00 AM (Thailand time).',
+                AppLocalizations.of(
+                  context,
+                )!.homeAnnounceVerifyFaceToReceive('100.00', 'THB'),
+                'This is a very long announcement message that is intended to test the text truncation functionality of the widget. It should be long enough to exceed three lines when displayed on a standard mobile screen width.',
+              ],
+            ),
+          ),
+    ),
+  );
+}
+
+@widgetbook.UseCase(name: 'Loading', type: AnnouncementStack)
+Widget buildAnnouncementStackLoading(BuildContext context) {
+  return const Padding(
+    padding: EdgeInsets.all(16.0),
+    child: AnnouncementStack(isLoading: true),
+  );
 }
 
 @widgetbook.UseCase(name: 'Default', type: AnnouncementWarning)
 Widget buildAnnouncementWarning(BuildContext context) {
-  return const AnnouncementWarning(
-    title: 'Warning',
-    description: 'This is a warning message.',
+  return const Padding(
+    padding: EdgeInsets.all(16.0),
+    child: AnnouncementWarning(
+      title: 'Please recheck information before proceeding',
+      description:
+          'To prevent wrong account transfers or fraudulent activities. It cannot be changed once confirmed.',
+    ),
   );
 }
 

@@ -49,6 +49,7 @@ Widget ต้องการ `ThemeColors` helper class ที่รองรั
 | `initialValue` | `String?` | No | `''` | ค่าเริ่มต้นของ input |
 | `onChanged` | `ValueChanged<String>?` | No | `null` | Callback เมื่อค่าใน input เปลี่ยน |
 | `infoText` | `String` | No | `'ท่านต้องฝากเงินอย่างน้อย 100 THB'` | ข้อความแสดงด้านล่าง input |
+| `isDisabled` | `bool` | No | `false` | สถานะ disabled state ของ input |
 
 ## Features
 
@@ -92,6 +93,15 @@ Widget ต้องการ `ThemeColors` helper class ที่รองรั
 - Info text: `text/base/success`
 - Prefix ฿: `text/base/600`
 - Input text: `text/base/600`
+
+#### Disabled State
+- เงื่อนไข: widget ถูก disabled ด้วย parent
+- Input: ไม่สามารถกรอกข้อมูลได้
+- Border: `stroke/base/200`
+- Background: `fill/base/300`
+- Prefix ฿: `text/base/400` (opacity ลดลง)
+- Placeholder: ไม่แสดง
+- Clear button: ซ่อน
 
 ## Usage Examples
 
