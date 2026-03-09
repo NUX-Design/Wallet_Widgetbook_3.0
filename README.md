@@ -36,6 +36,24 @@ A production-ready Flutter foundation with **multi-language support (i18n)**, **
 
 ---
 
+## 📱 Platform Compatibility
+
+Widget Library นี้รองรับ platform versions ดังต่อไปนี้:
+
+| Platform | Minimum Version | Notes |
+|----------|-----------------|-------|
+| **iOS** | 12.0+ | รองรับตั้งแต่ iPhone 5s ขึ้นไป |
+| **Android** | API 21 (Android 5.0 Lollipop)+ | ค่า default จาก Flutter SDK |
+| **Web** | Modern browsers | Chrome, Firefox, Safari, Edge |
+| **macOS** | 10.14+ | Mojave ขึ้นไป |
+| **Windows** | Windows 10+ | - |
+| **Linux** | Ubuntu 18.04+ | - |
+
+> [!NOTE]
+> Flutter ใช้ Skia rendering engine ของตัวเอง ทำให้ widget แสดงผลเหมือนกันในทุก OS version ที่รองรับ หากแอปหลักกำหนด minimum version ที่สูงกว่า (เช่น iOS 16+) widget library นี้จะทำงานได้ปกติโดยไม่มีผลกระทบใดๆ
+
+---
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -725,9 +743,20 @@ Then open `http://<YOUR_IP>:8000` on any device on the same Wi‑Fi.
 
 ## 🤖 AI Integration (Wi Wallet MCP)
 
-This project allows you to turn your Design System into a context for AI Developers (Cursor, Claude Desktop, etc.) via **Model Context Protocol (MCP)**.
+This project allows you to turn your Design System into a context for AI Developers (Cursor, Claude Desktop, Antigravity, etc.) via **Model Context Protocol (MCP)**.
 
-### 1. Auto-generate JSON Schema
+### 1. Team Installation (Automated) 🚀
+
+We provide a script to automatically register this MCP server in your IDE (Antigravity/Cursor) with the correct absolute paths for your machine.
+
+```bash
+cd mcp-server
+npm install
+npm run install-mcp
+```
+*Note: Restart your IDE after the script finishes.*
+
+### 2. Auto-generate JSON Schema
 
 Convert `GUIDE.md`, `spec.md`, and project structure into a single `docs/schema.json` file that AI can easily understand.
 
@@ -741,12 +770,9 @@ npm run generate-schema
 *   **Implementation Details**: Automatically extracts localization and theme import paths.
 *   **Smart Merge**: Combines data from the main guide and individual files.
 
-### 2. Wi Wallet MCP Server
+### 3. Wi Wallet MCP Server
 
 A local server that feeds the Design System Knowledge to your AI Assistant.
-
-**To Start Server:**
-The server is usually configured in your IDE (e.g., Cursor MCP settings), pointing to `mcp-server/index.js`.
 
 **Capabilities:**
 *   **Get Design System Info**: Ask AI about tokens, colors, or project structure.

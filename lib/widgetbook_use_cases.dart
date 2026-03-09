@@ -76,16 +76,24 @@ Widget buildItemListUnselected(BuildContext context) {
   return ItemList(title: 'Thai', isSelected: false, onTap: () {});
 }
 
-@widgetbook.UseCase(name: 'Transaction Type', type: ItemList)
-Widget buildItemListTransaction(BuildContext context) {
-  final themeMode =
-      Theme.of(context).brightness == Brightness.light ? 'light' : 'dark';
+@widgetbook.UseCase(name: 'Transaction In Type', type: ItemList)
+Widget buildItemListTransactionIn(BuildContext context) {
   return ItemList(
-    type: ItemListType.transaction,
-    title: 'Victor Von Doom',
+    type: ItemListType.transactionIn,
+    title: 'Received from Victor Von Doom',
+    subtitle: '2025-10-06 12:00:53',
+    amount: '+50,000.00 THB',
+    onTap: () {},
+  );
+}
+
+@widgetbook.UseCase(name: 'Transaction Out Type', type: ItemList)
+Widget buildItemListTransactionOut(BuildContext context) {
+  return ItemList(
+    type: ItemListType.transactionOut,
+    title: 'Transfer to Victor Von Doom',
     subtitle: '2025-10-06 12:00:53',
     amount: '-50,000.00 THB',
-    amountColor: ThemeColors.get(themeMode, 'text/base/danger'),
     onTap: () {},
   );
 }
@@ -443,7 +451,10 @@ Widget buildPreLoading(BuildContext context) {
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: ItemList(
-                type: ItemListType.transaction,
+                type:
+                    isNegative
+                        ? ItemListType.transactionOut
+                        : ItemListType.transactionIn,
                 title:
                     isNegative
                         ? 'Victor Von Doom ${index + 1}'

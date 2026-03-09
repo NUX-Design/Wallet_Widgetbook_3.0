@@ -4,7 +4,8 @@
     "description": "MCP Server for Wi_Wallet Design System",
     "type": "module",
     "scripts": {
-        "start": "node index.js"
+        "start": "node index.js",
+        "install-mcp": "node install.js"
     },
     "dependencies": {
         "@modelcontextprotocol/sdk": "^0.6.0",

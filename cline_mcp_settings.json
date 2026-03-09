@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "github.com/GLips/Figma-Context-MCP": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "figma-developer-mcp",
+        "--figma-api-key=figd_sAJDTjQXc5p_WkY-LLN-wEH4bks8e_zLt698EZ21",
+        "--stdio"
+      ]
+    },
+    "github.com/AgentDeskAI/browser-tools-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@agentdeskai/browser-tools-mcp@latest"
+      ],
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}
