@@ -106,7 +106,10 @@ class _PreviewPreLoadingPageState extends State<PreviewPreLoadingPage> {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 12),
                 child: ItemList(
-                  type: ItemListType.transaction,
+                  type:
+                      isNegative
+                          ? ItemListType.transactionOut
+                          : ItemListType.transactionIn,
                   title:
                       isNegative
                           ? 'Victor Von Doom ${index + 1}'

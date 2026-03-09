@@ -171,7 +171,7 @@ class PreviewDrawerCountryCode extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                   backgroundColor: ThemeColors.get(brightnessKey, 'primary/400'),
-                  foregroundColor: ThemeColors.get(brightnessKey, 'text/contrast/600'),
+                  foregroundColor: ThemeColors.get(brightnessKey, 'fill/contrast/600'),
                 ),
                 child: const Text('Show Country Code Drawer'),
               ),

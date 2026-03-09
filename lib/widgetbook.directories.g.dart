@@ -198,9 +198,16 @@ final directories = <_widgetbook.WidgetbookNode>[
                 builder: _mcp_test_app_widgetbook_use_cases.buildItemList,
               ),
               _widgetbook.WidgetbookUseCase(
-                name: 'Transaction Type',
+                name: 'Transaction In Type',
                 builder:
-                    _mcp_test_app_widgetbook_use_cases.buildItemListTransaction,
+                    _mcp_test_app_widgetbook_use_cases
+                        .buildItemListTransactionIn,
+              ),
+              _widgetbook.WidgetbookUseCase(
+                name: 'Transaction Out Type',
+                builder:
+                    _mcp_test_app_widgetbook_use_cases
+                        .buildItemListTransactionOut,
               ),
               _widgetbook.WidgetbookUseCase(
                 name: 'With Radio Button (Selected)',

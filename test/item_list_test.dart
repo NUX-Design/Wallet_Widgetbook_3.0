@@ -63,4 +63,36 @@ void main() {
     // We expect 4 SVGs total: 2 leading placeholders + 2 radio buttons
     expect(find.byType(SvgPicture), findsNWidgets(4));
   });
+
+  testWidgets('ItemList renders transaction in/out states correctly', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: Column(
+            children: [
+              ItemList(
+                type: ItemListType.transactionIn,
+                title: 'Received from Victor',
+                subtitle: '2025-10-06 12:00:53',
+                amount: '+50,000.00 THB',
+              ),
+              ItemList(
+                type: ItemListType.transactionOut,
+                title: 'Transfer to Victor',
+                subtitle: '2025-10-06 12:00:53',
+                amount: '-50,000.00 THB',
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Received from Victor'), findsOneWidget);
+    expect(find.text('Transfer to Victor'), findsOneWidget);
+    expect(find.text('+50,000.00 THB'), findsOneWidget);
+    expect(find.text('-50,000.00 THB'), findsOneWidget);
+  });
 }

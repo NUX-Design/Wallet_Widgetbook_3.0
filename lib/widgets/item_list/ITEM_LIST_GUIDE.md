@@ -1,250 +1,85 @@
-# ItemList Widget Guide
+# Item List Widgets Guide
 
 ## Overview
-The `ItemList` widget is a versatile, theme-aware menu item component designed for settings screens, lists, and transaction histories. It supports multiple trailing states (arrow, text, radio button, amount) and list types (common, transaction) with consistent styling across the application. The widget follows the project's design token system and adapts seamlessly to light/dark themes.
+The Item List collection consists of two primary widgets designed for different use cases: **ItemTile** for navigation and settings, and **HistoryCard** for transaction records. Both are theme-aware and follow the project's design token system.
 
-## Design Specifications
+---
 
-### Dimensions
-- **Height**: 
-  - Common Type: 56px (fixed)
-  - Transaction Type: 72px (fixed)
+## 1. ItemTile
+The `ItemTile` is a versatile menu item component designed for settings screens, navigation menus, and selection lists. It features multiple "Trailing States" to handle different interaction patterns.
+
+### Figma Code Connect
+- **Figma Design**: [ItemTile Component](https://www.figma.com/design/D7WVaC8n3foVLo6S3HuPn8/New-Wi-Wallet-2.0?node-id=7219-1076&t=h5CMvsRbalgPC05t-4)
+
+### Trailing States
+The `ItemTile` supports three distinct trailing (right-side) configurations:
+1.  **Arrow State (Default)**: Shows `arrow-right-01.svg` in `primary/400`. Used for navigation.
+2.  **Text State**: Displays a `trailingText` string. Used for showing current values (e.g., "Language: English").
+3.  **Radio State**: Displays a radio button. Used for selection lists (supports `isSelected` true/false).
+
+### Design Specifications
+- **Height**: 56px (fixed)
 - **Padding**: 16px horizontal
-- **Border Radius**: 12px
-- **Icon Size**: 24x24px
-- **Spacing**: 8px between icon and text
-
-### Typography
-- **Title Font**: Noto Sans Thai
-- **Title Font Size**: 13px
-- **Title Line Height**: 16px (1.23 ratio)
-- **Title Font Weight**: 600 (Semi-Bold)
-- **Subtitle Font Size**: 10px
-- **Subtitle Line Height**: 12px
-- **Subtitle Font Weight**: 400 (Regular)
-- **Trailing Text Font Weight**: 500 (Medium)
-
-### States
-The widget supports four trailing states:
-1. **Arrow State** (Default): Shows a right-pointing arrow
-2. **Text State**: Displays custom text (e.g., "English")
-3. **Radio Button State**: Shows check/uncheck radio button
-4. **Transaction State**: Displays amount (e.g., "+50,000.00") with color coding
-
-## Design Token Usage
-
-### Container
 - **Background**: `fill/base/300`
 - **Border Radius**: 12px
-- **No Border**: Border was removed for cleaner appearance
+- **Leading Icon**: 24x24px, default `Transaction History.svg`
 
-### Leading Icon
-- **Default Icon**: `Transaction History.svg`
-- **Color**: `text/base/600` (adapts to theme)
-- **Size**: 24x24px
+---
 
-### Title Text
-- **Color**: `text/base/600`
-- **Font**: Noto Sans Thai
-- **Weight**: 600
+## 2. HistoryCard
+The `HistoryCard` is a specialized widget for displaying financial transactions. It is optimized for showing amounts and transaction types.
 
-### Trailing Elements
+### Figma Code Connect
+- **Figma Design**: [HistoryCard Component](https://www.figma.com/design/D7WVaC8n3foVLo6S3HuPn8/New-Wi-Wallet-2.0?node-id=7186-32854&t=h5CMvsRbalgPC05t-4)
 
-#### Arrow Icon
-- **Asset**: `arrow-right-01.svg`
-- **Color**: `primary/400` (#F2C564)
-- **Size**: 24x24px
+### Transaction States
+The `HistoryCard` handles two specific types defined via `ItemListType`:
+1.  **Transaction In**: Displays `lib/assets/images/arrow-down-left-round.png` with a positive amount in `text/base/success`.
+2.  **Transaction Out**: Displays `lib/assets/images/arrow-up-right-round.png` with a negative amount in `text/base/danger`.
 
-#### Text
-- **Color**: `text/base/600`
-- **Font**: Noto Sans Thai
-- **Weight**: 500
+### Design Specifications
+- **Height**: 64px (min-height)
+- **Padding**: 16px horizontal, 16px vertical
+- **Background**: `fill/base/300`
+- **Border Radius**: 12px
+- **Subtitle**: Displays timestamp or transaction details in `text/base/500`.
 
-#### Radio Button
-- **Checked**: `radio_button_check.svg` (original color preserved)
-- **Unchecked**: `radio_button_uncheck.svg` with `text/base/600` color filter
-- **Size**: 24x24px with `BoxFit.contain`
+---
 
-### Transaction Specifics
-- **Logo**: `logo-wi.svg` (40x40px)
-- **Subtitle Color**: `text/base/400`
-- **Amount Color**: Custom or `text/base/success` (default)
+## Properties & Parameters
+Both widgets are currently implemented via the `ItemList` class. Below are the parameters and their logical application:
 
-## Code Review Analysis
+| Parameter | Type | Required | Default | Application | Description |
+|-----------|------|----------|---------|-------------|-------------|
+| `title` | `String` | No | `'History'` | Both | Main label text. Supports Noto Sans Thai. |
+| `subtitle` | `String?` | No | `null` | HistoryCard | Secondary text (e.g., timestamp). |
+| `iconPath` | `String?` | No | `null` | Both | Path to SVG asset. Fallbacks to `Transaction History.svg`. |
+| `onTap` | `VoidCallback?` | No | `null` | Both | Callback function when the item is tapped. |
+| `trailingText` | `String?` | No | `null` | ItemTile | Text shown at the end (Trailing State: Text). |
+| `isSelected` | `bool?` | No | `null` | ItemTile | Shows Radio Button if not null (Trailing State: Radio). |
+| `type` | `ItemListType` | No | `common` | Both | Enum to switch between `common`, `transactionIn`, `transactionOut`. |
+| `amount` | `String?` | No | `null` | HistoryCard | The currency amount to display. |
+| `amountColor` | `Color?` | No | `null` | HistoryCard | Overrides default success/danger colors. |
 
-### ✅ Compliant with Project Standards
-1. **Design Tokens**: Properly uses `ThemeColors.get()` for all colors
-2. **Theme Awareness**: Correctly implements light/dark mode switching
-3. **Typography**: Uses Noto Sans Thai for multi-language support
-4. **SVG Assets**: Properly handles SVG icons with flutter_svg
-5. **Flexible API**: Supports multiple use cases with optional parameters
-6. **Color Filters**: Intelligently applies color filters for theme adaptation
+---
 
-### ✅ Strong Points
-1. **Three Distinct States**: Clean separation of arrow/text/radio states
-2. **Theme Adaptation**: All colors adapt to light/dark mode
-3. **Consistent Sizing**: All elements use fixed, predictable sizes
-4. **Default Fallback**: Provides sensible defaults (Transaction History icon)
-5. **Radio Button Handling**: Proper visual consistency between checked/unchecked states
+## Technical Implementation Details
 
-### 💡 Design Decisions
-1. **No Border**: Removed for cleaner, more modern appearance
-2. **Fixed Height**: 56px ensures consistent list item height
-3. **Radio Button Colors**: Unchecked state uses theme color for better visibility
-4. **Icon Flexibility**: Allows custom icon path while providing default
+### Typography
+- **Font Family**: Noto Sans Thai
+- **Title**: 13px, Semi-Bold (600), Line Height 16px
+- **Subtitle**: 10px, Regular (400), Line Height 12px
+- **Amount/Trailing**: 11px-13px, Medium (500)
 
-## Usage Examples
-
-### Basic Arrow State (Navigation)
-```dart
-ItemList(
-  title: 'History',
-  onTap: () => Navigator.push(...),
-)
-```
-
-### Custom Icon with Arrow
-```dart
-ItemList(
-  title: 'Account',
-  iconPath: 'lib/assets/images/home-09.svg',
-  onTap: () => Navigator.push(...),
-)
-```
-
-### Text State (Display Value)
-```dart
-ItemList(
-  title: 'Language',
-  trailingText: 'English',
-  onTap: () => showLanguagePicker(),
-)
-```
-
-### Radio Button State (Selection)
-```dart
-ItemList(
-  title: 'Option 1',
-  isSelected: true,
-  onTap: () => selectOption(1),
-)
-
-ItemList(
-  title: 'Option 2',
-  isSelected: false,
-  onTap: () => selectOption(2),
-)
-```
-
-### Transaction State (History)
-```dart
-ItemList(
-  type: ItemListType.transaction,
-  title: 'Victor Von Doom',
-  subtitle: '2025-10-06 12:00:53',
-  amount: '-50,000.00 THB',
-  amountColor: ThemeColors.get(themeMode, 'text/base/danger'),
-  onTap: () => showDetails(),
-)
-```
-
-## Parameters
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `title` | String | No | 'History' | Main text label |
-| `subtitle` | String? | No | null | Secondary text label (Transaction only) |
-| `iconPath` | String? | No | null | Custom SVG icon path |
-| `onTap` | VoidCallback? | No | null | Tap handler |
-| `trailingText` | String? | No | null | Text to show instead of arrow |
-| `isSelected` | bool? | No | null | Radio button state (null = no radio) |
-| `type` | ItemListType | No | common | Widget type (common/transaction) |
-| `amount` | String? | No | null | Amount text (Transaction only) |
-| `amountColor` | Color? | No | null | Custom color for amount text |
-
-## Integration Guidelines
-
-### When to Use
-- Settings screens
-- Navigation menus
-- Selection lists
-- Account/profile options
-- Language/currency pickers
-
-### State Priority
-### State Priority
-1. If `type == transaction && amount != null`: Show amount text
-2. Else if `isSelected != null`: Show radio button
-3. Else if `trailingText != null`: Show text
-4. Else: Show arrow (default)
-
-### Icon Guidelines
-- Use 24x24px SVG icons
-- Ensure icons work in both light/dark themes
-- Keep icons simple and recognizable
-- Provide custom `iconPath` for specific items
+### Compliance
+- ✅ Uses `ThemeColors.get()` for all colors.
+- ✅ Full Dark Mode / Light Mode adaptation.
+- ✅ Responsive layouts with `Expanded` labels.
 
 ## File Structure
 ```
 lib/widgets/item_list/
-├── item_list.dart              # Main widget
-├── preview_item_list.dart      # Preview with all states
+├── item_list.dart              # Main implementation (contains both logic)
+├── preview_item_list.dart      # Visual testing for all states
 └── ITEM_LIST_GUIDE.md         # This documentation
 ```
-
-## Testing
-
-### Widget Tests
-The widget includes comprehensive tests covering:
-- Default arrow state rendering
-- Trailing text state rendering
-- Radio button state rendering (checked/unchecked)
-- Icon display verification
-
-Test file: `test/item_list_test.dart`
-
-## Preview Features
-The preview file (`preview_item_list.dart`) demonstrates:
-- Default state with arrow
-- Text state with custom trailing text
-- Radio button states (selected/unselected)
-- Theme switching (light/dark)
-- Multi-language support
-- Interactive tap feedback
-
-## Future Enhancements
-
-### Potential Improvements
-1. **Badge Support**: Add notification badge for leading icon
-2. **Subtitle**: Support for secondary text line
-3. **Loading State**: Show spinner during async operations
-4. **Swipe Actions**: Delete/edit actions with swipe gestures
-5. **Dividers**: Optional divider between items
-6. **Accessibility**: Enhanced screen reader support
-
-### Material Icon Integration
-Consider using Material Icons for radio buttons:
-```dart
-// Instead of SVG
-Icon(
-  isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-  size: 24,
-  color: ThemeColors.get(themeMode, isSelected ? 'primary/400' : 'text/base/600'),
-)
-```
-
-## Dependencies
-- `flutter/material.dart`: Core Flutter widgets
-- `flutter_svg/flutter_svg.dart`: SVG asset rendering
-- `ThemeColors`: Project design token system
-
-## Compliance Score: 95/100
-
-The widget excellently follows project conventions with:
-- ✅ Consistent design token usage
-- ✅ Proper theme adaptation
-- ✅ Clean, maintainable code
-- ✅ Comprehensive state handling
-- ✅ Good documentation and tests
-
-Minor improvements could include Material icon support and additional accessibility features.
