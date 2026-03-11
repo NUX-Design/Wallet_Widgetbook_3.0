@@ -23,10 +23,10 @@ https://www.figma.com/design/D7WVaC8n3foVLo6S3HuPn8/New-Wi-Wallet-2.0?node-id=70
 ## 📦 Files Structure
 
 ### Base Widget
-- **[announcement.dart](file:///Users/Niwat.yah/Downloads/flutter_test_app/lib/widgets/announce/announcement.dart)** - Pure base widget, ไม่มี preview code หรือ hardcoded data
+- **[announcement.dart](announcement.dart)** - Pure base widget, ไม่มี preview code หรือ hardcoded data
 
 ### Preview Widget
-- **[preview_announcement.dart](file:///Users/Niwat.yah/Downloads/flutter_test_app/lib/widgets/announce/preview_announcement.dart)** - Standalone preview app พร้อม theme/locale switching และ mock data
+- **[preview_announcement.dart](preview_announcement.dart)** - Standalone preview app พร้อม theme/locale switching และ mock data
 
 ## 📦 Import
 

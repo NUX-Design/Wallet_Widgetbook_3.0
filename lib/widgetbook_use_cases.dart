@@ -259,19 +259,22 @@ Widget buildDrawerBalanceDetail(BuildContext context) {
           onTap: () {},
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: Container(color: Colors.black.withValues(alpha: 0.5)),
+            child: Container(color: Colors.black.withValues(alpha: 0.55)),
           ),
         ),
       ),
       const Align(
         alignment: Alignment.bottomCenter,
         child: DrawerBalanceDetail(
-          totalBalanceAmount: '1,000.00',
+          totalBalanceAmount: '100,000,000,000.00',
+          totalBalanceLabel: 'Total Balance',
           holdAmountLabel: 'Hold Amount',
-          holdAmountValue: '100.00',
+          holdAmountValue: '5,030.20',
           ledgerBalanceLabel: 'Ledger Balance',
-          ledgerBalanceValue: '900.00',
-          warningText: '*Hold Amount is the amount that cannot be used.',
+          ledgerBalanceValue: '15,030.20',
+          warningText:
+              '*Hold Amount means they aren\'t immediately available for use. Please contact our customer support team for more details and to process the next steps.',
+          buttonText: 'View History',
         ),
       ),
     ],
