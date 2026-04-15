@@ -24,9 +24,14 @@ class AnnouncementWarning extends StatelessWidget {
     final brightnessKey =
         Theme.of(context).brightness == Brightness.light ? 'light' : 'dark';
 
-    final String bgToken = state == AnnouncementState.danger ? 'danger/600' : 'warning/600';
-    final String textToken = state == AnnouncementState.danger ? 'text/base/danger' : 'text/base/warning';
-    final String iconToken = state == AnnouncementState.danger ? 'danger/500' : 'warning/500';
+    final String bgToken =
+        state == AnnouncementState.danger ? 'danger/600' : 'warning/600';
+    final String textToken =
+        state == AnnouncementState.danger
+            ? 'text/base/danger'
+            : 'text/base/warning';
+    final String iconToken =
+        state == AnnouncementState.danger ? 'danger/500' : 'warning/500';
 
     final backgroundColor = theme.ThemeColors.get(brightnessKey, bgToken);
     final textColor = theme.ThemeColors.get(brightnessKey, textToken);
