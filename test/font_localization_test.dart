@@ -10,6 +10,10 @@ void main() {
     testWidgets('Noto Sans Thai is used for Thai locale', (
       WidgetTester tester,
     ) async {
+      tester.view.physicalSize = const Size(1170, 2532);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
       final localeProvider = LocaleProvider();
       localeProvider.setLocale(const Locale('th'));
 
@@ -38,6 +42,10 @@ void main() {
     testWidgets('Noto Sans is used for English locale', (
       WidgetTester tester,
     ) async {
+      tester.view.physicalSize = const Size(1170, 2532);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
       final localeProvider = LocaleProvider();
       localeProvider.setLocale(const Locale('en'));
 

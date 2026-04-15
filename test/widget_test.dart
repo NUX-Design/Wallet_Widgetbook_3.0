@@ -15,6 +15,10 @@ import 'package:mcp_test_app/providers/locale_provider.dart';
 void main() {
   group('App and Theme Tests', () {
     testWidgets('App should render home page', (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(1170, 2532);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
       await tester.pumpWidget(
         MultiProvider(
           providers: [
@@ -35,6 +39,10 @@ void main() {
     testWidgets('Theme should toggle between light and dark', (
       WidgetTester tester,
     ) async {
+      tester.view.physicalSize = const Size(1170, 2532);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
       await tester.pumpWidget(
         MultiProvider(
           providers: [
