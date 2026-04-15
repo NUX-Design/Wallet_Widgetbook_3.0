@@ -5,6 +5,7 @@ import 'package:mcp_test_app/widgets/item_list/item_list.dart';
 import 'package:mcp_test_app/config/themes/theme_color.dart';
 import 'package:mcp_test_app/widgets/announce/announcement.dart';
 import 'package:mcp_test_app/widgets/announce/announcement_warning.dart';
+import 'package:mcp_test_app/widgets/announce/announcement_danger.dart';
 import 'package:mcp_test_app/widgets/button/buttons.dart';
 import 'package:mcp_test_app/widgets/card/card_review_transaction.dart';
 import 'package:mcp_test_app/widgets/input/full_amount_input.dart';
@@ -138,6 +139,18 @@ Widget buildAnnouncementWarning(BuildContext context) {
       title: 'Please recheck information before proceeding',
       description:
           'To prevent wrong account transfers or fraudulent activities. It cannot be changed once confirmed.',
+    ),
+  );
+}
+
+@widgetbook.UseCase(name: 'Default', type: AnnouncementDanger)
+Widget buildAnnouncementDanger(BuildContext context) {
+  return const Padding(
+    padding: EdgeInsets.all(16.0),
+    child: AnnouncementDanger(
+      title: 'Action required: Verification failed',
+      description:
+          'Your profile verification could not be completed. Please re-upload your document to continue.',
     ),
   );
 }

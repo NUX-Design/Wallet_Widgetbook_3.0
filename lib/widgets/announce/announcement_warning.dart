@@ -3,25 +3,34 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mcp_test_app/config/themes/theme_color.dart' as theme;
 
+enum AnnouncementState { warning, danger }
+
 class AnnouncementWarning extends StatelessWidget {
   const AnnouncementWarning({
     super.key,
     required this.title,
     required this.description,
     this.descriptionSpans,
+    this.state = AnnouncementState.warning,
   });
 
   final String title;
   final String description;
   final List<TextSpan>? descriptionSpans;
+  final AnnouncementState state;
 
   @override
   Widget build(BuildContext context) {
     final brightnessKey =
         Theme.of(context).brightness == Brightness.light ? 'light' : 'dark';
-    final backgroundColor = theme.ThemeColors.get(brightnessKey, 'warning/600');
-    final textColor = theme.ThemeColors.get(brightnessKey, 'text/base/warning');
-    final iconColor = theme.ThemeColors.get(brightnessKey, 'warning/500');
+
+    final String bgToken = state == AnnouncementState.danger ? 'danger/600' : 'warning/600';
+    final String textToken = state == AnnouncementState.danger ? 'text/base/danger' : 'text/base/warning';
+    final String iconToken = state == AnnouncementState.danger ? 'danger/500' : 'warning/500';
+
+    final backgroundColor = theme.ThemeColors.get(brightnessKey, bgToken);
+    final textColor = theme.ThemeColors.get(brightnessKey, textToken);
+    final iconColor = theme.ThemeColors.get(brightnessKey, iconToken);
 
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),

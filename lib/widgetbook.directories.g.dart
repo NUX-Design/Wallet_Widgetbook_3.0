@@ -22,12 +22,28 @@ final directories = <_widgetbook.WidgetbookNode>[
         name: 'announce',
         children: [
           _widgetbook.WidgetbookComponent(
+            name: 'AnnouncementDanger',
+            useCases: [
+              _widgetbook.WidgetbookUseCase(
+                name: 'Default',
+                builder:
+                    _mcp_test_app_widgetbook_use_cases.buildAnnouncementDanger,
+              ),
+            ],
+          ),
+          _widgetbook.WidgetbookComponent(
             name: 'AnnouncementStack',
             useCases: [
               _widgetbook.WidgetbookUseCase(
                 name: 'Default',
                 builder:
                     _mcp_test_app_widgetbook_use_cases.buildAnnouncementStack,
+              ),
+              _widgetbook.WidgetbookUseCase(
+                name: 'Loading',
+                builder:
+                    _mcp_test_app_widgetbook_use_cases
+                        .buildAnnouncementStackLoading,
               ),
             ],
           ),
