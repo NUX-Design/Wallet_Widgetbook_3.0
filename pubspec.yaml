@@ -76,6 +76,13 @@ flutter:
   assets:
     - lib/assets/images/
     - lib/assets/images/figma_banks/
+    - lib/assets/images/receipt/check.svg
+    - lib/assets/images/receipt/receipt_background.svg
+    - lib/assets/images/receipt/qr.png
+    - lib/assets/images/receipt/receipt_image_background.svg
+    - lib/assets/images/receipt/receipt_image_powered_by_icon.svg
+    - lib/assets/images/receipt/receipt_image_powered_by_word.svg
+    - lib/assets/images/receipt/wiwallet-logo.svg
     - lib/assets/lottie/
 
   # An image asset can refer to one or more resolution-specific "variants", see

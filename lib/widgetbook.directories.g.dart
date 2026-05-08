@@ -273,6 +273,21 @@ final directories = <_widgetbook.WidgetbookNode>[
         ],
       ),
       _widgetbook.WidgetbookFolder(
+        name: 'receipt',
+        children: [
+          _widgetbook.WidgetbookComponent(
+            name: 'ReceiptComponent',
+            useCases: [
+              _widgetbook.WidgetbookUseCase(
+                name: 'Default',
+                builder:
+                    _mcp_test_app_widgetbook_use_cases.buildReceiptComponent,
+              ),
+            ],
+          ),
+        ],
+      ),
+      _widgetbook.WidgetbookFolder(
         name: 'shortcut_menu',
         children: [
           _widgetbook.WidgetbookComponent(
