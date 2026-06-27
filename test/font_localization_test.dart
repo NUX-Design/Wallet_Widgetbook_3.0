@@ -74,5 +74,38 @@ void main() {
         isNot(startsWith('NotoSansThai')),
       );
     });
+
+    testWidgets('Noto Sans Myanmar is used for Myanmar locale', (
+      WidgetTester tester,
+    ) async {
+      tester.view.physicalSize = const Size(1170, 2532);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final localeProvider = LocaleProvider();
+      localeProvider.setLocale(const Locale('my'));
+
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (context) => ThemeProvider()),
+            ChangeNotifierProvider.value(value: localeProvider),
+          ],
+          child: const MyApp(),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      final materialApp = tester.widget<MaterialApp>(find.byType(MaterialApp));
+      final textTheme = materialApp.theme?.textTheme;
+
+      expect(textTheme?.bodyMedium?.fontFamily, startsWith('NotoSansMyanmar'));
+      expect(
+        textTheme?.headlineMedium?.fontFamily,
+        startsWith('NotoSansMyanmar'),
+      );
+      expect(textTheme?.titleLarge?.fontFamily, startsWith('NotoSansMyanmar'));
+    });
   });
 }

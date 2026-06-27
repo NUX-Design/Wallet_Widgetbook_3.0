@@ -49,11 +49,13 @@ class ReceiptComponentPreviewPage extends StatelessWidget {
             merchantRefId: 'WP12345678901234567890',
             billerId: 'WP12345678901234567890',
             ref1: 'WP12345678901234567890',
+            ref2: 'WP12345678901234567891',
+            ref3: 'WP12345678901234567892',
             footerNoteOne:
                 'Please verify the information and keep the slip for evidence.',
             footerNoteTwo:
                 'Customer service contact 02-026-6679 operates 24 hours daily.',
-            transactionDetailRowCount: 5,
+            transactionDetailRowCount: 7,
           ),
         ),
       ),

@@ -25,6 +25,7 @@ import 'package:mcp_test_app/widgets/image_carousel/image_carousel.dart';
 import 'package:mcp_test_app/widgets/skeleton/lottie_skeleton.dart';
 import 'package:mcp_test_app/widgets/avatar/preview_avatar.dart'; // ignore: unused_import
 import 'package:mcp_test_app/widgets/loading/pre_loading.dart';
+import 'package:mcp_test_app/widgets/tab/horizontal_tabs.dart';
 
 // ItemList
 @widgetbook.UseCase(name: 'Default', type: ItemList)
@@ -103,6 +104,11 @@ Widget buildItemListTransactionOut(BuildContext context) {
 // Announcement
 @widgetbook.UseCase(name: 'Default', type: AnnouncementStack)
 Widget buildAnnouncementStack(BuildContext context) {
+  const defaultAnnouncementMessage =
+      'Your account has been verified successfully. All features are now fully accessible from 01/06/2022 at 8:00 AM (Thailand time).';
+  const myanmarAnnouncementMessage =
+      'Wi Wallet မဟုတ္ေသာ အေကာင့္မ်ားမွ ေငြလႊဲျခင္းကို လက္ခံရရွိပါက ေငြလႊဲသည့္ပမာဏမွ 2.5%၊ အနည္းဆုံး 5 THB၊ အမ်ားဆုံး 15 THB ေကာက္ခံမည္ျဖစ္ပါသည္။';
+
   return Localizations(
     delegates: AppLocalizations.localizationsDelegates,
     locale: const Locale('en'),
@@ -112,7 +118,9 @@ Widget buildAnnouncementStack(BuildContext context) {
             padding: const EdgeInsets.all(16.0),
             child: AnnouncementStack(
               messages: [
-                'Your account has been verified successfully. All features are now fully accessible from 01/06/2022 at 8:00 AM (Thailand time).',
+                Localizations.localeOf(context).languageCode == 'my'
+                    ? myanmarAnnouncementMessage
+                    : defaultAnnouncementMessage,
                 AppLocalizations.of(
                   context,
                 )!.homeAnnounceVerifyFaceToReceive('100.00', 'THB'),
@@ -225,6 +233,8 @@ Widget buildReceiptComponent(BuildContext context) {
       merchantRefId: 'WP12345678901234567890',
       billerId: 'WP12345678901234567890',
       ref1: 'WP12345678901234567890',
+      ref2: 'WP12345678901234567891',
+      ref3: 'WP12345678901234567892',
       footerNoteOne:
           'Please verify the information and keep the slip for evidence.',
       footerNoteTwo:
@@ -234,6 +244,7 @@ Widget buildReceiptComponent(BuildContext context) {
       qrAssetPath: 'lib/assets/images/receipt/qr.png',
       backgroundSvgAssetPath:
           'lib/assets/images/receipt/receipt_background.svg',
+      transactionDetailRowCount: 7,
     ),
   );
 }
@@ -523,4 +534,50 @@ Widget buildPreLoading(BuildContext context) {
       const PreLoading(),
     ],
   );
+}
+
+// HorizontalTabs
+@widgetbook.UseCase(name: '2 Tabs', type: HorizontalTabs)
+Widget buildHorizontalTabs2(BuildContext context) {
+  return _HorizontalTabsPreview(
+    tabs: const [
+      HorizontalTabItem(label: 'General', showDot: true),
+      HorizontalTabItem(label: 'For You', showDot: true),
+    ],
+  );
+}
+
+@widgetbook.UseCase(name: '3 Tabs', type: HorizontalTabs)
+Widget buildHorizontalTabs3(BuildContext context) {
+  return _HorizontalTabsPreview(
+    tabs: const [
+      HorizontalTabItem(label: 'History'),
+      HorizontalTabItem(label: 'Info'),
+      HorizontalTabItem(label: 'Setting'),
+    ],
+  );
+}
+
+class _HorizontalTabsPreview extends StatefulWidget {
+  const _HorizontalTabsPreview({required this.tabs});
+  final List<HorizontalTabItem> tabs;
+
+  @override
+  State<_HorizontalTabsPreview> createState() => _HorizontalTabsPreviewState();
+}
+
+class _HorizontalTabsPreviewState extends State<_HorizontalTabsPreview> {
+  int _selectedIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: HorizontalTabs(
+        tabs: widget.tabs,
+        selectedIndex: _selectedIndex,
+        onTabChanged: (i) => setState(() => _selectedIndex = i),
+      ),
+    );
+  }
 }

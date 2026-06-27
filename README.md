@@ -1,12 +1,12 @@
 
 <img width="1920" height="1080" alt="Cover" src="https://github.com/user-attachments/assets/4e0d1102-da06-4f92-bbfc-20123db01353" />
 
-# Flutter Foundation App 🚀
+# Flutter Widgetbook Library 🚀
 
 [![Flutter](https://img.shields.io/badge/Flutter-3.7.2+-02569B?logo=flutter)](https://flutter.dev)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-A production-ready Flutter foundation with **multi-language support (i18n)**, **theme system (light/dark mode)**, **design tokens**, and **reusable UI components** for financial applications.
+A Flutter design-system / widget-library repository with **Widgetbook previews**, **standalone preview entrypoints**, **localization generation**, **theme tokens**, and **reusable UI components** for financial applications.
 
 ## 📋 Table of Contents
 
@@ -18,6 +18,7 @@ A production-ready Flutter foundation with **multi-language support (i18n)**, **
   - [3. Design Tokens](#3-design-tokens)
   - [4. Reusable Widgets](#4-reusable-widgets)
 - [Project Structure](#-project-structure)
+- [Development Workflows](#-development-workflows)
 - [How to Apply to Your Project](#-how-to-apply-to-your-project)
 - [Available Components](#-available-components)
 - [Preview Widgets on External Devices](#-preview-widgets-on-external-devices)
@@ -30,6 +31,9 @@ A production-ready Flutter foundation with **multi-language support (i18n)**, **
 - 🌍 **Multi-language Support** - 5 languages (EN, TH, ZH, RU, MY) with proper font handling
 - 🎨 **Complete Theme System** - Light/Dark mode with 100+ design tokens
 - 🧩 **Reusable Components** - Production-ready widgets for financial apps
+- 📚 **Widget Documentation** - Local guide/spec/context markdown next to widgets
+- 🧪 **Widgetbook + Standalone Previews** - Two preview workflows for shared widgets
+- 🤖 **Agent-Friendly Repo** - Local `AGENTS.md` and `MEMORY.md` define trusted workflows
 - 📱 **Multi-platform** - iOS, Android, Web, macOS, Linux, Windows
 - 🎯 **Type-safe Design Tokens** - Consistent colors across the app
 - ♿ **Responsive Design** - Adapts to different screen sizes
@@ -80,6 +84,16 @@ flutter gen-l10n
 flutter run
 ```
 
+### Up-To-Date Repo Rules
+
+If you are using an AI agent or onboarding to the repository, prefer these files over broad overview docs when they disagree:
+
+1. `AGENTS.md`
+2. `MEMORY.md`
+3. live source files and build scripts
+
+This matters because some overview docs can lag behind the current Flutter tree.
+
 ---
 
 ## 🏗️ Foundation Setup
@@ -108,7 +122,7 @@ output-class: AppLocalizations
 output-dir: lib/generated/intl
 ```
 
-**Step 3:** Update `localization.json` at project root
+**Step 3:** Update `lib/l10n/localization.json`
 
 ```json
 [
@@ -404,37 +418,106 @@ class ThemedCard extends StatelessWidget {
 lib/
 ├── assets/
 │   ├── hugeicons/          # Icon library
-│   └── images/             # SVG icons
+│   ├── images/             # SVG/PNG assets
+│   └── lottie/             # Lottie assets
 ├── config/
 │   └── themes/
 │       ├── theme_color.dart      # Design tokens
 │       ├── base_theme.dart       # ColorScheme definitions
-│       └── theme_constants.dart  # Theme constants
-├── core/
-│   ├── providers/          # State management
-│   └── utils/              # Utility functions
 ├── generated/
 │   └── intl/               # Generated localization files
 ├── l10n/
-│   ├── app_en.arb          # English translations
-│   ├── app_th.arb          # Thai translations
-│   ├── app_zh.arb          # Chinese translations
-│   ├── app_ru.arb          # Russian translations
-│   └── app_my.arb          # Myanmar translations
+│   ├── localization.json   # Editable localization source of truth
+│   └── app_*.arb           # Generated ARB files
+├── providers/
+│   ├── locale_provider.dart
+│   └── theme_provider.dart
 ├── widgets/
-│   ├── announce/           # Announcement components
-│   ├── card/               # Card components
-│   ├── drawer/             # Drawer components
-│   ├── navigator_bar/      # Bottom navigation
-│   ├── visa/               # Visa card component
-│   ├── full_amount_input.dart
-│   ├── mobile_code_input.dart
-│   ├── search_input.dart
-│   └── buttons.dart
+│   ├── announce/
+│   ├── avatar/
+│   ├── button/
+│   ├── card/
+│   ├── drawer/
+│   ├── image_carousel/
+│   ├── input/
+│   ├── item_list/
+│   ├── loading/
+│   ├── navigator_bar/
+│   ├── receipt/
+│   ├── shortcut_menu/
+│   ├── skeleton/
+│   ├── snack_bar/
+│   ├── tab/
+│   └── visa/
+├── widgetbook.dart
+├── widgetbook_use_cases.dart
+├── widgetbook.directories.g.dart
 └── main.dart
 ```
 
----
+### Widget Folder Convention
+
+Most reusable widget folders follow this structure:
+
+```text
+lib/widgets/<feature>/
+├── <widget>.dart
+├── preview_<widget>.dart
+└── <WIDGET>_GUIDE.md | <WIDGET>_CONTEXT.md | <widget>_spec.md
+```
+
+## 🧭 Development Workflows
+
+### Run Main App
+
+```bash
+flutter run
+```
+
+### Run Widgetbook
+
+```bash
+flutter run -t lib/widgetbook.dart -d chrome
+```
+
+### Run A Standalone Widget Preview
+
+```bash
+flutter run -t lib/widgets/tab/preview_horizontal_tabs.dart -d <device>
+```
+
+### Regenerate Widgetbook Directories
+
+```bash
+dart run build_runner build --delete-conflicting-outputs
+```
+
+### Regenerate Localization
+
+```bash
+dart run tool/generate_arb.dart
+flutter gen-l10n
+```
+
+### Regenerate Documentation Schema
+
+```bash
+npm run generate-schema
+```
+
+`docs/schema.json` is generated output from:
+- `CODEBASE_CONTEXT.md`
+- `WIDGETS_GUIDE.md`
+- widget-local markdown under `lib/widgets/`
+
+Do not edit `docs/schema.json` by hand.
+
+### Verification
+
+```bash
+flutter analyze
+flutter test
+```
 
 ## 🎯 How to Apply to Your Project
 
@@ -445,17 +528,19 @@ lib/
    lib/config/themes/
    lib/l10n/
    lib/generated/intl/
+   lib/providers/
    ```
 2. Copy `l10n.yaml` to your project root
 3. Add dependencies to `pubspec.yaml`
-4. Run `flutter pub get` and `flutter gen-l10n`
+4. Run `flutter pub get`, `dart run tool/generate_arb.dart`, and `flutter gen-l10n`
 
 ### Option 2: Copy Specific Components
 
 #### Copy Theme System Only
 1. Copy `lib/config/themes/theme_color.dart`
-2. Create ThemeProvider (see [Theme System](#2-theme-system))
-3. Setup MaterialApp with theme configuration
+2. Copy `lib/config/themes/base_theme.dart`
+3. Create or reuse a ThemeProvider
+4. Setup MaterialApp with theme configuration
 
 #### Copy Localization Only
 1. Copy `lib/l10n/` folder
@@ -465,10 +550,11 @@ lib/
 
 #### Copy Individual Widgets
 Each widget in `lib/widgets/` is self-contained:
-1. Copy the widget file (e.g., `full_amount_input.dart`)
-2. Copy required assets (SVG icons)
+1. Copy the widget file
+2. Copy required assets
 3. Ensure `ThemeColors` is available
-4. Import and use in your app
+4. Read the local guide/spec markdown for that widget
+5. Import and use in your app
 
 ---
 

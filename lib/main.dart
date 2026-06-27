@@ -27,6 +27,17 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  TextTheme _buildLocalizedTextTheme(Locale? locale, TextTheme baseTheme) {
+    switch (locale?.languageCode) {
+      case 'th':
+        return GoogleFonts.notoSansThaiTextTheme(baseTheme);
+      case 'my':
+        return GoogleFonts.notoSansMyanmarTextTheme(baseTheme);
+      default:
+        return GoogleFonts.notoSansTextTheme(baseTheme);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer2<ThemeProvider, LocaleProvider>(
@@ -53,20 +64,26 @@ class MyApp extends StatelessWidget {
             colorScheme: BaseTheme.lightColorScheme,
             useMaterial3: true,
           ).copyWith(
-            textTheme:
-                localeProvider.locale?.languageCode == 'th'
-                    ? GoogleFonts.notoSansThaiTextTheme()
-                    : GoogleFonts.notoSansTextTheme(),
+            textTheme: _buildLocalizedTextTheme(
+              localeProvider.locale,
+              ThemeData.from(
+                colorScheme: BaseTheme.lightColorScheme,
+                useMaterial3: true,
+              ).textTheme,
+            ),
             scaffoldBackgroundColor: ThemeColors.get('light', 'fill/base/300'),
           ),
           darkTheme: ThemeData.from(
             colorScheme: BaseTheme.darkColorScheme,
             useMaterial3: true,
           ).copyWith(
-            textTheme:
-                localeProvider.locale?.languageCode == 'th'
-                    ? GoogleFonts.notoSansThaiTextTheme()
-                    : GoogleFonts.notoSansTextTheme(),
+            textTheme: _buildLocalizedTextTheme(
+              localeProvider.locale,
+              ThemeData.from(
+                colorScheme: BaseTheme.darkColorScheme,
+                useMaterial3: true,
+              ).textTheme,
+            ),
             scaffoldBackgroundColor: ThemeColors.get('dark', 'fill/base/300'),
           ),
           themeMode: themeProvider.themeMode,
@@ -85,6 +102,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  static const String _defaultAnnouncementMessage =
+      'Your account has been verified successfully. All features are now fully accessible from 01/06/2022 at 8:00 AM (Thailand time).';
+
+  static const String _myanmarAnnouncementMessage =
+      'Wi Wallet မဟုတ္ေသာ အေကာင့္မ်ားမွ ေငြလႊဲျခင္းကို လက္ခံရရွိပါက ေငြလႊဲသည့္ပမာဏမွ 2.5%၊ အနည္းဆုံး 5 THB၊ အမ်ားဆုံး 15 THB ေကာက္ခံမည္ျဖစ္ပါသည္။';
+
   // Helper to build dropdown items with consistent style
   DropdownMenuItem<Locale> _buildDropdownItem(
     BuildContext context,
@@ -318,7 +341,10 @@ class _HomePageState extends State<HomePage> {
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           child: AnnouncementStack(
                             messages: [
-                              'Your account has been verified successfully. All features are now fully accessible from 01/06/2022 at 8:00 AM (Thailand time).',
+                              Localizations.localeOf(context).languageCode ==
+                                      'my'
+                                  ? _myanmarAnnouncementMessage
+                                  : _defaultAnnouncementMessage,
                               AppLocalizations.of(
                                 context,
                               )!.homeAnnounceVerifyFaceToReceive(

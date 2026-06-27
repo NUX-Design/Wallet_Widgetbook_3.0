@@ -154,6 +154,37 @@ class _AnnouncementStackState extends State<AnnouncementStack>
   Widget _buildCard(String text, {bool isFront = false, Color? color}) {
     final brightnessKey =
         Theme.of(context).brightness == Brightness.light ? 'light' : 'dark';
+    final localeCode = Localizations.localeOf(context).languageCode;
+    final announcementTextStyle =
+        localeCode == 'th'
+            ? GoogleFonts.notoSansThai(
+              color:
+                  brightnessKey == 'light'
+                      ? theme.ThemeColors.get('light', 'text/base/600')
+                      : theme.ThemeColors.get('dark', 'text/base/600'),
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+              height: 1.45,
+            )
+            : localeCode == 'my'
+            ? GoogleFonts.notoSansMyanmar(
+              color:
+                  brightnessKey == 'light'
+                      ? theme.ThemeColors.get('light', 'text/base/600')
+                      : theme.ThemeColors.get('dark', 'text/base/600'),
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+              height: 1.45,
+            )
+            : GoogleFonts.notoSans(
+              color:
+                  brightnessKey == 'light'
+                      ? theme.ThemeColors.get('light', 'text/base/600')
+                      : theme.ThemeColors.get('dark', 'text/base/600'),
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+              height: 1.45,
+            );
 
     return Container(
       constraints: const BoxConstraints(minHeight: 65),
@@ -184,15 +215,7 @@ class _AnnouncementStackState extends State<AnnouncementStack>
                 text,
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.notoSans(
-                  color:
-                      brightnessKey == 'light'
-                          ? theme.ThemeColors.get('light', 'text/base/600')
-                          : theme.ThemeColors.get('dark', 'text/base/600'),
-                  fontSize: 11,
-                  fontWeight: FontWeight.w500,
-                  height: 1.45,
-                ),
+                style: announcementTextStyle,
               ),
             ),
           ),

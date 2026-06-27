@@ -22,7 +22,7 @@ const _kReceiptContentPadding = 16.0;
 const _kReceiptSectionGap = 16.0;
 const _kReceiptLabelGap = 8.0;
 const _kReceiptInnerGap = 12.0;
-const _kReceiptMaxDetailRows = 5;
+const _kReceiptMaxDetailRows = 7;
 
 class ReceiptComponent extends StatelessWidget {
   final String amount;
@@ -35,6 +35,8 @@ class ReceiptComponent extends StatelessWidget {
   final String merchantRefId;
   final String billerId;
   final String ref1;
+  final String ref2;
+  final String ref3;
   final String footerNoteOne;
   final String footerNoteTwo;
   final int transactionDetailRowCount;
@@ -56,6 +58,8 @@ class ReceiptComponent extends StatelessWidget {
     required this.merchantRefId,
     required this.billerId,
     required this.ref1,
+    this.ref2 = '',
+    this.ref3 = '',
     required this.footerNoteOne,
     required this.footerNoteTwo,
     this.transactionDetailRowCount = _kReceiptMaxDetailRows,
@@ -386,6 +390,8 @@ class ReceiptComponent extends StatelessWidget {
       _buildDetailRow('Merchant Ref ID:', merchantRefId),
       _buildDetailRow('Biller ID:', billerId),
       _buildDetailRow('Ref 1:', ref1),
+      _buildDetailRow('Ref 2:', ref2.isEmpty ? ref1 : ref2),
+      _buildDetailRow('Ref 3:', ref3.isEmpty ? ref1 : ref3),
     ];
 
     final visibleRowCount = transactionDetailRowCount.clamp(0, rows.length);

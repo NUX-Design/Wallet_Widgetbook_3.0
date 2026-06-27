@@ -2,7 +2,7 @@
 
 ## 📋 ภาพรวมโปรเจค
 
-**ชื่อโปรเจค:** flutter_test_app (Wi Wallet Flutter Widget 2.0)  
+**ชื่อโปรเจค:** mcp_test_app (Wi Wallet Flutter Widget 2.0)  
 **เวอร์ชัน:** 25.0.5+1  
 **Flutter SDK:** ^3.7.2  
 **ประเภท:** Multi-platform Flutter Application (iOS, Android, Web, macOS, Linux, Windows)  
@@ -10,7 +10,7 @@
 
 ## 🎯 จุดประสงค์
 
-Production-ready Flutter foundation พร้อมระบบ multi-language support (i18n), theme system (light/dark mode), design tokens, และ reusable UI components ที่ออกแบบมาสำหรับแอปพลิเคชันทางการเงิน
+Flutter design-system/widget-library repository พร้อม Widgetbook previews, standalone preview entrypoints, localization generation, design tokens, และ reusable UI components สำหรับแอปพลิเคชันทางการเงิน
 
 https://docs.flutter.dev/ui/internationalization
 https://docs.flutter.dev/cookbook/design/themes
@@ -23,34 +23,45 @@ https://docs.flutter.dev/ui/advanced/material-3
 lib/
 ├── assets/
 │   ├── hugeicons/          # Icon library
-│   └── images/             # SVG icons และ assets
+│   ├── images/             # SVG/PNG assets
+│   └── lottie/             # Lottie assets
 ├── config/
 │   └── themes/
 │       ├── theme_color.dart      # Design tokens (100+ colors)
 │       ├── base_theme.dart       # ColorScheme definitions
 │       └── theme_constants.dart  # Theme constants
-├── core/
-│   ├── providers/          # State management (ThemeProvider, LocaleProvider)
-│   └── utils/              # Utility functions
 ├── generated/
 │   └── intl/               # Generated localization files
 ├── l10n/
+│   ├── localization.json   # Editable localization source of truth
 │   ├── app_en.arb          # English translations
 │   ├── app_th.arb          # Thai translations
 │   ├── app_zh.arb          # Chinese translations
 │   ├── app_ru.arb          # Russian translations
 │   └── app_my.arb          # Myanmar translations
+├── providers/
+│   ├── locale_provider.dart
+│   └── theme_provider.dart
 ├── widgets/
-│   ├── announce/           # Announcement components (2 widgets)
-│   ├── button/             # Button components (1 widget + preview)
-│   ├── card/               # Card components (1 widget)
-│   ├── drawer/             # Drawer components (3 widgets)
-│   ├── navigator_bar/      # Bottom navigation (1 widget with blur effect)
-│   ├── shortcut_menu/      # Shortcut menu components (1 widget)
-│   ├── visa/               # Visa card component (1 widget)
-│   ├── full_amount_input.dart
-│   ├── mobile_code_input.dart
-│   └── search_input.dart
+│   ├── announce/
+│   ├── avatar/
+│   ├── button/
+│   ├── card/
+│   ├── drawer/
+│   ├── image_carousel/
+│   ├── input/
+│   ├── item_list/
+│   ├── loading/
+│   ├── navigator_bar/
+│   ├── receipt/
+│   ├── shortcut_menu/
+│   ├── skeleton/
+│   ├── snack_bar/
+│   ├── tab/
+│   └── visa/
+├── widgetbook.dart
+├── widgetbook_use_cases.dart
+├── widgetbook.directories.g.dart
 └── main.dart
 ```
 
@@ -84,8 +95,7 @@ lib/
 - 🇲🇲 မြန်မာ (my) - Myanmar
 
 ### การตั้งค่า
-### การตั้งค่า
-- **Source of Truth:** `localization.json` (Root level)
+- **Source of Truth:** `lib/l10n/localization.json`
 - **Generation Script:** `tool/generate_arb.dart`
 - **ARB files:** `lib/l10n/app_{locale}.arb` (Generated)
 - **Generated files:** `lib/generated/intl/`
@@ -133,44 +143,51 @@ lib/
 - **ThemeColors.get():** Type-safe color access
 - **Material Design 3:** useMaterial3: true
 
-## 🧩 Widget Components (20 Components)
+## 🧩 Widget Components
 
-### 1. Input Components (3)
+### 1. Input Components
 - **FullAmountInput** - Amount input with validation, decimal support
 - **MobileCodeInput** - Country code + phone number input
 - **SearchInput** - Search input with icon
 
-### 2. Navigation Components (1)
+### 2. Navigation Components
 - **NavigatorBar** - Bottom navigation with 5 items + floating scan button + 10px blur effect
 
-### 3. Card Components (2)
+### 3. Card / Receipt Components
 - **VisaCard** - Gradient visa card display with balance
 - **CardReviewTransaction** - Transaction review card with details
+- **ReceiptComponent** - Transaction receipt component
+- **ReceiptImageComponent** - Shareable receipt image layout
 
-### 4. Announcement Components (2)
+### 4. Announcement Components
 - **AnnouncementStack** - Animated announcement cards with rotation
 - **AnnouncementWarning** - Static warning alert with custom styling
+- **AnnouncementDanger** - Static danger/error alert variant
 
-### 5. Drawer Components (3)
+### 5. Drawer Components
 - **DrawerReviewTransaction** - Transaction review bottom sheet (75% height)
 - **DrawerBalanceDetail** - Balance breakdown drawer with hold amount
 - **DrawerDepositChannel** - Bank selection drawer (50% height)
+- **DrawerCountryCode** - Country code selector drawer
 
-### 6. Button Components (1)
+### 6. Button Components
 - **Buttons** - Reusable button component with 3 types (primary, secondary, amount)
 
-### 7. Menu Components (2)
+### 7. Menu Components
 - **ShortcutMenuItem** - Menu item with SVG icon manipulation and theme awareness
 - **ItemList** - Versatile list item for menus and transactions
 
-### 8. Display Components (3)
+### 8. Display Components
 - **Avatar** - Profile card with status badge and skeleton loading
 - **ImageCarousel** - Image slider with auto-play support
 - **SnackBarWidget** - Custom styled notification snackbar
 
-### 9. Loading Components (2)
+### 9. Loading Components
 - **PreLoading** - Full-screen loading overlay with blur and Lottie
 - **LottieSkeleton** - Skeleton loading wrapper using Lottie animation
+
+### 10. Tab Components
+- **HorizontalTabs** - Segmented tab switcher for 2-tab and 3-tab content grouping
 
 ## 🏗️ Architecture Patterns
 
@@ -183,8 +200,8 @@ lib/
 ```
 widgets/{feature}/
 ├── {widget}.dart              # Main widget
-├── preview_{widget}.dart      # Preview/testing widget
-└── {WIDGET}_GUIDE.md         # Documentation
+├── preview_{widget}.dart      # Standalone preview/testing widget
+└── {WIDGET}_GUIDE.md         # Documentation (or *_CONTEXT.md / *_spec.md)
 ```
 
 ### Widget Features
@@ -192,6 +209,30 @@ widgets/{feature}/
 - **Responsive** - MediaQuery สำหรับ responsive design
 - **Localized** - รองรับ multi-language
 - **Reusable** - Self-contained components
+- **Previewable** - ตรวจสอบได้ผ่าน Widgetbook หรือ standalone preview
+
+## 🧪 Development Workflows
+
+### Widgetbook
+- Entry point: `lib/widgetbook.dart`
+- Manual use cases: `lib/widgetbook_use_cases.dart`
+- Generated directories: `lib/widgetbook.directories.g.dart`
+
+### Standalone Preview
+- Widgets จำนวนมากมี `preview_*.dart` สำหรับรันตรงด้วย `flutter run -t ...`
+
+### Localization Generation
+- Edit `lib/l10n/localization.json`
+- Run `dart run tool/generate_arb.dart`
+- Run `flutter gen-l10n`
+
+### Documentation Schema Generation
+- Root schema output: `docs/schema.json`
+- Inputs:
+  - `CODEBASE_CONTEXT.md`
+  - `WIDGETS_GUIDE.md`
+  - widget-local markdown under `lib/widgets/`
+- Command: `npm run generate-schema`
 
 ## 📱 Platform Support
 

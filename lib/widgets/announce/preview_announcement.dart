@@ -69,13 +69,21 @@ class AnnouncementPreview extends StatefulWidget {
 }
 
 class _AnnouncementPreviewState extends State<AnnouncementPreview> {
+  static const String _defaultAnnouncementMessage =
+      'Your account has been verified successfully. All features are now fully accessible from 01/06/2022 at 8:00 AM (Thailand time).';
+
+  static const String _myanmarAnnouncementMessage =
+      'Wi Wallet မဟုတ္ေသာ အေကာင့္မ်ားမွ ေငြလႊဲျခင္းကို လက္ခံရရွိပါက ေငြလႊဲသည့္ပမာဏမွ 2.5%၊ အနည္းဆုံး 5 THB၊ အမ်ားဆုံး 15 THB ေကာက္ခံမည္ျဖစ္ပါသည္။';
+
   late List<String> _messages;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _messages = [
-      'Your account has been verified successfully. All features are now fully accessible from 01/06/2022 at 8:00 AM (Thailand time).',
+      Localizations.localeOf(context).languageCode == 'my'
+          ? _myanmarAnnouncementMessage
+          : _defaultAnnouncementMessage,
       AppLocalizations.of(
         context,
       )!.homeAnnounceVerifyFaceToReceive('100.00', 'THB'),
