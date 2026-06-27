@@ -13,7 +13,7 @@ The Figma-Context-MCP server has been successfully set up with the following con
 
 The server is configured to run with the following command structure:
 ```bash
-npx -y figma-developer-mcp --figma-api-key=YOUR-FIGMA-API-KEY --stdio
+FIGMA_API_KEY=your_figma_pat npx -y figma-developer-mcp --figma-api-key="$FIGMA_API_KEY" --stdio
 ```
 
 ## Available Server Options
@@ -50,20 +50,31 @@ To use the server, you need a Figma Personal Access Token:
 4. Give it a descriptive name (e.g., "MCP Server")
 5. Copy the generated token
 
-### Step 2: Update Configuration
+### Step 2: Configure With An Environment Variable
 
-Replace `YOUR-FIGMA-API-KEY` in `cline_mcp_settings.json` with your actual API key:
+Do not paste the token directly into tracked files. Export it through an environment variable and reference that variable from `cline_mcp_settings.json`:
 
 ```json
 {
   "mcpServers": {
     "github.com/GLips/Figma-Context-MCP": {
-      "command": "npx",
-      "args": ["-y", "figma-developer-mcp", "--figma-api-key=YOUR-ACTUAL-API-KEY", "--stdio"]
+      "command": "sh",
+      "args": [
+        "-c",
+        "exec npx -y figma-developer-mcp --figma-api-key=\"$FIGMA_API_KEY\" --stdio"
+      ]
     }
   }
 }
 ```
+
+Then export the token locally before starting the client:
+
+```bash
+export FIGMA_API_KEY=your_figma_pat
+```
+
+If you prefer, load it from a local shell profile or private `.env` file that is not committed.
 
 ### Step 3: Use the Server
 
@@ -93,6 +104,11 @@ The server has been verified to be accessible and functional:
 ## Next Steps
 
 1. Obtain your Figma API key
-2. Update the configuration file
+2. Export it locally as `FIGMA_API_KEY`
 3. Restart your AI assistant to load the new MCP server
 4. Test with a Figma file URL
+
+## Security Note
+
+- Never commit a Figma Personal Access Token into this repository.
+- If a token was ever committed, rotate/revoke it in Figma immediately even if the file has already been cleaned up.

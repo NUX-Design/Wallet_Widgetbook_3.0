@@ -127,6 +127,7 @@
 - Root `package.json` and `scripts/` support schema/doc generation.
 - `mcp-server/` is a separate Node-based MCP helper server.
 - `tools/flutter_mcp_2/` is an additional standalone tooling area with its own package manifest.
+- Local MCP/tooling configs must reference secrets through environment variables, not committed literal tokens.
 
 ### Generated Or Derived Areas
 
@@ -177,6 +178,7 @@ Read in this order:
 - Some docs still describe the project as a broader app foundation, but the current repo also serves as a design-system/widget catalog with Widgetbook and MCP-related tooling.
 - Root overview docs can drift from the live Flutter tree; verify paths against the filesystem before acting on them.
 - Widget-local markdown is not just human documentation; it can also feed the schema generation pipeline.
+- Secret scanning risk exists for local MCP setup docs/configs; never commit PATs or API keys into tracked files.
 - Flutter verification may fail in restricted environments unless the runtime can write to the Flutter SDK cache.
 
 ## When To Update This File
