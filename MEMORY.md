@@ -113,6 +113,7 @@
 - Many reusable widgets still have no direct tests yet, especially inputs, announcement variants, receipt widgets, NavigatorBar, Avatar, HorizontalTabs, ShortcutMenuItem, PreLoading, and LottieSkeleton.
 - Shared test setup now lives in `test/support/widget_test_harness.dart` and covers `MaterialApp` + `Scaffold` pumping, localized light/dark themes, modal bottom sheet and snackbar hosts, settle helpers, and a placeholder asset bundle for `SvgPicture.asset`/`Image.asset`/`Lottie.asset` smoke tests.
 - Parallel test execution backlog is now tracked in `TASKS.md`, while `WIDGET_TEST_PLAN.md` keeps the higher-level analysis and prioritization.
+- Batch 1 widget coverage now exists under `test/widgets/input/input_widgets_test.dart`, `test/widgets/tab/horizontal_tabs_test.dart`, `test/widgets/navigator_bar/navigator_bar_test.dart`, `test/widgets/avatar/avatar_test.dart`, and `test/widgets/snack_bar/snack_bar_test.dart`.
 
 ## Repo Boundaries
 
@@ -183,6 +184,8 @@ Read in this order:
 - Widget-local markdown is not just human documentation; it can also feed the schema generation pipeline.
 - Secret scanning risk exists for local MCP setup docs/configs; never commit PATs or API keys into tracked files.
 - Flutter verification may fail in restricted environments unless the runtime can write to the Flutter SDK cache.
+- In widget tests, safe-area padding is easiest to control via `tester.view.viewPadding` plus `tester.view.resetViewPadding`; `viewPaddingTestValue` is not available on `TestFlutterView` in this Flutter version.
+- `NetworkImage` widget tests need a fake `HttpClient` via `HttpOverrides`; the default test binding returns HTTP 400 for real network requests.
 
 ## When To Update This File
 

@@ -35,36 +35,36 @@ Lane: Shared
 
 ### W-01: `FullAmountInput`
 
-- [ ] ตรวจ render เริ่มต้น
-- [ ] ทดสอบ input รับตัวเลขและจุดทศนิยม
-- [ ] ทดสอบ clear button และ `onChanged`
-- [ ] ทดสอบ focus/error/success/disabled state
+- [x] ตรวจ render เริ่มต้น
+- [x] ทดสอบ input รับตัวเลขและจุดทศนิยม
+- [x] ทดสอบ clear button และ `onChanged`
+- [x] ทดสอบ focus/error/success/disabled state
 
 Depends on: S-01, S-02
 
 ### W-02: `MobileCodeInput`
 
-- [ ] ตรวจ render country code, flag, placeholder, counter
-- [ ] ทดสอบ digit-only input และ `maxLength`
-- [ ] ทดสอบ clear button, `onCountryCodeTap`, error state
-- [ ] ทดสอบ focus state และ callback `onChanged`
+- [x] ตรวจ render country code, flag, placeholder, counter
+- [x] ทดสอบ digit-only input และ `maxLength`
+- [x] ทดสอบ clear button, `onCountryCodeTap`, error state
+- [x] ทดสอบ focus state และ callback `onChanged`
 
 Depends on: S-01, S-02
 
 ### W-03: `SearchInput`
 
-- [ ] ตรวจ placeholder และ icon state
-- [ ] ทดสอบ focus border change
-- [ ] ทดสอบ clear button และ `onChanged`
-- [ ] ทดสอบ controller sync
+- [x] ตรวจ placeholder และ icon state
+- [x] ทดสอบ focus border change
+- [x] ทดสอบ clear button และ `onChanged`
+- [x] ทดสอบ controller sync
 
 Depends on: S-01, S-02
 
 ### W-04: `HorizontalTabs`
 
-- [ ] ตรวจ selected tab, pressed state, และ `showDot`
-- [ ] ทดสอบ tap แล้ว `onTabChanged`
-- [ ] ทดสอบ 2-tab / 3-tab layout
+- [x] ตรวจ selected tab และ `showDot`
+- [x] ทดสอบ tap แล้ว `onTabChanged`
+- [x] ทดสอบ 2-tab / 3-tab layout
 
 Depends on: S-01
 
@@ -72,28 +72,28 @@ Depends on: S-01
 
 ### W-05: `NavigatorBar`
 
-- [ ] ตรวจ render menu ครบ 5 item
-- [ ] ทดสอบ scan button ตรงกลาง
-- [ ] ทดสอบ theme light/dark
-- [ ] ทดสอบ locale label และ safe area/padding
-- [ ] ทดสอบ opacity behavior
+- [x] ตรวจ render menu ครบ 5 item
+- [x] ทดสอบ scan button ตรงกลาง
+- [x] ทดสอบ theme light/dark
+- [x] ทดสอบ locale label และ safe area/padding
+- [x] ทดสอบ opacity behavior
 
 Depends on: S-01, S-02
 
 ### W-06: `Avatar`
 
-- [ ] ตรวจ fallback icon เมื่อไม่มีรูป
-- [ ] ทดสอบ asset image vs network image precedence
-- [ ] ทดสอบ status badge `none/danger/warning`
-- [ ] ทดสอบ loading skeleton และ radius scaling
+- [x] ตรวจ fallback icon เมื่อไม่มีรูป
+- [x] ทดสอบ asset image vs network image precedence
+- [x] ทดสอบ status badge `none/danger/warning`
+- [x] ทดสอบ loading skeleton และ radius scaling
 
 Depends on: S-01, S-02
 
 ### W-07: `SnackBarWidget`
 
-- [ ] ขยาย UI test ครบทุก type
-- [ ] ตรวจ `show()` integration path
-- [ ] ทดสอบ floating behavior และ text/icon/color mapping
+- [x] ขยาย UI test ครบทุก type
+- [x] ตรวจ `show()` integration path
+- [x] ทดสอบ floating behavior และ text/icon/color mapping
 
 Depends on: S-01, S-02
 
