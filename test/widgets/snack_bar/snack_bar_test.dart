@@ -30,6 +30,19 @@ void main() {
       expect(find.text('Success Message'), findsOneWidget);
       expect(find.byType(SvgPicture), findsOneWidget);
 
+      // Verify Icon
+      final svgFinder = find.byWidgetPredicate((widget) {
+        return widget is SvgPicture &&
+            widget.bytesLoader is SvgAssetLoader &&
+            (widget.bytesLoader as SvgAssetLoader).assetName ==
+                'lib/assets/images/checkmark-circle-01.svg';
+      });
+      expect(svgFinder, findsOneWidget);
+
+      // Verify Container Decoration (Background Color & Border Radius)
+      final containerFinder = find.descendant(
+        of: find.byType(SnackBarWidget),
+        matching: find.byType(Container),
       final container = tester.widget<Container>(
         find.descendant(
           of: find.byType(SnackBarWidget),
@@ -41,6 +54,9 @@ void main() {
 
       expect(decoration.borderRadius, BorderRadius.circular(6));
       expect(decoration.color, ThemeColors.get('light', 'success/300'));
+
+      final text = tester.widget<Text>(find.text('Success Message'));
+      expect(text.style?.color, ThemeColors.get('light', 'text/base/success'));
       expect(icon.width, 24);
     });
 
@@ -123,6 +139,10 @@ void main() {
       await tester.tap(find.text('Show SnackBar'));
       await tester.pump();
 
+      // Verify SnackBar appears
+      final snackBar = tester.widget<SnackBar>(find.byType(SnackBar));
+      expect(snackBar.behavior, SnackBarBehavior.floating);
+      expect(snackBar.backgroundColor, Colors.transparent);
       expect(find.byType(SnackBar), findsOneWidget);
       expect(find.byType(SnackBarWidget), findsOneWidget);
       expect(find.text('Integration Test'), findsOneWidget);

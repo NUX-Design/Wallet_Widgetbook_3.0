@@ -31,14 +31,29 @@ class _ImageCarouselState extends State<ImageCarousel> {
   void initState() {
     super.initState();
     _pageController = PageController();
-    if (widget.autoPlay) {
+    if (widget.autoPlay && widget.pages.isNotEmpty) {
       _startAutoPlay();
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant ImageCarousel oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.autoPlay != widget.autoPlay ||
+        oldWidget.pages.length != widget.pages.length) {
+      _autoPlayTimer?.cancel();
+      _autoPlayTimer = null;
+
+      if (widget.autoPlay && widget.pages.isNotEmpty) {
+        _startAutoPlay();
+      }
     }
   }
 
   void _startAutoPlay() {
     _autoPlayTimer = Timer.periodic(widget.autoPlayInterval, (timer) {
-      if (mounted && widget.autoPlay) {
+      if (mounted && widget.autoPlay && widget.pages.isNotEmpty) {
         final nextPage = (_currentPage + 1) % widget.pages.length;
         _pageController.animateToPage(
           nextPage,

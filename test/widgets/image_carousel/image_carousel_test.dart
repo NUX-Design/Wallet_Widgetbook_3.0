@@ -1,10 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mcp_test_app/config/themes/base_theme.dart';
 import 'package:mcp_test_app/config/themes/theme_color.dart';
 import 'package:mcp_test_app/widgets/image_carousel/image_carousel.dart';
 
 void main() {
   group('ImageCarousel UI Tests', () {
+    testWidgets('matches the light-theme golden snapshot', (
+      WidgetTester tester,
+    ) async {
+      await _pumpImageCarouselGoldenApp(
+        tester,
+        child: const _ImageCarouselGoldenProbe(),
+        surfaceSize: const Size(375, 220),
+        themeVariant: ThemeMode.light,
+      );
+
+      await expectLater(
+        find.byType(_ImageCarouselGoldenProbe),
+        matchesGoldenFile('goldens/image_carousel_light.png'),
+      );
+    });
+
+    testWidgets('matches the dark-theme golden snapshot', (
+      WidgetTester tester,
+    ) async {
+      await _pumpImageCarouselGoldenApp(
+        tester,
+        child: const _ImageCarouselGoldenProbe(),
+        surfaceSize: const Size(375, 220),
+        themeVariant: ThemeMode.dark,
+      );
+
+      await expectLater(
+        find.byType(_ImageCarouselGoldenProbe),
+        matchesGoldenFile('goldens/image_carousel_dark.png'),
+      );
+    });
+
     testWidgets('renders correctly with given pages', (
       WidgetTester tester,
     ) async {
@@ -100,6 +133,56 @@ void main() {
       expect(find.byKey(const Key('page_2')), findsOneWidget);
     });
 
+    testWidgets('autoPlay stops cleanly when the widget is disposed', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ImageCarousel(
+              pages: [
+                Container(key: const Key('page_1'), color: Colors.red),
+                Container(key: const Key('page_2'), color: Colors.blue),
+              ],
+              autoPlay: true,
+              autoPlayInterval: const Duration(seconds: 1),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('page_2')), findsOneWidget);
+
+      await tester.pumpWidget(const MaterialApp(home: SizedBox.shrink()));
+      await tester.pump(const Duration(seconds: 1));
+
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('keeps rendering safely with an empty page list', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ImageCarousel(
+              pages: const <Widget>[],
+              autoPlay: true,
+              autoPlayInterval: const Duration(milliseconds: 200),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pump(const Duration(seconds: 1));
+
+      expect(find.byType(PageView), findsOneWidget);
+      expect(find.byType(AnimatedContainer), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('respects height parameters', (WidgetTester tester) async {
       const double widgetHeight = 200;
       const double imageHeight = 180;
@@ -130,4 +213,94 @@ void main() {
       expect(sizedBox.height, widgetHeight);
     });
   });
+}
+
+Future<void> _pumpImageCarouselGoldenApp(
+  WidgetTester tester, {
+  required Widget child,
+  required Size surfaceSize,
+  required ThemeMode themeVariant,
+}) async {
+  tester.view.physicalSize = surfaceSize;
+  tester.view.devicePixelRatio = 1.0;
+  addTearDown(tester.view.resetPhysicalSize);
+  addTearDown(tester.view.resetDevicePixelRatio);
+
+  final brightness =
+      themeVariant == ThemeMode.dark ? Brightness.dark : Brightness.light;
+  final colorScheme =
+      brightness == Brightness.light
+          ? BaseTheme.lightColorScheme
+          : BaseTheme.darkColorScheme;
+  final backgroundColor =
+      brightness == Brightness.light
+          ? ThemeColors.get('light', 'fill/base/300')
+          : ThemeColors.get('dark', 'fill/base/300');
+
+  await tester.pumpWidget(
+    MaterialApp(
+      theme: ThemeData.from(colorScheme: colorScheme, useMaterial3: true)
+          .copyWith(scaffoldBackgroundColor: backgroundColor),
+      darkTheme: ThemeData.from(colorScheme: colorScheme, useMaterial3: true)
+          .copyWith(scaffoldBackgroundColor: backgroundColor),
+      themeMode: themeVariant,
+      home: Scaffold(body: child),
+    ),
+  );
+}
+
+class _ImageCarouselGoldenProbe extends StatelessWidget {
+  const _ImageCarouselGoldenProbe();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: SizedBox(
+        width: 343,
+        child: ImageCarousel(
+          pages: [
+            Container(
+              key: const Key('golden_page_1'),
+              color: const Color(0xFFE53935),
+              alignment: Alignment.center,
+              child: const Text(
+                'Banner 1',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            Container(
+              key: const Key('golden_page_2'),
+              color: const Color(0xFF1E88E5),
+              alignment: Alignment.center,
+              child: const Text(
+                'Banner 2',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            Container(
+              key: const Key('golden_page_3'),
+              color: const Color(0xFF43A047),
+              alignment: Alignment.center,
+              child: const Text(
+                'Banner 3',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

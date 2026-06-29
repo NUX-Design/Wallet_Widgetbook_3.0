@@ -62,6 +62,7 @@ Depends on: S-01, S-02
 
 ### W-04: `HorizontalTabs`
 
+- [x] ตรวจ selected tab, pressed state, และ `showDot`
 - [x] ตรวจ selected tab และ `showDot`
 - [x] ทดสอบ tap แล้ว `onTabChanged`
 - [x] ทดสอบ 2-tab / 3-tab layout
@@ -101,26 +102,26 @@ Depends on: S-01, S-02
 
 ### W-08: `AnnouncementStack`
 
-- [ ] ทดสอบ render 1/2/3 message
-- [ ] ทดสอบ close rotation logic และ `onClose`
-- [ ] ทดสอบ close button เมื่อเหลือ message เดียว
-- [ ] ทดสอบ `didUpdateWidget` และ loading state
+- [x] ทดสอบ render 1/2/3 message
+- [x] ทดสอบ close rotation logic และ `onClose`
+- [x] ทดสอบ close button เมื่อเหลือ message เดียว
+- [x] ทดสอบ `didUpdateWidget` และ loading state
 
 Depends on: S-01, S-02
 
 ### W-09: `AnnouncementWarning`
 
-- [ ] ทดสอบ warning และ danger state
-- [ ] ทดสอบ title optional
-- [ ] ทดสอบ `descriptionSpans` เป็น RichText
+- [x] ทดสอบ warning และ danger state
+- [x] ทดสอบ title optional
+- [x] ทดสอบ `descriptionSpans` เป็น RichText
 
 Depends on: S-01
 
 ### W-10: `AnnouncementDanger`
 
-- [ ] ทดสอบสีและ icon override ของ danger state
-- [ ] ทดสอบ title optional
-- [ ] ทดสอบ `descriptionSpans`
+- [x] ทดสอบสีและ icon override ของ danger state
+- [x] ทดสอบ title optional
+- [x] ทดสอบ `descriptionSpans`
 
 Depends on: S-01
 
@@ -128,60 +129,60 @@ Depends on: S-01
 
 ### W-11: `Buttons`
 
-- [ ] ขยาย test ครบทุก `ButtonType`
-- [ ] ทดสอบ enabled/disabled style ทั้ง light/dark
-- [ ] ทดสอบ pressed animation และ callback
-- [ ] ทดสอบ amount text normalization
+- [x] ขยาย test ครบทุก `ButtonType`
+- [x] ทดสอบ enabled/disabled style ทั้ง light/dark
+- [x] ทดสอบ pressed animation และ callback
+- [x] ทดสอบ amount text normalization
 
 Depends on: S-01
 
 ### W-12: `ItemList`
 
-- [ ] ทดสอบ common item + `iconPath`
-- [ ] ทดสอบ selected/unselected radio
-- [ ] ทดสอบ transaction in/out icon mapping
-- [ ] ทดสอบ trailing text vs amount precedence
-- [ ] ทดสอบ `onTap` และ ellipsis/overflow
+- [x] ทดสอบ common item + `iconPath`
+- [x] ทดสอบ selected/unselected radio
+- [x] ทดสอบ transaction in/out icon mapping
+- [x] ทดสอบ trailing text vs amount precedence
+- [x] ทดสอบ `onTap` และ ellipsis/overflow
 
 Depends on: S-01, S-02
 
 ### W-13: `CardReviewTransaction`
 
-- [ ] ทดสอบ total, fee, detail rows, divider spacing
-- [ ] ทดสอบ long value handling
-- [ ] ทดสอบ light/dark token match
+- [x] ทดสอบ total, fee, detail rows, divider spacing
+- [x] ทดสอบ long value handling
+- [x] ทดสอบ light/dark token match
 
 Depends on: S-01
 
 ### W-14: `DrawerBalanceDetail`
 
-- [ ] ขยาย coverage loading state และ `showButton = false`
-- [ ] ทดสอบ warning parsing, safe area, custom callback
-- [ ] ทดสอบ `show()` helper path
+- [x] ขยาย coverage loading state และ `showButton = false`
+- [x] ทดสอบ warning parsing, safe area, custom callback
+- [x] ทดสอบ `show()` helper path
 
 Depends on: S-01, S-02
 
 ### W-15: `DrawerDepositChannel`
 
-- [ ] ขยาย coverage `show()` helper, close callback, safe area
-- [ ] ทดสอบ bank order, labels, logo mapping
+- [x] ขยาย coverage `show()` helper, close callback, safe area
+- [x] ทดสอบ bank order, labels, logo mapping
 
 Depends on: S-01, S-02
 
 ### W-16: `DrawerReviewTransaction`
 
-- [ ] ทดสอบ warning section, transaction card, object section
-- [ ] ทดสอบ confirm button และ close button
-- [ ] ทดสอบ `show()` helper
+- [x] ทดสอบ warning section, transaction card, object section
+- [x] ทดสอบ confirm button และ close button
+- [x] ทดสอบ `show()` helper
 
 Depends on: S-01, S-02
 
 ### W-17: `DrawerCountryCode`
 
-- [ ] ทดสอบ search filter by name/code
-- [ ] ทดสอบ empty state
-- [ ] ทดสอบ tap country -> callback + pop
-- [ ] ทดสอบ close button และ `show()` helper
+- [x] ทดสอบ search filter by name/code
+- [x] ทดสอบ empty state
+- [x] ทดสอบ tap country -> callback + pop
+- [x] ทดสอบ close button และ `show()` helper
 
 Depends on: S-01, S-02
 
@@ -189,55 +190,56 @@ Depends on: S-01, S-02
 
 ### W-18: `ImageCarousel`
 
-- [ ] ขยาย test autoPlay, indicator state, size
-- [ ] ทดสอบ single page / empty pages guard ถ้าจะรองรับ
-- [ ] ทดสอบ timer cleanup ตอน dispose
+- [x] สร้าง golden baseline light/dark
+- [x] ขยาย test autoPlay, indicator state, size
+- [x] ทดสอบ single page / empty pages guard ถ้าจะรองรับ
+- [x] ทดสอบ timer cleanup ตอน dispose
 
 Depends on: S-01, S-02
 
 ### W-19: `LottieSkeleton`
 
-- [ ] ทดสอบ `isLoading = false` คืน child ตรงๆ
-- [ ] ทดสอบ loading overlay, borderRadius, custom asset
+- [x] ทดสอบ `isLoading = false` คืน child ตรงๆ
+- [x] ทดสอบ loading overlay, borderRadius, custom asset
 
 Depends on: S-01, S-02
 
 ### W-20: `PreLoading`
 
-- [ ] ทดสอบ blur overlay และ centered animation
-- [ ] ทดสอบ asset path render
+- [x] ทดสอบ blur overlay และ centered animation
+- [x] ทดสอบ asset path render
 
 Depends on: S-01, S-02
 
 ### W-21: `ShortcutMenuItem`
 
-- [ ] ทดสอบ async SVG load แล้ว render
-- [ ] ทดสอบ custom icon override
-- [ ] ทดสอบ top/bottom arrow color replacement
-- [ ] ทดสอบ loading state
+- [x] ทดสอบ async SVG load แล้ว render
+- [x] ทดสอบ custom icon override
+- [x] ทดสอบ top/bottom arrow color replacement
+- [x] ทดสอบ loading state
 
 Depends on: S-01, S-02
 
 ### W-22: `VisaCard`
 
-- [ ] สร้าง golden baseline
-- [ ] ทดสอบ logo, expiry date, masked number, gradient card
+- [x] สร้าง golden baseline light/dark
+- [x] ทดสอบ logo, expiry date, masked number, gradient card
 
 Depends on: S-01, S-02
 
 ### W-23: `ReceiptComponent`
 
-- [ ] สร้าง golden baseline
-- [ ] ทดสอบ section rendering, optional asset fallback, long text
-- [ ] ทดสอบ `transactionDetailRowCount`
+- [x] สร้าง golden baseline light
+- [x] ทดสอบ section rendering, optional asset fallback, long text
+- [x] ทดสอบ `transactionDetailRowCount`
 
 Depends on: S-01, S-02
 
 ### W-24: `ReceiptImageComponent`
 
-- [ ] สร้าง golden baseline
-- [ ] ทดสอบ header logo fallback, background fallback, long text
-- [ ] ทดสอบ transaction detail layout
+- [x] สร้าง golden baseline light
+- [x] ทดสอบ header logo fallback, background fallback, long text
+- [x] ทดสอบ transaction detail layout
 
 Depends on: S-01, S-02
 
