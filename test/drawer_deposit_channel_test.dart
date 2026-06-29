@@ -4,6 +4,15 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mcp_test_app/generated/intl/app_localizations.dart';
 import 'package:mcp_test_app/widgets/drawer/drawer_deposit_channel.dart';
 
+Finder _cancelIconFinder() {
+  return find.byWidgetPredicate((widget) {
+    return widget is SvgPicture &&
+        widget.bytesLoader is SvgAssetLoader &&
+        (widget.bytesLoader as SvgAssetLoader).assetName ==
+            'lib/assets/images/cancel-01.svg';
+  });
+}
+
 void main() {
   Future<void> pumpDrawer(
     WidgetTester tester, {
@@ -78,5 +87,64 @@ void main() {
     await tester.pump();
 
     expect(selectedBank, BankType.kbank);
+  });
+
+  testWidgets('show helper opens the drawer and the close icon dismisses it', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('en'),
+        home: Scaffold(
+          body: Builder(
+            builder: (context) {
+              return Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    DrawerDepositChannel.show(context, onBankSelected: (_) {});
+                  },
+                  child: const Text('Open'),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Deposit Channel'), findsOneWidget);
+
+    await tester.tap(_cancelIconFinder());
+    await tester.pumpAndSettle();
+
+    expect(find.text('Deposit Channel'), findsNothing);
+  });
+
+  testWidgets('close callback is invoked when the drawer is dismissed', (
+    tester,
+  ) async {
+    var closed = false;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('en'),
+        home: Scaffold(
+          body: DrawerDepositChannel(onClose: () => closed = true),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(_cancelIconFinder());
+    await tester.pumpAndSettle();
+
+    expect(closed, isTrue);
   });
 }

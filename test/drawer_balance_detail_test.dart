@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mcp_test_app/generated/intl/app_localizations.dart';
 import 'package:mcp_test_app/widgets/announce/announcement_warning.dart';
 import 'package:mcp_test_app/widgets/drawer/drawer_balance_detail.dart';
+import 'package:mcp_test_app/widgets/skeleton/lottie_skeleton.dart';
 
 Widget _buildSubject({
   VoidCallback? onClose,
@@ -150,5 +151,48 @@ void main() {
     final longHeight = tester.getSize(find.byType(AnnouncementWarning)).height;
 
     expect(longHeight, greaterThan(shortHeight));
+  });
+
+  testWidgets('DrawerBalanceDetail supports loading state and safe area bottom', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      MediaQuery(
+        data: const MediaQueryData(padding: EdgeInsets.only(bottom: 24)),
+        child: MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          theme: ThemeData.dark(),
+          home: Scaffold(
+            body: DrawerBalanceDetail(
+              totalBalanceAmount: '100,000,000,000.00',
+              holdAmountLabel: 'Hold Amount',
+              holdAmountValue: '5,030.20',
+              ledgerBalanceLabel: 'Ledger Balance',
+              ledgerBalanceValue: '15,030.20',
+              warningText:
+                  '*Hold Amount means they aren\'t immediately available for use.',
+              isLoading: true,
+              showButton: false,
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.byType(LottieSkeleton), findsWidgets);
+    expect(find.text('View History'), findsNothing);
+    expect(
+      find.byWidgetPredicate(
+        (widget) =>
+            widget is Container &&
+            widget.constraints is BoxConstraints &&
+            (widget.constraints as BoxConstraints).minHeight == 24 &&
+            (widget.constraints as BoxConstraints).maxHeight == 24 &&
+            widget.decoration == null,
+      ),
+      findsOneWidget,
+    );
   });
 }
