@@ -27,6 +27,9 @@ ThemeData buildTestTheme(
   TestThemeVariant variant, {
   Locale? locale,
 }) {
+  // Keep widget tests deterministic and offline-friendly.
+  GoogleFonts.config.allowRuntimeFetching = false;
+
   final brightness =
       variant == TestThemeVariant.light ? Brightness.light : Brightness.dark;
   final colorScheme =

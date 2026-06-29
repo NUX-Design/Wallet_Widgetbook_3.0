@@ -189,55 +189,56 @@ Depends on: S-01, S-02
 
 ### W-18: `ImageCarousel`
 
-- [ ] ขยาย test autoPlay, indicator state, size
-- [ ] ทดสอบ single page / empty pages guard ถ้าจะรองรับ
-- [ ] ทดสอบ timer cleanup ตอน dispose
+- [x] สร้าง golden baseline light/dark
+- [x] ขยาย test autoPlay, indicator state, size
+- [x] ทดสอบ single page / empty pages guard ถ้าจะรองรับ
+- [x] ทดสอบ timer cleanup ตอน dispose
 
 Depends on: S-01, S-02
 
 ### W-19: `LottieSkeleton`
 
-- [ ] ทดสอบ `isLoading = false` คืน child ตรงๆ
-- [ ] ทดสอบ loading overlay, borderRadius, custom asset
+- [x] ทดสอบ `isLoading = false` คืน child ตรงๆ
+- [x] ทดสอบ loading overlay, borderRadius, custom asset
 
 Depends on: S-01, S-02
 
 ### W-20: `PreLoading`
 
-- [ ] ทดสอบ blur overlay และ centered animation
-- [ ] ทดสอบ asset path render
+- [x] ทดสอบ blur overlay และ centered animation
+- [x] ทดสอบ asset path render
 
 Depends on: S-01, S-02
 
 ### W-21: `ShortcutMenuItem`
 
-- [ ] ทดสอบ async SVG load แล้ว render
-- [ ] ทดสอบ custom icon override
-- [ ] ทดสอบ top/bottom arrow color replacement
-- [ ] ทดสอบ loading state
+- [x] ทดสอบ async SVG load แล้ว render
+- [x] ทดสอบ custom icon override
+- [x] ทดสอบ top/bottom arrow color replacement
+- [x] ทดสอบ loading state
 
 Depends on: S-01, S-02
 
 ### W-22: `VisaCard`
 
-- [ ] สร้าง golden baseline
-- [ ] ทดสอบ logo, expiry date, masked number, gradient card
+- [x] สร้าง golden baseline light/dark
+- [x] ทดสอบ logo, expiry date, masked number, gradient card
 
 Depends on: S-01, S-02
 
 ### W-23: `ReceiptComponent`
 
-- [ ] สร้าง golden baseline
-- [ ] ทดสอบ section rendering, optional asset fallback, long text
-- [ ] ทดสอบ `transactionDetailRowCount`
+- [x] สร้าง golden baseline light
+- [x] ทดสอบ section rendering, optional asset fallback, long text
+- [x] ทดสอบ `transactionDetailRowCount`
 
 Depends on: S-01, S-02
 
 ### W-24: `ReceiptImageComponent`
 
-- [ ] สร้าง golden baseline
-- [ ] ทดสอบ header logo fallback, background fallback, long text
-- [ ] ทดสอบ transaction detail layout
+- [x] สร้าง golden baseline light
+- [x] ทดสอบ header logo fallback, background fallback, long text
+- [x] ทดสอบ transaction detail layout
 
 Depends on: S-01, S-02
 
