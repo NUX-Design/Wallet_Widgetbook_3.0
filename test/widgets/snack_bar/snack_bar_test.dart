@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mcp_test_app/config/themes/theme_color.dart';
 import 'package:mcp_test_app/widgets/snack_bar/snack_bar.dart';
 
 void main() {
@@ -23,10 +24,13 @@ void main() {
       expect(find.text('Success Message'), findsOneWidget);
 
       // Verify Icon
-      final svgFinder = find.byType(SvgPicture);
+      final svgFinder = find.byWidgetPredicate((widget) {
+        return widget is SvgPicture &&
+            widget.bytesLoader is SvgAssetLoader &&
+            (widget.bytesLoader as SvgAssetLoader).assetName ==
+                'lib/assets/images/checkmark-circle-01.svg';
+      });
       expect(svgFinder, findsOneWidget);
-      // Note: Verifying exact SVG asset path might require inspecting the widget properties
-      // but finding the widget confirms it's there.
 
       // Verify Container Decoration (Background Color & Border Radius)
       final containerFinder = find.descendant(
@@ -38,11 +42,10 @@ void main() {
 
       // Check Border Radius
       expect(decoration.borderRadius, BorderRadius.circular(6));
+      expect(decoration.color, ThemeColors.get('light', 'success/300'));
 
-      // Check Background Color (Success uses 'success/300')
-      // We can't easily check the exact color value without mocking ThemeColors or knowing the exact map,
-      // but we can ensure it's not null.
-      expect(decoration.color, isNotNull);
+      final text = tester.widget<Text>(find.text('Success Message'));
+      expect(text.style?.color, ThemeColors.get('light', 'text/base/success'));
     });
 
     testWidgets('renders Warning SnackBar correctly', (
@@ -111,7 +114,9 @@ void main() {
       await tester.pump(); // Start animation
 
       // Verify SnackBar appears
-      expect(find.byType(SnackBar), findsOneWidget);
+      final snackBar = tester.widget<SnackBar>(find.byType(SnackBar));
+      expect(snackBar.behavior, SnackBarBehavior.floating);
+      expect(snackBar.backgroundColor, Colors.transparent);
       expect(find.byType(SnackBarWidget), findsOneWidget);
       expect(find.text('Integration Test'), findsOneWidget);
 

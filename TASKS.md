@@ -35,36 +35,36 @@ Lane: Shared
 
 ### W-01: `FullAmountInput`
 
-- [ ] ตรวจ render เริ่มต้น
-- [ ] ทดสอบ input รับตัวเลขและจุดทศนิยม
-- [ ] ทดสอบ clear button และ `onChanged`
-- [ ] ทดสอบ focus/error/success/disabled state
+- [x] ตรวจ render เริ่มต้น
+- [x] ทดสอบ input รับตัวเลขและจุดทศนิยม
+- [x] ทดสอบ clear button และ `onChanged`
+- [x] ทดสอบ focus/error/success/disabled state
 
 Depends on: S-01, S-02
 
 ### W-02: `MobileCodeInput`
 
-- [ ] ตรวจ render country code, flag, placeholder, counter
-- [ ] ทดสอบ digit-only input และ `maxLength`
-- [ ] ทดสอบ clear button, `onCountryCodeTap`, error state
-- [ ] ทดสอบ focus state และ callback `onChanged`
+- [x] ตรวจ render country code, flag, placeholder, counter
+- [x] ทดสอบ digit-only input และ `maxLength`
+- [x] ทดสอบ clear button, `onCountryCodeTap`, error state
+- [x] ทดสอบ focus state และ callback `onChanged`
 
 Depends on: S-01, S-02
 
 ### W-03: `SearchInput`
 
-- [ ] ตรวจ placeholder และ icon state
-- [ ] ทดสอบ focus border change
-- [ ] ทดสอบ clear button และ `onChanged`
-- [ ] ทดสอบ controller sync
+- [x] ตรวจ placeholder และ icon state
+- [x] ทดสอบ focus border change
+- [x] ทดสอบ clear button และ `onChanged`
+- [x] ทดสอบ controller sync
 
 Depends on: S-01, S-02
 
 ### W-04: `HorizontalTabs`
 
-- [ ] ตรวจ selected tab, pressed state, และ `showDot`
-- [ ] ทดสอบ tap แล้ว `onTabChanged`
-- [ ] ทดสอบ 2-tab / 3-tab layout
+- [x] ตรวจ selected tab, pressed state, และ `showDot`
+- [x] ทดสอบ tap แล้ว `onTabChanged`
+- [x] ทดสอบ 2-tab / 3-tab layout
 
 Depends on: S-01
 
@@ -72,28 +72,28 @@ Depends on: S-01
 
 ### W-05: `NavigatorBar`
 
-- [ ] ตรวจ render menu ครบ 5 item
-- [ ] ทดสอบ scan button ตรงกลาง
-- [ ] ทดสอบ theme light/dark
-- [ ] ทดสอบ locale label และ safe area/padding
-- [ ] ทดสอบ opacity behavior
+- [x] ตรวจ render menu ครบ 5 item
+- [x] ทดสอบ scan button ตรงกลาง
+- [x] ทดสอบ theme light/dark
+- [x] ทดสอบ locale label และ safe area/padding
+- [x] ทดสอบ opacity behavior
 
 Depends on: S-01, S-02
 
 ### W-06: `Avatar`
 
-- [ ] ตรวจ fallback icon เมื่อไม่มีรูป
-- [ ] ทดสอบ asset image vs network image precedence
-- [ ] ทดสอบ status badge `none/danger/warning`
-- [ ] ทดสอบ loading skeleton และ radius scaling
+- [x] ตรวจ fallback icon เมื่อไม่มีรูป
+- [x] ทดสอบ asset image vs network image precedence
+- [x] ทดสอบ status badge `none/danger/warning`
+- [x] ทดสอบ loading skeleton และ radius scaling
 
 Depends on: S-01, S-02
 
 ### W-07: `SnackBarWidget`
 
-- [ ] ขยาย UI test ครบทุก type
-- [ ] ตรวจ `show()` integration path
-- [ ] ทดสอบ floating behavior และ text/icon/color mapping
+- [x] ขยาย UI test ครบทุก type
+- [x] ตรวจ `show()` integration path
+- [x] ทดสอบ floating behavior และ text/icon/color mapping
 
 Depends on: S-01, S-02
 
@@ -101,26 +101,26 @@ Depends on: S-01, S-02
 
 ### W-08: `AnnouncementStack`
 
-- [ ] ทดสอบ render 1/2/3 message
-- [ ] ทดสอบ close rotation logic และ `onClose`
-- [ ] ทดสอบ close button เมื่อเหลือ message เดียว
-- [ ] ทดสอบ `didUpdateWidget` และ loading state
+- [x] ทดสอบ render 1/2/3 message
+- [x] ทดสอบ close rotation logic และ `onClose`
+- [x] ทดสอบ close button เมื่อเหลือ message เดียว
+- [x] ทดสอบ `didUpdateWidget` และ loading state
 
 Depends on: S-01, S-02
 
 ### W-09: `AnnouncementWarning`
 
-- [ ] ทดสอบ warning และ danger state
-- [ ] ทดสอบ title optional
-- [ ] ทดสอบ `descriptionSpans` เป็น RichText
+- [x] ทดสอบ warning และ danger state
+- [x] ทดสอบ title optional
+- [x] ทดสอบ `descriptionSpans` เป็น RichText
 
 Depends on: S-01
 
 ### W-10: `AnnouncementDanger`
 
-- [ ] ทดสอบสีและ icon override ของ danger state
-- [ ] ทดสอบ title optional
-- [ ] ทดสอบ `descriptionSpans`
+- [x] ทดสอบสีและ icon override ของ danger state
+- [x] ทดสอบ title optional
+- [x] ทดสอบ `descriptionSpans`
 
 Depends on: S-01
 
@@ -128,60 +128,60 @@ Depends on: S-01
 
 ### W-11: `Buttons`
 
-- [ ] ขยาย test ครบทุก `ButtonType`
-- [ ] ทดสอบ enabled/disabled style ทั้ง light/dark
-- [ ] ทดสอบ pressed animation และ callback
-- [ ] ทดสอบ amount text normalization
+- [x] ขยาย test ครบทุก `ButtonType`
+- [x] ทดสอบ enabled/disabled style ทั้ง light/dark
+- [x] ทดสอบ pressed animation และ callback
+- [x] ทดสอบ amount text normalization
 
 Depends on: S-01
 
 ### W-12: `ItemList`
 
-- [ ] ทดสอบ common item + `iconPath`
-- [ ] ทดสอบ selected/unselected radio
-- [ ] ทดสอบ transaction in/out icon mapping
-- [ ] ทดสอบ trailing text vs amount precedence
-- [ ] ทดสอบ `onTap` และ ellipsis/overflow
+- [x] ทดสอบ common item + `iconPath`
+- [x] ทดสอบ selected/unselected radio
+- [x] ทดสอบ transaction in/out icon mapping
+- [x] ทดสอบ trailing text vs amount precedence
+- [x] ทดสอบ `onTap` และ ellipsis/overflow
 
 Depends on: S-01, S-02
 
 ### W-13: `CardReviewTransaction`
 
-- [ ] ทดสอบ total, fee, detail rows, divider spacing
-- [ ] ทดสอบ long value handling
-- [ ] ทดสอบ light/dark token match
+- [x] ทดสอบ total, fee, detail rows, divider spacing
+- [x] ทดสอบ long value handling
+- [x] ทดสอบ light/dark token match
 
 Depends on: S-01
 
 ### W-14: `DrawerBalanceDetail`
 
-- [ ] ขยาย coverage loading state และ `showButton = false`
-- [ ] ทดสอบ warning parsing, safe area, custom callback
-- [ ] ทดสอบ `show()` helper path
+- [x] ขยาย coverage loading state และ `showButton = false`
+- [x] ทดสอบ warning parsing, safe area, custom callback
+- [x] ทดสอบ `show()` helper path
 
 Depends on: S-01, S-02
 
 ### W-15: `DrawerDepositChannel`
 
-- [ ] ขยาย coverage `show()` helper, close callback, safe area
-- [ ] ทดสอบ bank order, labels, logo mapping
+- [x] ขยาย coverage `show()` helper, close callback, safe area
+- [x] ทดสอบ bank order, labels, logo mapping
 
 Depends on: S-01, S-02
 
 ### W-16: `DrawerReviewTransaction`
 
-- [ ] ทดสอบ warning section, transaction card, object section
-- [ ] ทดสอบ confirm button และ close button
-- [ ] ทดสอบ `show()` helper
+- [x] ทดสอบ warning section, transaction card, object section
+- [x] ทดสอบ confirm button และ close button
+- [x] ทดสอบ `show()` helper
 
 Depends on: S-01, S-02
 
 ### W-17: `DrawerCountryCode`
 
-- [ ] ทดสอบ search filter by name/code
-- [ ] ทดสอบ empty state
-- [ ] ทดสอบ tap country -> callback + pop
-- [ ] ทดสอบ close button และ `show()` helper
+- [x] ทดสอบ search filter by name/code
+- [x] ทดสอบ empty state
+- [x] ทดสอบ tap country -> callback + pop
+- [x] ทดสอบ close button และ `show()` helper
 
 Depends on: S-01, S-02
 
