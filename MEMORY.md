@@ -111,6 +111,7 @@
   - image carousel
   - snack bar
 - Many reusable widgets still have no direct tests yet, especially inputs, announcement variants, receipt widgets, NavigatorBar, Avatar, HorizontalTabs, ShortcutMenuItem, PreLoading, and LottieSkeleton.
+- Shared test setup now lives in `test/support/widget_test_harness.dart` and covers `MaterialApp` + `Scaffold` pumping, localized light/dark themes, modal bottom sheet and snackbar hosts, settle helpers, and a placeholder asset bundle for `SvgPicture.asset`/`Image.asset`/`Lottie.asset` smoke tests.
 - Parallel test execution backlog is now tracked in `TASKS.md`, while `WIDGET_TEST_PLAN.md` keeps the higher-level analysis and prioritization.
 
 ## Repo Boundaries

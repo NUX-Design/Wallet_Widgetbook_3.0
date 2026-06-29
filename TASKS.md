@@ -12,9 +12,9 @@
 
 ### S-01: สร้าง test harness กลาง
 
-- [ ] ทำ `pumpWidget` helper สำหรับ `MaterialApp`, `Scaffold`, theme light/dark, และ localization
-- [ ] ทำ helper สำหรับ modal bottom sheet / snackbar / async settle
-- [ ] ทำ helper สำหรับ golden snapshot ถ้าจะเริ่มส่วน visual regression
+- [x] ทำ `pumpWidget` helper สำหรับ `MaterialApp`, `Scaffold`, theme light/dark, และ localization
+- [x] ทำ helper สำหรับ modal bottom sheet / snackbar / async settle
+- [x] ทำ helper สำหรับ golden snapshot ถ้าจะเริ่มส่วน visual regression
 
 Depends on: ไม่มี
 
@@ -22,8 +22,10 @@ Lane: Shared
 
 ### S-02: จัด asset-heavy widget helper
 
-- [ ] สร้าง helper สำหรับ mock/pump widget ที่พึ่ง `SvgPicture`, `Image.asset`, `Lottie.asset`
-- [ ] ระบุ strategy ว่าจะใช้ asset จริงหรือ placeholder ใน test
+- [x] สร้าง helper สำหรับ mock/pump widget ที่พึ่ง `SvgPicture`, `Image.asset`, `Lottie.asset`
+- [x] ระบุ strategy ว่าจะใช้ asset จริงหรือ placeholder ใน test
+
+หมายเหตุ: ใช้ asset จริงเป็นค่าเริ่มต้น และมี `PlaceholderAssetBundle` สำหรับเคสที่ต้องการ isolation หรือ asset-aware smoke test.
 
 Depends on: S-01
 
