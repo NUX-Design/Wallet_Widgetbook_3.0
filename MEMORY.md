@@ -92,6 +92,12 @@
 - Watch schema generation: `npm run generate-schema:watch`
 - MCP server: `cd mcp-server && npm start`
 - Standalone widget preview: `flutter run -t lib/widgets/<folder>/preview_<name>.dart -d <device>`
+- Browser-friendly preview inspection: `flutter run -t lib/widgets/<folder>/preview_<name>.dart -d web-server --web-hostname 127.0.0.1 --web-port <port>`
+
+### Claude Code Reference
+
+- Local knowledge base for Claude Code slash commands: `/Users/Niwat.yah/Documents/Obsidian Vault/Claude-Slash/claude-code-slash-commands-cheatsheet.md`
+- Use that file as the reference source when the user asks about Claude Code slash commands; keep `AGENTS.md` limited to the pointer and repo-specific rules.
 
 ## Verified Repo Facts
 

@@ -161,6 +161,12 @@ Use these default execution recipes unless the user explicitly asks for a differ
   - `npm run generate-schema` when schema-facing docs changed
 - If Flutter commands fail because of SDK/cache permissions or environment issues, report that explicitly.
 
+## Claude Code Slash Commands Reference
+
+- เมื่อผู้ใช้ถามเรื่อง `Claude Code slash commands` ให้ใช้อ้างอิง knowledge base ที่อยู่ที่ `/Users/Niwat.yah/Documents/Obsidian Vault/Claude-Slash/claude-code-slash-commands-cheatsheet.md`
+- ใช้ไฟล์นั้นเป็น source สำหรับคำอธิบาย/คำแนะนำเกี่ยวกับ slash commands แทนการบันทึกรายการคำสั่งทั้งหมดไว้ใน `AGENTS.md`
+- หากต้องการยืนยันว่าคำสั่งใดใช้ได้จริงในเครื่อง ให้ตรวจด้วย `/help` และ `/release-notes` เสมอ เพราะ availability เปลี่ยนตาม version, platform และ plan
+
 ## Code Conventions
 
 ### Flutter and Dart
