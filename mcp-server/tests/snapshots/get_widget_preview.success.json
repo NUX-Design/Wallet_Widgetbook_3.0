@@ -1,0 +1,9 @@
+{
+  "widgetName": "PrimaryButton",
+  "previews": [
+    {
+      "file": "lib/widgets/button/preview_primary_button.dart",
+      "code": "import 'package:flutter/material.dart';\nimport 'package:mcp_test_app/widgets/button/primary_button.dart';\n\nclass PrimaryButtonPreview extends StatelessWidget {\n  const PrimaryButtonPreview({super.key});\n\n  @override\n  Widget build(BuildContext context) {\n    return const Scaffold(body: PrimaryButton(label: 'Pay now'));\n  }\n}\n\nvoid main() {\n  runApp(const MaterialApp(home: PrimaryButtonPreview()));\n}\n"
+    }
+  ]
+}

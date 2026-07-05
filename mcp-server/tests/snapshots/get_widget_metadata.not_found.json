@@ -1,0 +1,14 @@
+{
+  "isError": true,
+  "payload": {
+    "ok": false,
+    "error": {
+      "code": "NOT_FOUND",
+      "message": "Widget \"MissingWidget\" was not found.",
+      "hint": "Use \"list_widgets\" to browse categories or \"search_widgets\" to find similar widget names first.",
+      "details": {
+        "widgetName": "MissingWidget"
+      }
+    }
+  }
+}

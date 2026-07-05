@@ -1,0 +1,14 @@
+{
+  "isError": true,
+  "payload": {
+    "ok": false,
+    "error": {
+      "code": "EMPTY_RESULT",
+      "message": "Widget \"GhostBanner\" has no preview files.",
+      "hint": "Check the widget folder for preview_*.dart or *_preview.dart files, or add one before retrying.",
+      "details": {
+        "widgetName": "GhostBanner"
+      }
+    }
+  }
+}

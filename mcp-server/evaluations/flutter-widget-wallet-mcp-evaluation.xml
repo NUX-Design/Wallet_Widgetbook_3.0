@@ -1,0 +1,59 @@
+<evaluationSuite name="flutter-widget-wallet-mcp" version="2">
+  <case id="category-lookup">
+    <description>Category lookup should surface DrawerBalanceDetail under the drawer category.</description>
+    <tool>list_widgets</tool>
+    <args>{"category":"drawer","limit":50,"offset":0}</args>
+    <assert path="category" op="equals">drawer</assert>
+    <assert path="widgets" op="includesObject">{"name":"DrawerBalanceDetail","category":"drawer"}</assert>
+  </case>
+
+  <case id="search-by-asset-keyword">
+    <description>Keyword search should find input widgets that use the cancel-circle clear icon.</description>
+    <tool>search_widgets</tool>
+    <args>{"query":"cancel-circle","limit":10,"offset":0}</args>
+    <assert path="query" op="equals">cancel-circle</assert>
+    <assert path="widgets" op="includesObject">{"name":"FullAmountInput","category":"input"}</assert>
+  </case>
+
+  <case id="metadata-assets">
+    <description>Widget metadata should expose the clear-button asset for FullAmountInput.</description>
+    <tool>get_widget_metadata</tool>
+    <args>{"widgetName":"FullAmountInput"}</args>
+    <assert path="name" op="equals">FullAmountInput</assert>
+    <assert path="assets" op="includes">lib/assets/images/cancel-circle.svg</assert>
+    <assert path="warnings" op="notEmpty"></assert>
+  </case>
+
+  <case id="figma-mapping">
+    <description>Figma Search Input should map to the SearchInput Flutter widget with the localization wrapper pattern.</description>
+    <tool>get_figma_to_flutter_mapping</tool>
+    <args>{"figmaComponentName":"Search Input"}</args>
+    <assert path="found" op="equals">true</assert>
+    <assert path="flutterClass" op="equals">SearchInput</assert>
+    <assert path="widgetbookPattern" op="equals">localization</assert>
+  </case>
+
+  <case id="source-extraction">
+    <description>Base widget source extraction should return the SearchInput implementation path and code.</description>
+    <tool>get_widget_code</tool>
+    <args>{"widgetName":"SearchInput"}</args>
+    <assert path="widgetFile" op="equals">lib/widgets/input/search_input.dart</assert>
+    <assert path="code" op="includes">class SearchInput extends StatefulWidget</assert>
+  </case>
+
+  <case id="preview-extraction">
+    <description>Preview extraction should return the Avatar demo entrypoint.</description>
+    <tool>get_widget_preview</tool>
+    <args>{"widgetName":"Avatar"}</args>
+    <assert path="widgetName" op="equals">Avatar</assert>
+    <assert path="previews" op="includesObject">{"file":"lib/widgets/avatar/preview_avatar.dart"}</assert>
+  </case>
+
+  <case id="token-lookup">
+    <description>Color token lookup should return the canonical Dart usage for primary/400.</description>
+    <tool>get_color_token</tool>
+    <args>{"tokenName":"primary/400"}</args>
+    <assert path="tokenName" op="equals">primary/400</assert>
+    <assert path="dartUsage" op="equals">ThemeColors.get(brightnessKey, 'primary/400')</assert>
+  </case>
+</evaluationSuite>

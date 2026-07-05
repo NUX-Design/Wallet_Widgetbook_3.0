@@ -1,67 +1,59 @@
-import fs from 'fs';
-import path from 'path';
-import os from 'os';
-import { fileURLToPath } from 'url';
-
-// Helper to get __dirname in ESM
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-/**
- * Setup script for Wi_Wallet Design System MCP Server
- * This script automatically registers the server in Antigravity settings.
- */
-
-// 1. Path to the MCP server entry point
-const mcpIndex = path.resolve(__dirname, 'index.js');
-
-// 2. Path to Antigravity's MCP settings
-const settingsPath = path.join(
-    os.homedir(),
-    'Library/Application Support/Antigravity/User/globalStorage/kilocode.kilo-code/settings/mcp_settings.json'
-);
+import {
+  CLIENT_LABELS,
+  ensureServerExists,
+  parseArgs,
+  resolveInstallOptions,
+  resolveServerIndexPath,
+  writeExampleConfigs,
+  writeSettingsConfig,
+} from "./installer.js";
 
 function setup() {
-    console.log('🚀 Starting MCP Server automated setup...');
+  const cli = parseArgs(process.argv.slice(2));
+  const options = resolveInstallOptions(cli, process.env);
 
-    // Check if index.js exists
-    if (!fs.existsSync(mcpIndex)) {
-        console.error(`❌ Error: Could not find MCP server at ${mcpIndex}`);
-        process.exit(1);
-    }
+  console.log("Generating MCP configuration...");
 
-    // Check if settings file exists
-    if (!fs.existsSync(settingsPath)) {
-        console.error(`❌ Error: Antigravity settings file not found at: ${settingsPath}`);
-        console.log('💡 Please ensure Antigravity is installed and you have opened it at least once.');
-        process.exit(1);
-    }
+  try {
+    const serverIndex = ensureServerExists(options.repoRoot);
+    const exampleFiles = writeExampleConfigs(options);
 
-    try {
-        const config = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
-
-        // Initialize mcpServers if it doesn't exist
-        if (!config.mcpServers) {
-            config.mcpServers = {};
-        }
-
-        // Register/Update the server
-        config.mcpServers["wi-wallet-design-system"] = {
+    if (!options.settingsPath) {
+      console.log(`✅ Wrote example configs for client target "${options.client}".`);
+      for (const file of exampleFiles) {
+        console.log(`- ${file.label}: ${file.path}`);
+      }
+      console.log("\nTo write directly into a client config file, rerun with:");
+      console.log("  node install.js --client claude-code --settings /absolute/path/to/mcp.json");
+      console.log("  node install.js --client codex-chatgpt-agent --settings /absolute/path/to/mcp.json");
+      console.log("  node install.js --client cursor --settings /absolute/path/to/mcp.json");
+      console.log("\nResolved server entry:");
+      console.log(
+        JSON.stringify(
+          {
             command: "node",
-            args: [mcpIndex]
-        };
-
-        // Write back
-        fs.writeFileSync(settingsPath, JSON.stringify(config, null, 2), 'utf8');
-
-        console.log('\n✅ Success! MCP Server has been registered.');
-        console.log(`📍 Server Path: ${mcpIndex}`);
-        console.log('\n💡 Please restart your IDE or refresh MCP servers to see the changes.');
-
-    } catch (err) {
-        console.error('❌ Failed to update configuration:', err.message);
-        process.exit(1);
+            args: [serverIndex],
+          },
+          null,
+          2,
+        ),
+      );
+      return;
     }
+
+    const writtenPath = writeSettingsConfig(options.settingsPath, options);
+
+    console.log("\n✅ Success! MCP server configuration has been updated.");
+    console.log(`🧩 Server Name: ${options.serverName}`);
+    console.log(`🧩 Client Target: ${CLIENT_LABELS[options.client] ?? options.client}`);
+    console.log(`📍 Repo Root: ${options.repoRoot}`);
+    console.log(`📍 Server Path: ${resolveServerIndexPath(options.repoRoot)}`);
+    console.log(`📄 Config Path: ${writtenPath}`);
+    console.log("\nRefresh your MCP client after updating the config.");
+  } catch (error) {
+    console.error("❌ Failed to update configuration:", error.message);
+    process.exit(1);
+  }
 }
 
 setup();

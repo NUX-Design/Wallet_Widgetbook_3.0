@@ -1,0 +1,5 @@
+{
+  "widgetName": "PrimaryButton",
+  "widgetFile": "lib/widgets/button/primary_button.dart",
+  "code": "import 'package:flutter/material.dart';\nimport 'package:flutter_svg/flutter_svg.dart';\nimport 'package:mcp_test_app/widgets/shared/badge.dart';\n\nclass PrimaryButton extends StatelessWidget {\n  final String label;\n  final VoidCallback? onPressed;\n  final bool isLoading;\n\n  const PrimaryButton({\n    super.key,\n    required this.label,\n    this.onPressed,\n    this.isLoading = false,\n  });\n\n  @override\n  Widget build(BuildContext context) {\n    return Row(\n      children: [\n        SvgPicture.asset('assets/icons/send.svg'),\n        Text(label),\n      ],\n    );\n  }\n}\n"
+}

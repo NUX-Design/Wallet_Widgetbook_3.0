@@ -827,13 +827,13 @@ Then open `http://<YOUR_IP>:8000` on any device on the same Wi‑Fi.
 
 ---
 
-## 🤖 AI Integration (Wi Wallet MCP)
+## 🤖 AI Integration (`flutter-widget-wallet-mcp`)
 
-This project allows you to turn your Design System into a context for AI Developers (Cursor, Claude Desktop, Antigravity, etc.) via **Model Context Protocol (MCP)**.
+This repository includes an MCP server that lets AI clients connect to this repo and use tools to access Flutter widget code, preview files, metadata, design-system context, and related implementation guidance.
 
-### 1. Team Installation (Automated) 🚀
+### 1. Local Team Installation (Automated) 🚀
 
-We provide a script to automatically register this MCP server in your IDE (Antigravity/Cursor) with the correct absolute paths for your machine.
+Install the MCP config for your client from the `mcp-server/` directory:
 
 ```bash
 cd mcp-server
@@ -841,6 +841,16 @@ npm install
 npm run install-mcp
 ```
 *Note: Restart your IDE after the script finishes.*
+
+This generates client config examples and local MCP settings for supported clients such as:
+- Claude Code
+- Codex
+- Cursor
+
+See:
+- `mcp-server/README.md`
+- `mcp-server/examples/`
+- `mcp-server/mcp.json.example`
 
 ### 2. Auto-generate JSON Schema
 
@@ -856,14 +866,36 @@ npm run generate-schema
 *   **Implementation Details**: Automatically extracts localization and theme import paths.
 *   **Smart Merge**: Combines data from the main guide and individual files.
 
-### 3. Wi Wallet MCP Server
+### 3. MCP Capabilities
 
-A local server that feeds the Design System Knowledge to your AI Assistant.
+The MCP server can be used by AI tools to:
 
 **Capabilities:**
-*   **Get Design System Info**: Ask AI about tokens, colors, or project structure.
-*   **List/Get Widgets**: Ask AI "What widgets do we have?" or "How to use FullAmountInput?".
-*   **Auto-Reload**: The server automatically reloads `schema.json` on every request. You can update docs, run `generate-schema`, and the AI gets the new info immediately!
+*   **Discover Widgets**: List categories and search widgets by name or keyword.
+*   **Read Widget Metadata**: Inspect props, dependencies, preview paths, assets, and related docs.
+*   **Extract Source Code**: Access base widget Dart code and preview/demo files.
+*   **Use Design-System Context**: Read tokens, patterns, and implementation guidance from this repo.
+
+### 4. MCP Verification Commands
+
+Use these commands before pushing MCP changes:
+
+```bash
+cd mcp-server
+npm run ci:mcp
+npm run validate:onboarding
+```
+
+Useful lower-level commands:
+
+```bash
+cd mcp-server
+npm run check:mcp-syntax
+npm test
+npm run verify:mcp
+npm run verify:mcp:http
+npm run evaluate:mcp
+```
 
 ---
 

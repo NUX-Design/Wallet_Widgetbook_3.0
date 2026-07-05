@@ -1,0 +1,25 @@
+{
+  "category": "button",
+  "total": 1,
+  "count": 1,
+  "limit": 5,
+  "offset": 0,
+  "hasMore": false,
+  "widgets": [
+    {
+      "name": "PrimaryButton",
+      "category": "button",
+      "widgetFile": "lib/widgets/button/primary_button.dart",
+      "previewFiles": [
+        "lib/widgets/button/preview_primary_button.dart"
+      ],
+      "tags": [
+        "button",
+        "dependencies",
+        "primary",
+        "usage"
+      ],
+      "updatedAt": "2026-07-04T07:42:48.438Z"
+    }
+  ]
+}

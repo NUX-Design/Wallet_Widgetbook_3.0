@@ -1,0 +1,74 @@
+{
+  "name": "PrimaryButton",
+  "category": "button",
+  "widgetFile": "lib/widgets/button/primary_button.dart",
+  "previewFiles": [
+    "lib/widgets/button/preview_primary_button.dart"
+  ],
+  "docFiles": [
+    "lib/widgets/button/primary_button_GUIDE.md"
+  ],
+  "props": [
+    {
+      "name": "isLoading",
+      "type": "bool",
+      "required": false,
+      "source": "code",
+      "defaultValue": "false",
+      "description": "Shows a spinner state"
+    },
+    {
+      "name": "label",
+      "type": "String",
+      "required": true,
+      "source": "code",
+      "defaultValue": "-",
+      "description": "Main button copy"
+    },
+    {
+      "name": "onPressed",
+      "type": "VoidCallback?",
+      "required": false,
+      "source": "code",
+      "defaultValue": "-",
+      "description": "Tap callback"
+    }
+  ],
+  "dependencies": [
+    "flutter_svg"
+  ],
+  "internalImports": [
+    "lib/widgets/shared/badge.dart"
+  ],
+  "assets": [
+    "lib/assets/icons/send.svg"
+  ],
+  "tags": [
+    "button",
+    "dependencies",
+    "primary",
+    "usage"
+  ],
+  "figmaLinks": [
+    "https://www.figma.com/file/example/primary-button"
+  ],
+  "updatedAt": "2026-07-04T07:42:48.438Z",
+  "metadataSources": {
+    "props": "code+docs",
+    "dependencies": "code+docs",
+    "previews": "adjacent-preview-index",
+    "docs": "widget-local-markdown",
+    "figmaLinks": "docs",
+    "updatedAt": "mtime"
+  },
+  "metadataConfidence": {
+    "props": "high",
+    "previews": "high",
+    "docs": "high",
+    "figmaLinks": "high",
+    "overall": "high"
+  },
+  "warnings": [
+    "updatedAt for lib/widgets/button/primary_button.dart fell back to filesystem mtime because git history was unavailable."
+  ]
+}

@@ -1,14 +1,26 @@
 {
-    "name": "figma-widget-mcp",
-    "version": "2.0.0",
-    "description": "Figma Widget MCP — Figma-to-Flutter + Widgetbook code generation for Wi Wallet",
+    "name": "flutter-widget-wallet-mcp",
+    "version": "2.1.0",
+    "description": "Flutter widget wallet MCP — widget discovery, metadata extraction, and design-system guidance for Wi Wallet",
     "type": "module",
     "scripts": {
         "start": "node index.js",
-        "install-mcp": "node install.js"
+        "start:http": "node http-server.js",
+        "install-mcp": "node install.js",
+        "check:mcp-syntax": "node scripts/check-syntax.js",
+        "verify:mcp": "node scripts/verify-mcp.js",
+        "verify:mcp:http": "node scripts/verify-http.js",
+        "evaluate:mcp": "node scripts/run-evaluations.js",
+        "validate:onboarding": "node scripts/validate-onboarding.js",
+        "ci:mcp": "node scripts/run-ci.js",
+        "test": "node --test tests/**/*.test.js",
+        "test:update-snapshots": "UPDATE_SNAPSHOTS=1 node --test tests/**/*.test.js"
     },
     "dependencies": {
         "@modelcontextprotocol/sdk": "^1.0.0",
         "zod": "^3.22.4"
+    },
+    "devDependencies": {
+        "@modelcontextprotocol/inspector": "^0.22.0"
     }
 }

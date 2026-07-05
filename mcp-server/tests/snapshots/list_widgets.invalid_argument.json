@@ -1,0 +1,17 @@
+{
+  "isError": true,
+  "payload": {
+    "ok": false,
+    "error": {
+      "code": "INVALID_ARGUMENT",
+      "message": "Field \"limit\" must be in range 1 to 200.",
+      "hint": "Adjust \"limit\" to stay within the supported range.",
+      "details": {
+        "field": "limit",
+        "received": 0,
+        "minimum": 1,
+        "maximum": 200
+      }
+    }
+  }
+}
