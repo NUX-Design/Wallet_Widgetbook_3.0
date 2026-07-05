@@ -137,6 +137,7 @@
 - `task/TASKS.md` currently tracks the MCP production-ready execution checklist and keeps a short historical reference to the completed widget-test backlog; `WIDGET_TEST_PLAN.md` still holds the higher-level widget testing analysis and prioritization.
 - When updating `task/TASKS.md`, always refresh the `อัปเดตล่าสุดเมื่อ` timestamp whenever any checklist item, note, or progress detail changes.
 - When asked for the latest work, latest completed item, or current execution progress, inspect `task/TASKS.md` first and answer from its checklist state plus the `อัปเดตล่าสุดเมื่อ` timestamp.
+- Batch 1 widget coverage now exists under `test/widgets/input/input_widgets_test.dart`, `test/widgets/tab/horizontal_tabs_test.dart`, `test/widgets/navigator_bar/navigator_bar_test.dart`, `test/widgets/avatar/avatar_test.dart`, and `test/widgets/snack_bar/snack_bar_test.dart`.
 
 ## Repo Boundaries
 
@@ -255,6 +256,8 @@ Read in this order:
 - Widgets that call `GoogleFonts` directly inside `build()` may require dedicated local font assets or custom test overrides; otherwise offline golden tests can fail on font resolution.
 - `ImageCarousel` autoplay should stay safe when `pages` is empty; tests now cover empty-page and dispose paths, and timer state is reset when autoplay settings or page count changes.
 - Receipt widgets can exercise fallback rendering by passing null asset paths for icons/backgrounds, which avoids asset-heavy setup when testing long-text truncation and detail-row layout.
+- In widget tests, safe-area padding is easiest to control via `tester.view.viewPadding` plus `tester.view.resetViewPadding`; `viewPaddingTestValue` is not available on `TestFlutterView` in this Flutter version.
+- `NetworkImage` widget tests need a fake `HttpClient` via `HttpOverrides`; the default test binding returns HTTP 400 for real network requests.
 
 ## When To Update This File
 

@@ -4,24 +4,31 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mcp_test_app/config/themes/theme_color.dart';
 import 'package:mcp_test_app/widgets/snack_bar/snack_bar.dart';
 
+import '../../support/widget_test_harness.dart';
+
 void main() {
   group('SnackBarWidget UI Tests', () {
     testWidgets('renders Success SnackBar correctly', (
       WidgetTester tester,
     ) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: SnackBarWidget(
-              title: 'Success Message',
-              type: SnackBarType.success,
-            ),
-          ),
+      await pumpTestApp(
+        tester,
+        const SnackBarWidget(
+          title: 'Success Message',
+          type: SnackBarType.success,
+        ),
+        assetStrategy: TestAssetStrategy.placeholderAssets,
+        assetBundle: PlaceholderAssetBundle(
+          assetPaths: <String>[
+            'lib/assets/images/checkmark-circle-01.svg',
+            'lib/assets/images/Alert Icon.svg',
+            'lib/assets/images/outline-cancel-circle.svg',
+          ],
         ),
       );
 
-      // Verify Title
       expect(find.text('Success Message'), findsOneWidget);
+      expect(find.byType(SvgPicture), findsOneWidget);
 
       // Verify Icon
       final svgFinder = find.byWidgetPredicate((widget) {
@@ -39,26 +46,32 @@ void main() {
       );
       final container = tester.widget<Container>(containerFinder.first);
       final decoration = container.decoration as BoxDecoration;
+      final icon = tester.widget<SvgPicture>(find.byType(SvgPicture));
 
-      // Check Border Radius
       expect(decoration.borderRadius, BorderRadius.circular(6));
       expect(decoration.color, ThemeColors.get('light', 'success/300'));
 
       final text = tester.widget<Text>(find.text('Success Message'));
       expect(text.style?.color, ThemeColors.get('light', 'text/base/success'));
+      expect(icon.width, 24);
     });
 
     testWidgets('renders Warning SnackBar correctly', (
       WidgetTester tester,
     ) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: SnackBarWidget(
-              title: 'Warning Message',
-              type: SnackBarType.warning,
-            ),
-          ),
+      await pumpTestApp(
+        tester,
+        const SnackBarWidget(
+          title: 'Warning Message',
+          type: SnackBarType.warning,
+        ),
+        assetStrategy: TestAssetStrategy.placeholderAssets,
+        assetBundle: PlaceholderAssetBundle(
+          assetPaths: <String>[
+            'lib/assets/images/checkmark-circle-01.svg',
+            'lib/assets/images/Alert Icon.svg',
+            'lib/assets/images/outline-cancel-circle.svg',
+          ],
         ),
       );
 
@@ -69,14 +82,16 @@ void main() {
     testWidgets('renders Error SnackBar correctly', (
       WidgetTester tester,
     ) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: SnackBarWidget(
-              title: 'Error Message',
-              type: SnackBarType.error,
-            ),
-          ),
+      await pumpTestApp(
+        tester,
+        const SnackBarWidget(title: 'Error Message', type: SnackBarType.error),
+        assetStrategy: TestAssetStrategy.placeholderAssets,
+        assetBundle: PlaceholderAssetBundle(
+          assetPaths: <String>[
+            'lib/assets/images/checkmark-circle-01.svg',
+            'lib/assets/images/Alert Icon.svg',
+            'lib/assets/images/outline-cancel-circle.svg',
+          ],
         ),
       );
 
@@ -89,38 +104,44 @@ void main() {
     testWidgets('SnackBarWidget.show displays SnackBar', (
       WidgetTester tester,
     ) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: Builder(
-              builder:
-                  (context) => ElevatedButton(
-                    onPressed: () {
-                      SnackBarWidget.show(
-                        context,
-                        title: 'Integration Test',
-                        type: SnackBarType.success,
-                      );
-                    },
-                    child: const Text('Show SnackBar'),
-                  ),
-            ),
-          ),
+      await pumpTestApp(
+        tester,
+        Builder(
+          builder:
+              (context) => ElevatedButton(
+                onPressed: () {
+                  SnackBarWidget.show(
+                    context,
+                    title: 'Integration Test',
+                    type: SnackBarType.success,
+                  );
+                },
+                child: const Text('Show SnackBar'),
+              ),
+        ),
+        assetStrategy: TestAssetStrategy.placeholderAssets,
+        assetBundle: PlaceholderAssetBundle(
+          assetPaths: <String>[
+            'lib/assets/images/checkmark-circle-01.svg',
+            'lib/assets/images/Alert Icon.svg',
+            'lib/assets/images/outline-cancel-circle.svg',
+          ],
         ),
       );
 
-      // Tap the button
       await tester.tap(find.text('Show SnackBar'));
-      await tester.pump(); // Start animation
+      await tester.pump();
 
       // Verify SnackBar appears
       final snackBar = tester.widget<SnackBar>(find.byType(SnackBar));
       expect(snackBar.behavior, SnackBarBehavior.floating);
       expect(snackBar.backgroundColor, Colors.transparent);
+      expect(find.byType(SnackBar), findsOneWidget);
       expect(find.byType(SnackBarWidget), findsOneWidget);
       expect(find.text('Integration Test'), findsOneWidget);
+      expect(snackBar.padding, EdgeInsets.zero);
+      expect(snackBar.duration, const Duration(seconds: 6));
 
-      // Wait for animation to finish (optional, but good practice if checking disappearance)
       await tester.pumpAndSettle();
     });
   });
