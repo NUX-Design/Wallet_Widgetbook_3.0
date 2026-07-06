@@ -19,6 +19,8 @@ services:
       # Set them in the Render Dashboard (Environment tab) after the first
       # Blueprint sync. sync: false keeps Render from expecting/overwriting
       # them from this file.
+      - key: MCP_REMOTE_BEARER_TOKENS
+        sync: false
       - key: MCP_REMOTE_PROXY_SHARED_SECRET
         sync: false
       - key: MCP_REMOTE_REFRESH_TOKEN

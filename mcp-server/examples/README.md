@@ -30,10 +30,15 @@ node install.js --client cursor --settings /absolute/path/to/mcp.json
 ## 2. Hosted remote examples
 
 - `remote.generic.mcp.json`
+- `mcp-remote.generic.mcp.json`
+- `codex-chatgpt-agent.remote-bridge.mcp.json`
 
 หมายเหตุ:
 
 - remote example ใช้ `url` ไปยัง hosted Streamable HTTP endpoint เช่น `https://mcp.example.com/mcp`
-- header `Authorization` ในตัวอย่างนี้เป็น **edge-facing auth** ระหว่าง client กับ reverse proxy/API gateway เท่านั้น
-- อย่าส่ง internal headers อย่าง `x-mcp-authenticated-user` หรือ `x-mcp-proxy-secret` จาก client ตรง ๆ เพราะ header เหล่านั้นควรถูก inject โดย trusted proxy เท่านั้น
+- header `Authorization` ในตัวอย่างนี้คือ public client auth ที่ service เดิมรับตรงได้ผ่าน `MCP_REMOTE_BEARER_TOKEN(S)`
+- อย่าส่ง internal headers อย่าง `x-mcp-authenticated-user` หรือ `x-mcp-proxy-secret` จาก client ตรง ๆ ยกเว้นคุณกำลังใช้ legacy trusted-proxy integration ภายใน
 - repo นี้ verify remote mode ระดับ protocol ด้วย `npm run verify:mcp:http`; ส่วน host apps/IDE clients ที่รับ remote URL โดยตรงยังต้องดู support matrix ใน `README.md` และ `COMPATIBILITY_POLICY.md`
+- ถ้า client ของคุณยังไม่ verify ว่ารับ remote MCP URL ตรง ๆ ได้ดี ให้ใช้ `mcp-remote` bridge เป็น fallback
+- `mcp-remote.generic.mcp.json` เป็นตัวอย่าง bridge แบบ generic
+- `codex-chatgpt-agent.remote-bridge.mcp.json` เป็นตัวอย่างที่ตั้งชื่อไฟล์ให้ตรงกับ Codex use case ของ `P8-04`

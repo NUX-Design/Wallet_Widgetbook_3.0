@@ -12,15 +12,18 @@
  *
  *   cd mcp-server
  *   MCP_REMOTE_BASE_URL="https://<host>/mcp" \
- *   MCP_REMOTE_PROXY_SHARED_SECRET="<same-secret-as-deploy>" \
+ *   MCP_REMOTE_BEARER_TOKEN="<public-bearer-token>" \
  *   MCP_REMOTE_REFRESH_TOKEN="<same-refresh-token>" \
  *   npm run verify:mcp:remote
  *
  * Required env vars:
  *   MCP_REMOTE_BASE_URL             Full URL to the /mcp endpoint, e.g. https://host/mcp
- *   MCP_REMOTE_PROXY_SHARED_SECRET  Must match MCP_REMOTE_PROXY_SHARED_SECRET on the server
+ *   MCP_REMOTE_BEARER_TOKEN         Must match MCP_REMOTE_BEARER_TOKEN(S) on the server
  *
  * Optional env vars:
+ *   MCP_REMOTE_AUTH_MODE            "bearer" (default) or "proxy"
+ *   MCP_REMOTE_BEARER_TOKEN_HEADER  Header name for direct auth (default: Authorization)
+ *   MCP_REMOTE_BEARER_TOKEN_PREFIX  Prefix for direct auth (default: Bearer)
  *   MCP_REMOTE_AUTH_USER            Principal to send as the authenticated-user header (default: render-pilot-verifier)
  *   MCP_REMOTE_AUTH_USER_HEADER     Header name for the principal (default: x-mcp-authenticated-user)
  *   MCP_REMOTE_PROXY_SECRET_HEADER  Header name for the shared secret (default: x-mcp-proxy-secret)
@@ -41,6 +44,10 @@ import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/
 const env = process.env;
 
 const baseUrl = env.MCP_REMOTE_BASE_URL;
+const authMode = env.MCP_REMOTE_AUTH_MODE ?? "bearer";
+const bearerToken = env.MCP_REMOTE_BEARER_TOKEN ?? "";
+const bearerTokenHeader = env.MCP_REMOTE_BEARER_TOKEN_HEADER ?? "Authorization";
+const bearerTokenPrefix = env.MCP_REMOTE_BEARER_TOKEN_PREFIX ?? "Bearer";
 const proxySharedSecret = env.MCP_REMOTE_PROXY_SHARED_SECRET ?? "";
 const authUser = env.MCP_REMOTE_AUTH_USER ?? "render-pilot-verifier";
 const authUserHeader = env.MCP_REMOTE_AUTH_USER_HEADER ?? "x-mcp-authenticated-user";
@@ -107,7 +114,7 @@ async function main() {
     console.error(
       "Missing MCP_REMOTE_BASE_URL. Example:\n" +
         '  MCP_REMOTE_BASE_URL="https://<your-service>.onrender.com/mcp" \\\n' +
-        '  MCP_REMOTE_PROXY_SHARED_SECRET="<secret>" \\\n' +
+        '  MCP_REMOTE_BEARER_TOKEN="<token>" \\\n' +
         "  npm run verify:mcp:remote",
     );
     process.exitCode = 1;
@@ -117,10 +124,16 @@ async function main() {
   console.log(`Running MCP Streamable HTTP verification against hosted endpoint: ${baseUrl}`);
   console.log(`Per-request timeout: ${timeoutMs}ms (used to detect held-connection issues)\n`);
 
-  if (!proxySharedSecret) {
+  if (authMode === "bearer" && !bearerToken) {
     console.warn(
-      "WARNING: MCP_REMOTE_PROXY_SHARED_SECRET is empty. Requests to /mcp will likely be rejected with 401 " +
-        "unless the server has MCP_REMOTE_REQUIRE_PROXY_AUTH disabled.\n",
+      "WARNING: MCP_REMOTE_BEARER_TOKEN is empty. Requests to /mcp will likely be rejected with 401 " +
+        "unless the server has MCP_REMOTE_BEARER_TOKEN(S) configured differently.\n",
+    );
+  }
+
+  if (authMode === "proxy" && !proxySharedSecret) {
+    console.warn(
+      "WARNING: MCP_REMOTE_PROXY_SHARED_SECRET is empty. Legacy trusted-proxy requests to /mcp will likely be rejected with 401.\n",
     );
   }
 
@@ -143,12 +156,18 @@ async function main() {
   let transport;
   try {
     client = new Client({ name: "flutter-widget-wallet-mcp-remote-verifier", version: "1.0.0" });
+    const headers =
+      authMode === "proxy"
+        ? {
+            [authUserHeader]: authUser,
+            [proxySecretHeader]: proxySharedSecret,
+          }
+        : {
+            [bearerTokenHeader]: `${bearerTokenPrefix} ${bearerToken}`,
+          };
     transport = new StreamableHTTPClientTransport(new URL(baseUrl), {
       requestInit: {
-        headers: {
-          [authUserHeader]: authUser,
-          [proxySecretHeader]: proxySharedSecret,
-        },
+        headers,
       },
     });
 

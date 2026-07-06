@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "flutter-widget-wallet-mcp-remote": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "https://mcp.example.com/mcp",
+        "--header",
+        "Authorization: Bearer <EDGE_ACCESS_TOKEN>"
+      ]
+    }
+  }
+}

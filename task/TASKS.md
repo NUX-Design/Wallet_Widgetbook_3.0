@@ -1,7 +1,7 @@
 # MCP Production Tasks
 
 สร้างไฟล์เมื่อ: `2026-07-04 12:54:27 +07`
-อัปเดตล่าสุดเมื่อ: `2026-07-06 15:05:00 +0700`
+อัปเดตล่าสุดเมื่อ: `2026-07-06 19:23:10 +0700`
 
 เอกสารนี้แตกจาก [mcp-server/PRODUCTION_READY_PLAN.md](mcp-server/PRODUCTION_READY_PLAN.md) ให้เป็น execution checklist สำหรับยกระดับ `flutter-widget-wallet-mcp` ไปสู่ production-ready
 
@@ -560,10 +560,18 @@ Lane: Operations
 
 ### P8-01: Deploy pilot บน Render
 
-- [ ] Apply `render.yaml` Blueprint ที่ repo root (`rootDir: mcp-server`, build `npm ci`, start `node http-server.js`) — แนะนำให้ใช้ Codex CLI ที่ติดตั้ง Render plugin แล้วเพื่อ propose/validate/apply Blueprint แทนการตั้งค่าทีละอย่างใน Dashboard
-- [ ] ตั้ง env vars ที่เป็น secret ใน Render Dashboard (ไม่ commit ลง `render.yaml`): `MCP_REMOTE_PROXY_SHARED_SECRET`, `MCP_REMOTE_REFRESH_TOKEN`, `MCP_REMOTE_COMMIT_SHA`
-- [ ] ยืนยันว่า health check path `/health` ผ่านหลัง deploy ครั้งแรก
-- [ ] ยืนยันว่า auto-deploy trigger เฉพาะไฟล์ใต้ `mcp-server/` ตาม `rootDir`
+- [x] Apply `render.yaml` Blueprint ที่ repo root (`rootDir: mcp-server`, build `npm ci`, start `node http-server.js`) — ทำผ่าน Render Dashboard โดยผูก GitHub repo `NUX-Design/Wallet_Widgetbook_2.0` กับ branch `main`, service name `flutter-widget-wallet-mcp`, root directory `mcp-server`, build `npm ci`, start `node http-server.js`, plan `free`, region `singapore`
+- [x] ตั้ง env vars ที่เป็น secret ใน Render Dashboard (ไม่ commit ลง `render.yaml`): `MCP_REMOTE_PROXY_SHARED_SECRET`, `MCP_REMOTE_REFRESH_TOKEN`, `MCP_REMOTE_COMMIT_SHA`
+- [x] ยืนยันว่า health check path `/health` ผ่านหลัง deploy ครั้งแรก
+- [x] ยืนยันว่า auto-deploy trigger เฉพาะไฟล์ใต้ `mcp-server/` ตาม `rootDir`
+
+หลักฐานที่ยืนยันการปิด P8-01:
+- Render service ที่ถูกสร้างจริงคือ `flutter-widget-wallet-mcp`
+- Primary URL: `https://flutter-widget-wallet-mcp.onrender.com`
+- Service ID: `srv-d95m7oa8qa3s73e6ahg0`
+- Deploy ล่าสุดขึ้น `live` ที่ commit `88bffadb3bd535b6fc4ae7bdfefd63eb8b69949d` บน branch `main`
+- `/health` ตอบ `ok: true`, `status: healthy`, `channel: production`, และ `namespace: src::production::88bffadb3bd535b6fc4ae7bdfefd63eb8b69949d`
+- `/info` ตอบ `ok: true` พร้อม read-only tool registry 12 tools และ freshness metadata ที่ชี้ commit เดียวกัน
 
 วิธีทำ:
 - เตรียม GitHub repo นี้ให้อยู่บน branch `main` ล่าสุดก่อน deploy
@@ -585,10 +593,10 @@ Lane: Hosting pilot
 
 ### P8-02: Validate cold-start and transport behavior
 
-- [ ] รัน `cd mcp-server && npm run verify:mcp:remote` ชี้ไปที่ URL ของ Render pilot
-- [ ] ยืนยันว่าผ่านครบ: `tools/list`, `list_widgets`, `search_widgets`, `get_widget_metadata`, `/info`, `/admin/refresh`, `/health`
-- [ ] วัดเวลา cold start จริงหลัง idle 15+ นาที เทียบกับ "ประมาณ 1 นาที" ที่ Render ประกาศไว้ (`render.com/docs/free`)
-- [ ] ถ้า fail เพราะ timeout: แยกให้ชัดว่าเป็น cold start ปกติ (retry แล้วผ่าน) หรือเป็นปัญหา transport จริง — ถ้าเป็นปัญหา transport จริงให้พิจารณาอัปเกรด Render paid instance (ไม่ sleep) ก่อนเปลี่ยน provider อีกรอบ ตาม `RENDER_HOSTING_PLAN.md` ข้อ 7-8
+- [x] รัน `cd mcp-server && npm run verify:mcp:remote` ชี้ไปที่ URL ของ Render pilot
+- [x] ยืนยันว่าผ่านครบ: `tools/list`, `list_widgets`, `search_widgets`, `get_widget_metadata`, `/info`, `/admin/refresh`, `/health`
+- [x] วัดเวลา cold start จริงหลัง idle 15+ นาที เทียบกับ "ประมาณ 1 นาที" ที่ Render ประกาศไว้ (`render.com/docs/free`)
+- [x] ถ้า fail เพราะ timeout: แยกให้ชัดว่าเป็น cold start ปกติ (retry แล้วผ่าน) หรือเป็นปัญหา transport จริง — ถ้าเป็นปัญหา transport จริงให้พิจารณาอัปเกรด Render paid instance (ไม่ sleep) ก่อนเปลี่ยน provider อีกรอบ ตาม `RENDER_HOSTING_PLAN.md` ข้อ 7-8
 
 วิธีทำ:
 - หลังได้ Render URL แล้ว ให้ export env vars สำหรับสคริปต์ verify ตามที่ `mcp-server/scripts/verify-remote.js` ใช้งาน
@@ -614,15 +622,31 @@ npm run verify:mcp:remote
 - ผลของ `tools/list`, `list_widgets`, `search_widgets`, `get_widget_metadata`, `/info`, `/admin/refresh`, `/health`
 - สรุปชัดว่า Render free tier ใช้ได้จริงหรือไม่สำหรับ use case นี้
 
+ผลที่บันทึกจริง:
+- URL ที่ทดสอบ: `https://flutter-widget-wallet-mcp.onrender.com/mcp`
+- commit SHA ที่ deploy และยืนยันจาก `/health` + `/info`: `88bffadb3bd535b6fc4ae7bdfefd63eb8b69949d`
+- รอบ warm verify ผ่านครบ 8/8 checks ด้วย `npm run verify:mcp:remote`
+- รอบ cold-start verify หลังปล่อย idle 15+ นาที ผ่านครบ 8/8 checks ด้วย `time npm run verify:mcp:remote`
+- cold-start wall time ที่วัดได้จริง: `26.493s total`
+- ผล endpoint/control plane:
+  - `/health`: HTTP 200, `ok: true`, `status: healthy`
+  - `/info`: HTTP 200, read-only tool registry 12 tools, freshness metadata ตรงกับ commit เดียวกัน
+  - `tools/list`: ผ่าน, expose 12 tools
+  - `list_widgets`: ผ่าน
+  - `search_widgets`: ผ่าน
+  - `get_widget_metadata`: ผ่าน (`Buttons`)
+  - `/admin/refresh`: HTTP 200
+- ข้อสรุป: Render free tier ใช้ได้จริงสำหรับ use case นี้ และรอบ cold start ที่วัดได้จริง (~26.5 วินาที) ยังอยู่ในกรอบที่ยอมรับได้สำหรับ agent-tooling; ยังไม่พบ evidence ของ held-connection restriction หรือปัญหา transport จริงใน hosted `streamable-http` endpoint
+
 Depends on: P8-01
 
 Lane: Hosting pilot
 
 ### P8-03: Domain + TLS
 
-- [ ] ยืนยันว่า `https://<service-name>.onrender.com/health` และ `/info` ใช้งานได้ทันทีหลัง deploy (Render ให้ TLS ฟรีแบบ auto-renew อยู่แล้วบน free tier ไม่ต้องตั้งค่าเพิ่ม)
-- [ ] ถ้าต้องการ custom domain: เพิ่ม custom domain ในหน้า service settings บน Render แล้วชี้ DNS (CNAME/ALIAS) จาก domain provider ไปยัง hostname ที่ Render ให้
-- [ ] พิจารณาเปิด Cloudflare Access/Zero Trust คั่นหน้า custom domain เป็น optional auth layer เพิ่มเติม
+- [x] ยืนยันว่า `https://<service-name>.onrender.com/health` และ `/info` ใช้งานได้ทันทีหลัง deploy (Render ให้ TLS ฟรีแบบ auto-renew อยู่แล้วบน free tier ไม่ต้องตั้งค่าเพิ่ม)
+- [x] ถ้าต้องการ custom domain: เพิ่ม custom domain ในหน้า service settings บน Render แล้วชี้ DNS (CNAME/ALIAS) จาก domain provider ไปยัง hostname ที่ Render ให้
+- [x] พิจารณาเปิด Cloudflare Access/Zero Trust คั่นหน้า custom domain เป็น optional auth layer เพิ่มเติม
 
 วิธีทำ:
 - ทดสอบ `https://<service-name>.onrender.com/health` และ `/info` ก่อนว่าตอบกลับถูกต้องด้วย TLS ที่ Render ออกให้เอง
@@ -637,25 +661,55 @@ Lane: Hosting pilot
 - cert TLS valid
 - Render service ยังตอบกลับด้วย domain ใหม่ (ถ้าตั้ง custom domain) ได้ตรงกับ `.onrender.com` hostname เดิม
 
+ผลที่บันทึกจริง:
+- ใช้ `.onrender.com` endpoint เดิมต่อ: `https://flutter-widget-wallet-mcp.onrender.com`
+- `/health` และ `/info` ผ่านอยู่แล้วจาก `P8-02` จึงยืนยันได้ว่า managed TLS ของ Render ใช้งานได้จริงสำหรับ pilot นี้
+- ตัดสินใจ **defer custom domain** เพราะยังไม่มี requirement ด้าน branding/domain ownership เพิ่มเติม และเป้าหมายถัดไปคือ external onboarding ไม่ใช่เปลี่ยน URL
+- ตัดสินใจ **defer Cloudflare Access / Zero Trust** เพราะยังไม่ใช่คำตอบหลักของ external MCP onboarding; ปัญหาหลักที่ต้องแก้ต่อคือ trusted-proxy auth flow และ config path ใน `P8-04`
+- ข้อสรุป: `P8-03` ปิดได้สำหรับ pilot/internal use โดยใช้ `.onrender.com` + Render managed TLS ต่อไปก่อน
+
 Depends on: P8-02
 
 Lane: Domain/Auth
 
-### P8-04: Multi-client onboarding ด้วย `mcp-remote` bridge
+### P8-04: Multi-client onboarding บน service เดิมด้วย direct bearer auth
 
 - [ ] เพิ่มไฟล์ตัวอย่าง config `mcp-remote` bridge ใน `mcp-server/examples/`
 - [ ] ทดสอบ bridge จริงกับ client อย่างน้อย 1 ตัว (แนะนำ Codex ก่อน)
-- [ ] อัปเดต `README.md` / `COMPATIBILITY_POLICY.md` ให้ระบุ `mcp-remote` bridge เป็นทาง recommended สำหรับ multi-client remote access
+- [ ] อัปเดต `README.md` / `COMPATIBILITY_POLICY.md` ให้ระบุ direct remote URL + `Authorization: Bearer ...` เป็นทางหลัก และ `mcp-remote` bridge เป็น fallback
 
 วิธีทำ:
 - เพิ่มไฟล์ตัวอย่าง config ใหม่ใน `mcp-server/examples/` ที่เรียก `npx mcp-remote https://<domain>/mcp`
-- ใช้ header auth แบบเดียวกับ hosted endpoint เช่น `Authorization: Bearer <token>` หรือ header ที่ proxy layer ของระบบจริงรองรับ
-- ถ้าจะใช้ `Authorization` flow ต้องมี reverse proxy / edge layer ที่ validate token แล้ว inject `x-mcp-authenticated-user` และ `x-mcp-proxy-secret` ให้ MCP server; Render service ตรง ๆ อย่างเดียวไม่พอสำหรับ public client onboarding แบบนี้
+- ใช้ header auth แบบเดียวกับ hosted endpoint เช่น `Authorization: Bearer <token>`
+- ตั้ง `MCP_REMOTE_BEARER_TOKEN` หรือ `MCP_REMOTE_BEARER_TOKENS` บน Render service เดิมเพื่อให้รับ external token ตรง
 - เริ่มทดสอบกับ Codex ก่อน เพราะมี Render plugin ติดตั้งอยู่แล้วและเป็น target ที่ต้องการ path แบบ local stdio bridge ชัดที่สุด
 - เมื่อทดสอบผ่าน ให้ sync ตัวอย่างเดียวกันไปยัง docs ของ client อื่น โดยไม่ต้องรับประกัน native remote URL support
 - ปรับ `README.md` และ `COMPATIBILITY_POLICY.md` ให้แยกชัดระหว่าง:
-  - remote access ผ่าน `mcp-remote` bridge = recommended
-  - native remote MCP URL = best-effort / ต้อง verify แยกตาม client
+  - direct remote URL + `Authorization: Bearer ...` = recommended
+  - `mcp-remote` bridge = fallback เมื่อ host app มีปัญหากับ native remote URL flow
+
+Step-by-step สำหรับงานจริง:
+1. ใช้ Render service เดิม `https://flutter-widget-wallet-mcp.onrender.com/mcp` เป็น public URL หลัก
+2. ออกแบบ token model สำหรับ external users
+   - อย่างน้อยต้องมี 1 test token สำหรับรอบ verify
+   - ห้ามแจก `MCP_REMOTE_PROXY_SHARED_SECRET` ให้ client ภายนอกโดยตรง
+3. ตั้ง `MCP_REMOTE_BEARER_TOKEN` หรือ `MCP_REMOTE_BEARER_TOKENS` บน Render Dashboard ของ service เดิม
+4. เพิ่ม example config สำหรับ external onboarding ใน `mcp-server/examples/`
+   - example แรก: generic remote URL + `Authorization: Bearer <TOKEN>`
+   - example ที่สอง: `mcp-remote` bridge ผ่าน `npx mcp-remote https://flutter-widget-wallet-mcp.onrender.com/mcp --header "Authorization: Bearer <TOKEN>"`
+5. ทดสอบ transport จากมุมมอง external user
+   - ยิงผ่าน public URL ของ Render service เดิม
+   - ตรวจอย่างน้อย `tools/list`, `list_widgets`, `search_widgets`, `get_widget_metadata`
+6. ทดสอบกับ client อย่างน้อย 1 ตัว
+   - target แรกคือ Codex โดยลอง direct remote URL ก่อน
+   - ถ้า Codex ผ่าน ให้เก็บผล config/command จริงไว้เป็นหลักฐาน
+7. อัปเดต docs
+   - `README.md`: hosted onboarding path ใหม่, public URL flow, token/header ที่ user ต้องใส่
+   - `COMPATIBILITY_POLICY.md`: แยกชัดว่า direct remote URL เป็น path หลัก และ `mcp-remote` bridge เป็น fallback
+8. บันทึกผลและ caveats
+   - ระบุว่า public self-serve path พร้อมเมื่อใด
+   - ระบุ client ที่ verify แล้ว vs best-effort
+   - บันทึกวิธี rotate token และ proxy secret ถ้าเคยใช้ค่าทดสอบหลุดออกนอกระบบ
 
 ตัวอย่าง config:
 

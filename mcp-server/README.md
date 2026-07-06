@@ -83,16 +83,24 @@ Client-specific templates:
 - [codex-chatgpt-agent.mcp.json](/Users/Niwat.yah/flutter_widgetbook_3.0/mcp-server/examples/codex-chatgpt-agent.mcp.json)
 - [cursor.mcp.json](/Users/Niwat.yah/flutter_widgetbook_3.0/mcp-server/examples/cursor.mcp.json)
 - [remote.generic.mcp.json](/Users/Niwat.yah/flutter_widgetbook_3.0/mcp-server/examples/remote.generic.mcp.json)
+- [mcp-remote.generic.mcp.json](/Users/Niwat.yah/flutter_widgetbook_3.0/mcp-server/examples/mcp-remote.generic.mcp.json)
+- [codex-chatgpt-agent.remote-bridge.mcp.json](/Users/Niwat.yah/flutter_widgetbook_3.0/mcp-server/examples/codex-chatgpt-agent.remote-bridge.mcp.json)
 - [examples/README.md](/Users/Niwat.yah/flutter_widgetbook_3.0/mcp-server/examples/README.md)
 
 ## 🌐 Hosted Remote Onboarding
 
 ถ้าต้องการให้ external users หรือ agents ใช้งาน MCP นี้แบบ **zero-clone** ให้ deploy `streamable-http` entrypoint แล้วแจก remote URL แทน local path
 
+สำหรับ desktop clients อย่าง Codex / Claude Code / Cursor:
+
+- ถ้า client รับ remote MCP URL ตรง ๆ ได้และคุณ verify เองแล้ว สามารถใช้ remote URL flow ตรงได้
+- ถ้ายังไม่เคย verify host app นั้นกับ remote URL flow มาก่อน ให้เริ่มจาก direct remote URL + `Authorization: Bearer ...` ก่อน แล้วค่อย fallback ไป `mcp-remote` bridge ถ้า host app นั้นมีปัญหากับ native remote flow
+
 ### Start hosted endpoint
 
 ```bash
 cd mcp-server
+MCP_REMOTE_BEARER_TOKENS=change-me \
 MCP_REMOTE_PROXY_SHARED_SECRET=change-me \
 MCP_REMOTE_REFRESH_TOKEN=change-refresh-token \
 npm run start:http
@@ -100,6 +108,7 @@ npm run start:http
 
 ค่า env สำคัญ:
 
+- `MCP_REMOTE_BEARER_TOKEN` หรือ `MCP_REMOTE_BEARER_TOKENS`: public bearer token สำหรับ external clients
 - `MCP_REMOTE_PROXY_SHARED_SECRET`: shared secret ระหว่าง reverse proxy กับ MCP process
 - `MCP_REMOTE_REFRESH_TOKEN`: token สำหรับ `POST /admin/refresh`
 - `MCP_REMOTE_CHANNEL`: rollout channel เช่น `production` หรือ `staging`
@@ -108,23 +117,53 @@ npm run start:http
 
 ### Public client flow
 
-1. client เชื่อมไปที่ hosted endpoint เช่น `https://mcp.example.com/mcp`
-2. client authenticate กับ reverse proxy / API gateway ของคุณ
-3. proxy validate token แล้ว inject internal headers ให้ MCP process:
-   - `x-mcp-authenticated-user`
-   - `x-mcp-proxy-secret`
+1. client เชื่อมไปที่ hosted endpoint เช่น `https://flutter-widget-wallet-mcp.onrender.com/mcp`
+2. client ส่ง `Authorization: Bearer <token>` ตรงไปยัง service
+3. service validate token จาก `MCP_REMOTE_BEARER_TOKEN` หรือ `MCP_REMOTE_BEARER_TOKENS`
 
 หมายเหตุ:
 
 - remote endpoint เป็น **snapshot of deployed clone** ไม่ใช่ live local working tree
 - caller ไม่สามารถ override `repo`, `branch`, หรือ `commit` ผ่าน request ได้
 - remote endpoint expose เฉพาะ read-only tools
+- trusted-proxy headers (`x-mcp-authenticated-user`, `x-mcp-proxy-secret`) ยังรองรับอยู่เพื่อ backward compatibility แต่ไม่ใช่เส้นทาง onboarding หลักอีกแล้ว
 
-### Remote config example
+### Remote config examples
 
-ดูตัวอย่าง generic remote config ได้ที่:
+ใช้ได้ 2 แบบ:
 
-- [remote.generic.mcp.json](/Users/Niwat.yah/flutter_widgetbook_3.0/mcp-server/examples/remote.generic.mcp.json)
+1. direct remote URL
+2. `mcp-remote` bridge
+
+ตัวอย่างไฟล์:
+
+- direct remote URL: [remote.generic.mcp.json](/Users/Niwat.yah/flutter_widgetbook_3.0/mcp-server/examples/remote.generic.mcp.json)
+- generic `mcp-remote` bridge: [mcp-remote.generic.mcp.json](/Users/Niwat.yah/flutter_widgetbook_3.0/mcp-server/examples/mcp-remote.generic.mcp.json)
+- Codex-focused bridge example: [codex-chatgpt-agent.remote-bridge.mcp.json](/Users/Niwat.yah/flutter_widgetbook_3.0/mcp-server/examples/codex-chatgpt-agent.remote-bridge.mcp.json)
+
+ตัวอย่าง bridge command:
+
+```json
+{
+  "mcpServers": {
+    "flutter-widget-wallet-mcp-remote": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "https://mcp.example.com/mcp",
+        "--header",
+        "Authorization: Bearer <EDGE_ACCESS_TOKEN>"
+      ]
+    }
+  }
+}
+```
+
+หมายเหตุ:
+
+- `Authorization` เป็น public client auth ที่ service เดิมรับตรงได้แล้วผ่าน `MCP_REMOTE_BEARER_TOKEN(S)`
+- ห้ามแจก `MCP_REMOTE_PROXY_SHARED_SECRET` หรือ internal headers ให้ client ภายนอก
+- ถ้ากำลังทำ onboarding ให้ Codex เป็น client แรก แนะนำให้ลอง direct remote URL บน `https://flutter-widget-wallet-mcp.onrender.com/mcp` ก่อน
 
 ### Health / freshness surface
 
@@ -265,6 +304,7 @@ node http-server.js
 - Local `stdio` officially supported: Claude Code, Codex, Cursor
 - Remote `streamable-http` officially supported: MCP SDK clients ที่ใช้ `StreamableHTTPClientTransport`, และ generic remote-URL clients ตาม [remote.generic.mcp.json](/Users/Niwat.yah/flutter_widgetbook_3.0/mcp-server/examples/remote.generic.mcp.json)
 - Remote best-effort / unverified: Claude Code, Codex, Cursor ในโหมด remote URL โดยตรง
+- Recommended onboarding path สำหรับ external access ตอนนี้คือ direct remote URL + `Authorization: Bearer ...`; ถ้า host app ใดมีปัญหากับ native remote flow ค่อย fallback ไป `mcp-remote` bridge ตาม [mcp-remote.generic.mcp.json](/Users/Niwat.yah/flutter_widgetbook_3.0/mcp-server/examples/mcp-remote.generic.mcp.json) หรือ [codex-chatgpt-agent.remote-bridge.mcp.json](/Users/Niwat.yah/flutter_widgetbook_3.0/mcp-server/examples/codex-chatgpt-agent.remote-bridge.mcp.json)
 
 ## Operations Docs
 
@@ -302,7 +342,7 @@ Protocol-level verification against a REAL hosted endpoint you already deployed 
 
 ```bash
 MCP_REMOTE_BASE_URL="https://<your-host>/mcp" \
-MCP_REMOTE_PROXY_SHARED_SECRET="<same-secret-as-deploy>" \
+MCP_REMOTE_BEARER_TOKEN="<same-bearer-token-as-deploy>" \
 MCP_REMOTE_REFRESH_TOKEN="<same-refresh-token>" \
 npm run verify:mcp:remote
 ```
