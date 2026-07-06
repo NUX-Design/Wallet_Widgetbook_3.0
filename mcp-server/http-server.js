@@ -28,6 +28,15 @@ function parseInteger(value, defaultValue) {
   return Number.isFinite(parsed) ? parsed : defaultValue;
 }
 
+function parseCsvSet(...values) {
+  return new Set(
+    values
+      .flatMap((value) => String(value ?? "").split(","))
+      .map((value) => value.trim())
+      .filter(Boolean),
+  );
+}
+
 function firstHeaderValue(value) {
   if (Array.isArray(value)) return value[0] ?? "";
   return typeof value === "string" ? value : "";
@@ -146,6 +155,15 @@ export function resolveRemoteHttpOptions(rawOptions = {}, env = process.env) {
   const proxySecretHeader =
     rawOptions.proxySecretHeader ?? env.MCP_REMOTE_PROXY_SECRET_HEADER ?? "x-mcp-proxy-secret";
   const proxySharedSecret = rawOptions.proxySharedSecret ?? env.MCP_REMOTE_PROXY_SHARED_SECRET ?? "";
+  const bearerTokenHeader =
+    rawOptions.bearerTokenHeader ?? env.MCP_REMOTE_BEARER_TOKEN_HEADER ?? "authorization";
+  const bearerTokenPrefix =
+    rawOptions.bearerTokenPrefix ?? env.MCP_REMOTE_BEARER_TOKEN_PREFIX ?? "Bearer";
+  const bearerTokens =
+    rawOptions.bearerTokens ??
+    parseCsvSet(env.MCP_REMOTE_BEARER_TOKEN, env.MCP_REMOTE_BEARER_TOKENS);
+  const bearerPrincipal =
+    rawOptions.bearerPrincipal ?? env.MCP_REMOTE_BEARER_PRINCIPAL ?? "external-client";
   const refreshTokenHeader =
     rawOptions.refreshTokenHeader ?? env.MCP_REMOTE_REFRESH_TOKEN_HEADER ?? "x-mcp-refresh-token";
   const refreshToken = rawOptions.refreshToken ?? env.MCP_REMOTE_REFRESH_TOKEN ?? "";
@@ -187,6 +205,10 @@ export function resolveRemoteHttpOptions(rawOptions = {}, env = process.env) {
     authenticatedUserHeader,
     proxySecretHeader,
     proxySharedSecret,
+    bearerTokenHeader,
+    bearerTokenPrefix,
+    bearerTokens,
+    bearerPrincipal,
     refreshTokenHeader,
     refreshToken,
     allowAnonymousHealth,
@@ -200,13 +222,33 @@ export function resolveRemoteHttpOptions(rawOptions = {}, env = process.env) {
 }
 
 function authenticateRequest(req, options) {
+  const bearerHeader = firstHeaderValue(req.headers[options.bearerTokenHeader.toLowerCase()]).trim();
   const principal = firstHeaderValue(req.headers[options.authenticatedUserHeader.toLowerCase()]).trim();
   const proxySecret = firstHeaderValue(req.headers[options.proxySecretHeader.toLowerCase()]).trim();
+  const bearerPrefix = `${options.bearerTokenPrefix} `;
+
+  if (options.bearerTokens.size > 0 && bearerHeader.startsWith(bearerPrefix)) {
+    const bearerToken = bearerHeader.slice(bearerPrefix.length).trim();
+    if (options.bearerTokens.has(bearerToken)) {
+      return {
+        ok: true,
+        principal: options.bearerPrincipal,
+        authMode: "bearer-token",
+      };
+    }
+
+    return {
+      ok: false,
+      statusCode: 401,
+      message: `Missing or invalid bearer token header "${options.bearerTokenHeader}".`,
+    };
+  }
 
   if (!options.requireProxyAuth) {
     return {
       ok: true,
       principal: principal || "anonymous",
+      authMode: "anonymous",
     };
   }
 
@@ -229,6 +271,7 @@ function authenticateRequest(req, options) {
   return {
     ok: true,
     principal,
+    authMode: "trusted-proxy",
   };
 }
 
@@ -259,6 +302,7 @@ async function handleMcpRequest(req, res, requestUrl, remoteState) {
       method: req.method,
       path: requestUrl.pathname,
       principal: auth.principal,
+      authMode: auth.authMode,
       retryAfterSeconds,
     });
     json(res, 429, {
@@ -301,6 +345,7 @@ async function handleMcpRequest(req, res, requestUrl, remoteState) {
     method: req.method,
     path: requestUrl.pathname,
     principal: auth.principal,
+    authMode: auth.authMode,
     namespace: snapshot.namespace,
     commitSha: snapshot.commitSha,
     repoIdentity: snapshot.repoIdentity,
@@ -369,6 +414,10 @@ export async function startRemoteHttpServer(rawOptions = {}) {
           toolCount: REMOTE_READ_ONLY_TOOL_DEFINITIONS.length,
           toolNames: REMOTE_READ_ONLY_TOOL_DEFINITIONS.map((tool) => tool.name),
           authBoundary: {
+            supportsBearerToken: options.bearerTokens.size > 0,
+            bearerTokenHeader: options.bearerTokenHeader,
+            bearerTokenPrefix: options.bearerTokenPrefix,
+            bearerPrincipal: options.bearerPrincipal,
             requiresTrustedProxy: options.requireProxyAuth,
             authenticatedUserHeader: options.authenticatedUserHeader,
             proxySecretHeader: options.proxySecretHeader,

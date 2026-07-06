@@ -71,4 +71,4 @@
 
 - สำหรับ 3 client ข้างบน repo นี้ยังไม่มี automated host-app verification ของ remote URL integration โดยตรง
 - จนกว่าจะมี client-specific remote smoke checks ให้ถือว่า local `stdio` คือ officially supported path สำหรับ desktop IDE/agent hosts เหล่านี้
-- สำหรับ external desktop-host onboarding ที่ไม่อยาก clone repo แต่ก็ยังไม่อยากพึ่ง remote URL flow ตรง ๆ ให้ใช้ `mcp-remote` bridge เป็นเส้นทาง recommended แทน โดยอ้างอิง `examples/mcp-remote.generic.mcp.json` หรือ `examples/codex-chatgpt-agent.remote-bridge.mcp.json`
+- สำหรับ external onboarding ของ hosted endpoint ตอนนี้ใช้ direct remote URL + `Authorization: Bearer ...` เป็นเส้นทางหลัก และใช้ `mcp-remote` bridge เป็น fallback เมื่อ host app ใดมีปัญหากับ native remote URL flow

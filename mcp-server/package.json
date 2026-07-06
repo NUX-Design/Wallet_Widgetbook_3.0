@@ -6,8 +6,6 @@
     "scripts": {
         "start": "node index.js",
         "start:http": "node http-server.js",
-        "start:edge": "node edge-proxy.js",
-        "start:dev-edge-proxy": "node scripts/dev-edge-proxy.js",
         "install-mcp": "node install.js",
         "check:mcp-syntax": "node scripts/check-syntax.js",
         "verify:mcp": "node scripts/verify-mcp.js",

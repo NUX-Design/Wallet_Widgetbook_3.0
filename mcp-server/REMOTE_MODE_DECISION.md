@@ -21,14 +21,12 @@
 
 ## Auth Boundary
 
-- public client ต้อง authenticate ที่ reverse proxy / deployment edge ก่อนถึง MCP process
-- MCP process เชื่อใจเฉพาะ request ที่ proxy inject:
+- public client สามารถ authenticate ตรงกับ MCP process ผ่าน `Authorization: Bearer ...` ได้ เมื่อ server ถูกตั้งค่า `MCP_REMOTE_BEARER_TOKEN` หรือ `MCP_REMOTE_BEARER_TOKENS`
+- trusted-proxy mode เดิมยังรองรับอยู่เพื่อ backward compatibility:
   - authenticated principal ผ่าน header `x-mcp-authenticated-user` (configurable)
   - proxy shared secret ผ่าน header `x-mcp-proxy-secret` (configurable)
-- remote endpoint จะ reject request ถ้า:
-  - ไม่มี authenticated principal จาก trusted proxy
-  - shared secret ไม่ตรงกับค่า env
-- client ภายนอกไม่ควรส่ง internal headers ตรง ๆ; ให้ส่ง edge auth เช่น `Authorization: Bearer ...` ไปยัง proxy แล้วให้ proxy map ต่อเอง
+- remote endpoint จะ reject request ถ้าไม่มี bearer token ที่ถูกต้อง และไม่มี trusted-proxy headers ที่ถูกต้องตามค่า env
+- client ภายนอกไม่ควรส่ง `x-mcp-proxy-secret` ตรง ๆ; ถ้าระบบใดยังใช้ proxy mode ให้ถือว่าเป็น internal integration path
 
 ## Read-Only Tool Boundary
 
