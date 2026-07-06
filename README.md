@@ -27,7 +27,7 @@ This repo serves as the source-of-truth for a Flutter widget library targeted at
 
 1. Ready-to-reuse UI components
 2. A consistent Design System and theme/token foundation
-3. Agent tooling that lets AI assistants read, search, and reuse components more accurately
+3. Agent tooling that lets AI agents read, search, and reuse components more accurately
 
 Overview of what this repo covers:
 
@@ -194,7 +194,7 @@ Use the remote MCP URL with an `Authorization` header:
 ```json
 {
   "mcpServers": {
-    "flutter-widget-wallet-mcp-remote": {
+    "flutter-widget-wallet-mcp": {
       "url": "https://flutter-widget-wallet-mcp.onrender.com/mcp",
       "headers": {
         "Authorization": "Bearer <EDGE_ACCESS_TOKEN>"
@@ -211,7 +211,7 @@ Use the same remote MCP URL shape:
 ```json
 {
   "mcpServers": {
-    "flutter-widget-wallet-mcp-remote": {
+    "flutter-widget-wallet-mcp": {
       "url": "https://flutter-widget-wallet-mcp.onrender.com/mcp",
       "headers": {
         "Authorization": "Bearer <EDGE_ACCESS_TOKEN>"
@@ -228,7 +228,7 @@ If the version of Kiro you're using supports remote MCP with a `url` + `headers`
 ```json
 {
   "mcpServers": {
-    "flutter-widget-wallet-mcp-remote": {
+    "flutter-widget-wallet-mcp": {
       "url": "https://flutter-widget-wallet-mcp.onrender.com/mcp",
       "headers": {
         "Authorization": "Bearer <EDGE_ACCESS_TOKEN>"
