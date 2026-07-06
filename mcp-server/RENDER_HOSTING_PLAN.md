@@ -71,6 +71,20 @@ Prompt ตัวอย่างที่ใช้กับ Codex ได้ทั
 | Env vars (secret, `sync: false` — ตั้งค่าใน Dashboard เท่านั้น ไม่ commit ลง Blueprint) | `MCP_REMOTE_PROXY_SHARED_SECRET`, `MCP_REMOTE_REFRESH_TOKEN`, `MCP_REMOTE_COMMIT_SHA` |
 | Auto-deploy | `autoDeployTrigger: commit` — เมื่อตั้ง `rootDir: mcp-server` แล้ว Render จะ trigger deploy เฉพาะตอนไฟล์ใต้ `mcp-server/` เปลี่ยนเท่านั้น |
 
+สำหรับ external onboarding จริง ให้ deploy web service เพิ่มอีกตัวจาก Blueprint เดียวกัน:
+
+| ค่า | Setting |
+|---|---|
+| Service name | `flutter-widget-wallet-mcp-edge` |
+| Root directory (`rootDir`) | `mcp-server` |
+| Build command | `npm ci` |
+| Start command | `node edge-proxy.js` |
+| Health check | HTTP path `/health` |
+| Env vars (plain) | `MCP_EDGE_HOST=0.0.0.0`, `MCP_EDGE_PORT=10000`, `MCP_EDGE_UPSTREAM_BASE_URL=https://flutter-widget-wallet-mcp.onrender.com`, `MCP_EDGE_AUTHENTICATED_USER=external-client` |
+| Env vars (secret) | `MCP_EDGE_BEARER_TOKENS`, `MCP_EDGE_UPSTREAM_PROXY_SHARED_SECRET` |
+
+`MCP_EDGE_UPSTREAM_PROXY_SHARED_SECRET` ต้องใช้ค่าเดียวกับ `MCP_REMOTE_PROXY_SHARED_SECRET` ของ service หลัก เพื่อให้ edge proxy inject internal header เข้า upstream MCP ได้ถูกต้อง
+
 **สำคัญ — port binding**: `http-server.js` อ่าน `MCP_REMOTE_HOST` และ `MCP_REMOTE_PORT` จาก env โดยตรง ไม่ได้อ่าน Render's ตัว `PORT` ที่ inject มาให้อัตโนมัติ ดังนั้นต้องตั้งค่าทั้งสอง env var นี้เอง:
 
 - `MCP_REMOTE_HOST=0.0.0.0` — Render's edge proxy เชื่อมต่อ process ผ่าน internal IP ไม่ใช่ loopback, ถ้า bind แค่ `127.0.0.1` (ค่า default เดิมของโค้ด) proxy จะต่อไม่ติดและ health check จะ fail

@@ -83,11 +83,18 @@ Client-specific templates:
 - [codex-chatgpt-agent.mcp.json](/Users/Niwat.yah/flutter_widgetbook_3.0/mcp-server/examples/codex-chatgpt-agent.mcp.json)
 - [cursor.mcp.json](/Users/Niwat.yah/flutter_widgetbook_3.0/mcp-server/examples/cursor.mcp.json)
 - [remote.generic.mcp.json](/Users/Niwat.yah/flutter_widgetbook_3.0/mcp-server/examples/remote.generic.mcp.json)
+- [mcp-remote.generic.mcp.json](/Users/Niwat.yah/flutter_widgetbook_3.0/mcp-server/examples/mcp-remote.generic.mcp.json)
+- [codex-chatgpt-agent.remote-bridge.mcp.json](/Users/Niwat.yah/flutter_widgetbook_3.0/mcp-server/examples/codex-chatgpt-agent.remote-bridge.mcp.json)
 - [examples/README.md](/Users/Niwat.yah/flutter_widgetbook_3.0/mcp-server/examples/README.md)
 
 ## 🌐 Hosted Remote Onboarding
 
 ถ้าต้องการให้ external users หรือ agents ใช้งาน MCP นี้แบบ **zero-clone** ให้ deploy `streamable-http` entrypoint แล้วแจก remote URL แทน local path
+
+สำหรับ desktop clients อย่าง Codex / Claude Code / Cursor:
+
+- ถ้า client รับ remote MCP URL ตรง ๆ ได้และคุณ verify เองแล้ว สามารถใช้ remote URL flow ตรงได้
+- ถ้ายังไม่เคย verify host app นั้นกับ remote URL flow มาก่อน ให้ใช้ `mcp-remote` bridge เป็นค่าเริ่มต้นก่อน เพราะเป็นเส้นทาง onboarding ที่ predictable กว่าใน `P8-04`
 
 ### Start hosted endpoint
 
@@ -106,6 +113,21 @@ npm run start:http
 - `MCP_REMOTE_COMMIT_SHA`: pin endpoint ให้ชี้ commit ที่ deploy อยู่
 - `MCP_REMOTE_DEPLOYED_AT`: เวลาที่ snapshot นี้ถูก deploy
 
+### Public edge proxy for real external onboarding
+
+ถ้าต้องการให้ external clients ใช้งานผ่าน Render แบบ public จริง ให้ deploy `edge-proxy.js` เป็น web service แยกอีกตัวหนึ่ง แล้วให้ client ยิงเข้า proxy ตัวนี้แทนการยิง `flutter-widget-wallet-mcp.onrender.com` ตรง ๆ
+
+env vars ของ edge proxy:
+
+- `MCP_EDGE_HOST=0.0.0.0`
+- `MCP_EDGE_PORT=10000`
+- `MCP_EDGE_UPSTREAM_BASE_URL=https://flutter-widget-wallet-mcp.onrender.com`
+- `MCP_EDGE_AUTHENTICATED_USER=external-client`
+- `MCP_EDGE_BEARER_TOKEN` หรือ `MCP_EDGE_BEARER_TOKENS` = public bearer token ที่จะแจก client
+- `MCP_EDGE_UPSTREAM_PROXY_SHARED_SECRET` = ค่าเดียวกับ `MCP_REMOTE_PROXY_SHARED_SECRET` ของ service MCP หลัก
+
+Blueprint ที่ repo root ตอนนี้มี service นี้ให้แล้วในชื่อ `flutter-widget-wallet-mcp-edge`
+
 ### Public client flow
 
 1. client เชื่อมไปที่ hosted endpoint เช่น `https://mcp.example.com/mcp`
@@ -119,12 +141,45 @@ npm run start:http
 - remote endpoint เป็น **snapshot of deployed clone** ไม่ใช่ live local working tree
 - caller ไม่สามารถ override `repo`, `branch`, หรือ `commit` ผ่าน request ได้
 - remote endpoint expose เฉพาะ read-only tools
+- สำหรับการทดลอง `P8-04` บนเครื่อง local ก่อนมี proxy จริงใน production สามารถใช้ dev helper ได้ด้วย `npm run start:dev-edge-proxy` แล้วตั้งค่า env vars `DEV_EDGE_PROXY_TARGET`, `DEV_EDGE_PROXY_BEARER_TOKEN`, และ `DEV_EDGE_PROXY_SHARED_SECRET`
 
-### Remote config example
+### Remote config examples
 
-ดูตัวอย่าง generic remote config ได้ที่:
+ใช้ได้ 2 แบบ:
 
-- [remote.generic.mcp.json](/Users/Niwat.yah/flutter_widgetbook_3.0/mcp-server/examples/remote.generic.mcp.json)
+1. direct remote URL
+2. `mcp-remote` bridge
+
+ตัวอย่างไฟล์:
+
+- direct remote URL: [remote.generic.mcp.json](/Users/Niwat.yah/flutter_widgetbook_3.0/mcp-server/examples/remote.generic.mcp.json)
+- generic `mcp-remote` bridge: [mcp-remote.generic.mcp.json](/Users/Niwat.yah/flutter_widgetbook_3.0/mcp-server/examples/mcp-remote.generic.mcp.json)
+- Codex-focused bridge example: [codex-chatgpt-agent.remote-bridge.mcp.json](/Users/Niwat.yah/flutter_widgetbook_3.0/mcp-server/examples/codex-chatgpt-agent.remote-bridge.mcp.json)
+
+ตัวอย่าง bridge command:
+
+```json
+{
+  "mcpServers": {
+    "flutter-widget-wallet-mcp-remote": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "https://mcp.example.com/mcp",
+        "--header",
+        "Authorization: Bearer <EDGE_ACCESS_TOKEN>"
+      ]
+    }
+  }
+}
+```
+
+หมายเหตุ:
+
+- `Authorization` เป็น edge-facing auth ระหว่าง client กับ proxy/API gateway ของคุณ
+- ห้ามแจก `x-mcp-proxy-secret` ให้ client ภายนอกโดยตรง
+- ถ้ากำลังทำ onboarding ให้ Codex เป็น client แรก แนะนำให้เริ่มจาก bridge example ก่อน แล้วค่อยพิจารณา native remote URL flow ภายหลัง
+- ถ้าต้องการ production external path บน Render จริง ให้ใช้ URL ของ edge proxy service เช่น `https://flutter-widget-wallet-mcp-edge.onrender.com/mcp` แทน URL ของ MCP core โดยตรง
 
 ### Health / freshness surface
 
@@ -265,6 +320,7 @@ node http-server.js
 - Local `stdio` officially supported: Claude Code, Codex, Cursor
 - Remote `streamable-http` officially supported: MCP SDK clients ที่ใช้ `StreamableHTTPClientTransport`, และ generic remote-URL clients ตาม [remote.generic.mcp.json](/Users/Niwat.yah/flutter_widgetbook_3.0/mcp-server/examples/remote.generic.mcp.json)
 - Remote best-effort / unverified: Claude Code, Codex, Cursor ในโหมด remote URL โดยตรง
+- Recommended onboarding path สำหรับ desktop hosts ที่ยังไม่ verify remote URL flow: `mcp-remote` bridge ตาม [mcp-remote.generic.mcp.json](/Users/Niwat.yah/flutter_widgetbook_3.0/mcp-server/examples/mcp-remote.generic.mcp.json) หรือ [codex-chatgpt-agent.remote-bridge.mcp.json](/Users/Niwat.yah/flutter_widgetbook_3.0/mcp-server/examples/codex-chatgpt-agent.remote-bridge.mcp.json)
 
 ## Operations Docs
 

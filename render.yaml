@@ -25,3 +25,25 @@ services:
         sync: false
       - key: MCP_REMOTE_COMMIT_SHA
         sync: false
+  - type: web
+    name: flutter-widget-wallet-mcp-edge
+    runtime: node
+    plan: free
+    rootDir: mcp-server
+    buildCommand: npm ci
+    startCommand: node edge-proxy.js
+    healthCheckPath: /health
+    autoDeployTrigger: commit
+    envVars:
+      - key: MCP_EDGE_HOST
+        value: 0.0.0.0
+      - key: MCP_EDGE_PORT
+        value: 10000
+      - key: MCP_EDGE_UPSTREAM_BASE_URL
+        value: https://flutter-widget-wallet-mcp.onrender.com
+      - key: MCP_EDGE_AUTHENTICATED_USER
+        value: external-client
+      - key: MCP_EDGE_BEARER_TOKENS
+        sync: false
+      - key: MCP_EDGE_UPSTREAM_PROXY_SHARED_SECRET
+        sync: false
