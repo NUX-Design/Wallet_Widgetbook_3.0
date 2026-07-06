@@ -1,0 +1,7 @@
+interface:
+  display_name: "Flutter Widget Adapt"
+  short_description: "Make an imported widget feel native to the target Flutter repo"
+  default_prompt: "Use $flutter-widget-adapt to adapt the imported Flutter widget so it matches this repo's theme, localization, and code patterns."
+
+policy:
+  allow_implicit_invocation: true

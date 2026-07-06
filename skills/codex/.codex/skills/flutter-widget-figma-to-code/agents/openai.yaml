@@ -1,0 +1,7 @@
+interface:
+  display_name: "Flutter Widget Figma To Code"
+  short_description: "Turn Figma intent into a Flutter widget using MCP patterns"
+  default_prompt: "Use $flutter-widget-figma-to-code to turn this Figma or design handoff into a Flutter widget aligned with flutter-widget-wallet-mcp patterns."
+
+policy:
+  allow_implicit_invocation: true

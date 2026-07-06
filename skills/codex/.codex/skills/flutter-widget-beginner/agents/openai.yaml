@@ -1,0 +1,7 @@
+interface:
+  display_name: "Flutter Widget Beginner"
+  short_description: "Scan or bootstrap a Flutter widget workspace with guided questions"
+  default_prompt: "Use $flutter-widget-beginner to scan this workspace and, after asking the required scope questions, bootstrap the Flutter widget foundation needed to start using flutter-widget-wallet-mcp."
+
+policy:
+  allow_implicit_invocation: true

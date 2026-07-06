@@ -1,0 +1,7 @@
+interface:
+  display_name: "Flutter Widget Install"
+  short_description: "Install a widget from flutter-widget-wallet-mcp into the current repo"
+  default_prompt: "Use $flutter-widget-install to bring the selected Flutter widget from flutter-widget-wallet-mcp into this project and adapt it to the local structure."
+
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Flutter Widget Search"
+  short_description: "Find the best matching widget from flutter-widget-wallet-mcp"
+  default_prompt: "Use $flutter-widget-search to find the best matching Flutter widgets in flutter-widget-wallet-mcp for this use case."
+
+policy:
+  allow_implicit_invocation: true

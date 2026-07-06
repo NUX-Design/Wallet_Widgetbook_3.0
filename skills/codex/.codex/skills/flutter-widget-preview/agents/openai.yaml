@@ -1,0 +1,7 @@
+interface:
+  display_name: "Flutter Widget Preview"
+  short_description: "Create or refresh previews and Widgetbook use cases"
+  default_prompt: "Use $flutter-widget-preview to add or update the preview and Widgetbook coverage for this Flutter widget."
+
+policy:
+  allow_implicit_invocation: true

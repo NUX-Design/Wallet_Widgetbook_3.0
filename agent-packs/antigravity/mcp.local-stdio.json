@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "flutter-widget-wallet-mcp": {
+      "command": "node",
+      "args": [
+        "/ABSOLUTE/PATH/TO/flutter_widgetbook_3.0/mcp-server/index.js"
+      ]
+    }
+  }
+}
