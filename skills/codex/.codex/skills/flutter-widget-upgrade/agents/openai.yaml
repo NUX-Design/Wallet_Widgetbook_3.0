@@ -1,0 +1,7 @@
+interface:
+  display_name: "Flutter Widget Upgrade"
+  short_description: "Refresh a local widget against the latest MCP source-of-truth"
+  default_prompt: "Use $flutter-widget-upgrade to compare this local widget against flutter-widget-wallet-mcp and upgrade it safely."
+
+policy:
+  allow_implicit_invocation: true

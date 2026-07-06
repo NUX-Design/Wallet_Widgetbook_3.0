@@ -1,0 +1,7 @@
+interface:
+  display_name: "Flutter Widget Audit"
+  short_description: "Review a widget integration for drift, gaps, and regressions"
+  default_prompt: "Use $flutter-widget-audit to audit this Flutter widget integration for theme, localization, preview, test, and design-system alignment issues."
+
+policy:
+  allow_implicit_invocation: true

@@ -1,7 +1,7 @@
 # MCP Production Tasks
 
 สร้างไฟล์เมื่อ: `2026-07-04 12:54:27 +07`
-อัปเดตล่าสุดเมื่อ: `2026-07-06 19:23:10 +0700`
+อัปเดตล่าสุดเมื่อ: `2026-07-06 19:46:20 +0700`
 
 เอกสารนี้แตกจาก [mcp-server/PRODUCTION_READY_PLAN.md](mcp-server/PRODUCTION_READY_PLAN.md) ให้เป็น execution checklist สำหรับยกระดับ `flutter-widget-wallet-mcp` ไปสู่ production-ready
 
@@ -674,9 +674,9 @@ Lane: Domain/Auth
 
 ### P8-04: Multi-client onboarding บน service เดิมด้วย direct bearer auth
 
-- [ ] เพิ่มไฟล์ตัวอย่าง config `mcp-remote` bridge ใน `mcp-server/examples/`
-- [ ] ทดสอบ bridge จริงกับ client อย่างน้อย 1 ตัว (แนะนำ Codex ก่อน)
-- [ ] อัปเดต `README.md` / `COMPATIBILITY_POLICY.md` ให้ระบุ direct remote URL + `Authorization: Bearer ...` เป็นทางหลัก และ `mcp-remote` bridge เป็น fallback
+- [x] เพิ่มไฟล์ตัวอย่าง config `mcp-remote` bridge ใน `mcp-server/examples/`
+- [x] ทดสอบ bridge จริงกับ client อย่างน้อย 1 ตัว (แนะนำ Codex ก่อน)
+- [x] อัปเดต `README.md` / `COMPATIBILITY_POLICY.md` ให้ระบุ direct remote URL + `Authorization: Bearer ...` เป็นทางหลัก และ `mcp-remote` bridge เป็น fallback
 
 วิธีทำ:
 - เพิ่มไฟล์ตัวอย่าง config ใหม่ใน `mcp-server/examples/` ที่เรียก `npx mcp-remote https://<domain>/mcp`
@@ -733,6 +733,21 @@ Step-by-step สำหรับงานจริง:
 - ไฟล์ example config ที่เพิ่มจริง
 - ผลทดสอบกับ client อย่างน้อย 1 ตัว
 - doc diff ใน `README.md` และ `COMPATIBILITY_POLICY.md`
+
+ผลที่บันทึกจริง:
+- service จริงที่ใช้ต่อคือ `https://flutter-widget-wallet-mcp.onrender.com/mcp` (service id `srv-d95m7oa8qa3s73e6ahg0`) โดยไม่ต้องเพิ่ม Render service ตัวที่สอง
+- ตั้งค่า `MCP_REMOTE_BEARER_TOKENS` บน Render service เดิม และ redeploy จน `/health` กับ `/info` ชี้ commit `9652855e8536d5bbf3b3db4a7b498c683b522130`
+- `/info` ยืนยัน `authBoundary.supportsBearerToken: true`
+- Codex host-app ทดสอบ MCP ได้จริงแล้วทั้งแบบ bridge/local rehearsal และแบบ production direct URL
+- `cd mcp-server && MCP_REMOTE_BASE_URL="https://flutter-widget-wallet-mcp.onrender.com/mcp" MCP_REMOTE_BEARER_TOKEN="<token>" MCP_REMOTE_REFRESH_TOKEN="<refresh-token>" npm run verify:mcp:remote` ผ่านครบ `8/8`
+
+หลักฐานไฟล์:
+- [mcp-server/http-server.js](/Users/Niwat.yah/flutter_widgetbook_3.0/mcp-server/http-server.js)
+- [mcp-server/examples/remote.generic.mcp.json](/Users/Niwat.yah/flutter_widgetbook_3.0/mcp-server/examples/remote.generic.mcp.json)
+- [mcp-server/examples/mcp-remote.generic.mcp.json](/Users/Niwat.yah/flutter_widgetbook_3.0/mcp-server/examples/mcp-remote.generic.mcp.json)
+- [mcp-server/examples/codex-chatgpt-agent.remote-bridge.mcp.json](/Users/Niwat.yah/flutter_widgetbook_3.0/mcp-server/examples/codex-chatgpt-agent.remote-bridge.mcp.json)
+- [mcp-server/README.md](/Users/Niwat.yah/flutter_widgetbook_3.0/mcp-server/README.md)
+- [mcp-server/COMPATIBILITY_POLICY.md](/Users/Niwat.yah/flutter_widgetbook_3.0/mcp-server/COMPATIBILITY_POLICY.md)
 
 Depends on: P8-03
 

@@ -42,3 +42,138 @@ node install.js --client cursor --settings /absolute/path/to/mcp.json
 - ถ้า client ของคุณยังไม่ verify ว่ารับ remote MCP URL ตรง ๆ ได้ดี ให้ใช้ `mcp-remote` bridge เป็น fallback
 - `mcp-remote.generic.mcp.json` เป็นตัวอย่าง bridge แบบ generic
 - `codex-chatgpt-agent.remote-bridge.mcp.json` เป็นตัวอย่างที่ตั้งชื่อไฟล์ให้ตรงกับ Codex use case ของ `P8-04`
+
+## 3. Production quick configs
+
+แทน `<TOKEN>` ด้วยค่าจริงจาก `MCP_REMOTE_BEARER_TOKEN(S)` และใช้ endpoint เดียวกัน:
+
+```text
+https://flutter-widget-wallet-mcp.onrender.com/mcp
+```
+
+### Codex
+
+- `Name`: `flutter-widget-wallet-mcp`
+- `Transport`: `Streamable HTTP`
+- `URL`: `https://flutter-widget-wallet-mcp.onrender.com/mcp`
+- `Header`: `Authorization: Bearer <TOKEN>`
+
+### Claude Code
+
+ถ้า host app รองรับ remote URL ตรง:
+
+```json
+{
+  "mcpServers": {
+    "flutter-widget-wallet-mcp": {
+      "url": "https://flutter-widget-wallet-mcp.onrender.com/mcp",
+      "headers": {
+        "Authorization": "Bearer <TOKEN>"
+      }
+    }
+  }
+}
+```
+
+ถ้า remote URL flow ยังมีปัญหา ให้ fallback เป็น `mcp-remote` bridge:
+
+```json
+{
+  "mcpServers": {
+    "flutter-widget-wallet-mcp": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "https://flutter-widget-wallet-mcp.onrender.com/mcp",
+        "--header",
+        "Authorization: Bearer <TOKEN>"
+      ]
+    }
+  }
+}
+```
+
+### Cursor
+
+```json
+{
+  "mcpServers": {
+    "flutter-widget-wallet-mcp": {
+      "url": "https://flutter-widget-wallet-mcp.onrender.com/mcp",
+      "headers": {
+        "Authorization": "Bearer <TOKEN>"
+      }
+    }
+  }
+}
+```
+
+### Kiro
+
+ถ้า Kiro รองรับ remote MCP URL ตรง ให้ใช้ payload แบบ generic เดียวกับ Cursor:
+
+```json
+{
+  "mcpServers": {
+    "flutter-widget-wallet-mcp": {
+      "url": "https://flutter-widget-wallet-mcp.onrender.com/mcp",
+      "headers": {
+        "Authorization": "Bearer <TOKEN>"
+      }
+    }
+  }
+}
+```
+
+ถ้า Kiro รองรับเฉพาะ command-based MCP ให้ fallback เป็น `mcp-remote`:
+
+```json
+{
+  "mcpServers": {
+    "flutter-widget-wallet-mcp": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "https://flutter-widget-wallet-mcp.onrender.com/mcp",
+        "--header",
+        "Authorization: Bearer <TOKEN>"
+      ]
+    }
+  }
+}
+```
+
+### Other agents / generic MCP clients
+
+ใช้ direct remote URL ก่อน:
+
+```json
+{
+  "mcpServers": {
+    "flutter-widget-wallet-mcp": {
+      "url": "https://flutter-widget-wallet-mcp.onrender.com/mcp",
+      "headers": {
+        "Authorization": "Bearer <TOKEN>"
+      }
+    }
+  }
+}
+```
+
+ถ้า client นั้นรับ `url` ไม่ได้หรือมีปัญหากับ native remote flow ให้ fallback เป็น:
+
+```json
+{
+  "mcpServers": {
+    "flutter-widget-wallet-mcp": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "https://flutter-widget-wallet-mcp.onrender.com/mcp",
+        "--header",
+        "Authorization: Bearer <TOKEN>"
+      ]
+    }
+  }
+}
+```

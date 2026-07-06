@@ -1,476 +1,86 @@
-
 <img width="1920" height="1080" alt="Cover" src="https://github.com/user-attachments/assets/4e0d1102-da06-4f92-bbfc-20123db01353" />
 
-# Flutter Widgetbook Library 🚀
+# Flutter Widgetbook Library
 
 [![Flutter](https://img.shields.io/badge/Flutter-3.7.2+-02569B?logo=flutter)](https://flutter.dev)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-A Flutter design-system / widget-library repository with **Widgetbook previews**, **standalone preview entrypoints**, **localization generation**, **theme tokens**, and **reusable UI components** for financial applications.
+Flutter UI Library สำหรับ Dart/Flutter ที่โฟกัสงานแนว Finance, Wallet, และ Banking โดย repo นี้เป็นแหล่งรวม reusable widgets, Design System, Design Tokens, i18n, Themes, Foundation layers และ preview workflows ที่แปลงต่อมาจาก Figma design components เพื่อให้ทีมพัฒนาใช้งานซ้ำได้จริงในระดับ production
 
-## 📋 Table of Contents
+นอกจากฝั่ง UI แล้ว repo นี้ยังมี `mcp-server/` สำหรับเชื่อมต่อ AI agents ผ่าน Model Context Protocol (MCP) และมีเอกสารบริบทสำหรับ agent เช่น `AGENTS.md` และ `MEMORY.md` เพื่อให้ agent เข้าใจกฎของ repo, อ่าน source-of-truth ถูกจุด, และดึง widget/code metadata ไปใช้ได้อย่างเป็นระบบ
 
-- [Features](#-features)
-- [Quick Start](#-quick-start)
-- [Foundation Setup](#-foundation-setup)
-  - [1. Localization (i18n)](#1-localization-i18n)
-  - [2. Theme System](#2-theme-system)
-  - [3. Design Tokens](#3-design-tokens)
-  - [4. Reusable Widgets](#4-reusable-widgets)
-- [Project Structure](#-project-structure)
-- [Development Workflows](#-development-workflows)
-- [How to Apply to Your Project](#-how-to-apply-to-your-project)
-- [Available Components](#-available-components)
-- [Preview Widgets on External Devices](#-preview-widgets-on-external-devices)
-- [Contributing](#-contributing)
+## Table of Contents
 
----
+- [Repo นี้คืออะไร](#repo-นี้คืออะไร)
+- [สิ่งที่มีใน repo](#สิ่งที่มีใน-repo)
+- [Project Structure](#project-structure)
+- [Quick Start](#quick-start)
+- [Design System Foundation](#design-system-foundation)
+- [MCP Server และ Agent Skills](#mcp-server-และ-agent-skills)
+- [Setup MCP สำหรับ Codex, Claude Code, Kiro](#setup-mcp-สำหรับ-codex-claude-code-kiro)
+- [ทำไมการใช้ MCP + Skills ของ repo นี้จึงมีประโยชน์](#ทำไมการใช้-mcp--skills-ของ-repo-นี้จึงมีประโยชน์)
+- [Useful Commands](#useful-commands)
 
-## ✨ Features
+## Repo นี้คืออะไร
 
-- 🌍 **Multi-language Support** - 5 languages (EN, TH, ZH, RU, MY) with proper font handling
-- 🎨 **Complete Theme System** - Light/Dark mode with 100+ design tokens
-- 🧩 **Reusable Components** - Production-ready widgets for financial apps
-- 📚 **Widget Documentation** - Local guide/spec/context markdown next to widgets
-- 🧪 **Widgetbook + Standalone Previews** - Two preview workflows for shared widgets
-- 🤖 **Agent-Friendly Repo** - Local `AGENTS.md` and `MEMORY.md` define trusted workflows
-- 📱 **Multi-platform** - iOS, Android, Web, macOS, Linux, Windows
-- 🎯 **Type-safe Design Tokens** - Consistent colors across the app
-- ♿ **Responsive Design** - Adapts to different screen sizes
+repo นี้ทำหน้าที่เป็น source-of-truth ของ Flutter widget library สำหรับงานสายการเงิน โดยเน้น 3 เรื่องพร้อมกัน:
 
----
+1. UI Components ที่พร้อม reuse
+2. Design System และ theme/token foundations ที่สม่ำเสมอ
+3. Agent tooling สำหรับให้ AI assistants อ่าน ค้นหา และนำ component ไปใช้ต่อได้แม่นขึ้น
 
-## 📱 Platform Compatibility
+ภาพรวมของสิ่งที่ repo นี้ครอบคลุม:
 
-Widget Library นี้รองรับ platform versions ดังต่อไปนี้:
+- Flutter reusable widgets สำหรับ Finance / Wallet / Banking flows
+- Widgetbook catalog และ standalone previews สำหรับ inspect UI แยกชิ้น
+- Theme system ที่รองรับ light/dark
+- Design tokens ที่ดึงไปใช้ต่อได้แบบเป็นระบบ
+- Localization source + generator pipeline
+- Widget docs / metadata / previews ที่เกาะกับ source code จริง
+- MCP server สำหรับ AI agents ที่ต้องการค้นหา widget, อ่าน metadata, และดึงตัวอย่างโค้ด
 
-| Platform | Minimum Version | Notes |
-|----------|-----------------|-------|
-| **iOS** | 12.0+ | รองรับตั้งแต่ iPhone 5s ขึ้นไป |
-| **Android** | API 21 (Android 5.0 Lollipop)+ | ค่า default จาก Flutter SDK |
-| **Web** | Modern browsers | Chrome, Firefox, Safari, Edge |
-| **macOS** | 10.14+ | Mojave ขึ้นไป |
-| **Windows** | Windows 10+ | - |
-| **Linux** | Ubuntu 18.04+ | - |
+## สิ่งที่มีใน repo
 
-> [!NOTE]
-> Flutter ใช้ Skia rendering engine ของตัวเอง ทำให้ widget แสดงผลเหมือนกันในทุก OS version ที่รองรับ หากแอปหลักกำหนด minimum version ที่สูงกว่า (เช่น iOS 16+) widget library นี้จะทำงานได้ปกติโดยไม่มีผลกระทบใดๆ
+- `lib/widgets/` รวม reusable widgets หลัก เช่น button, card, drawer, receipt, input, avatar, tab, navigator bar, snack bar, loading, shortcut menu และอื่นๆ
+- `lib/config/themes/` เป็นศูนย์กลางของ theme primitives และ color tokens
+- `lib/l10n/localization.json` เป็น editable source of truth สำหรับข้อความหลายภาษา
+- `lib/widgetbook.dart` และ `lib/widgetbook_use_cases.dart` รองรับการ preview component ผ่าน Widgetbook
+- `mcp-server/` เป็น MCP server สำหรับให้ agent/tool ภายนอก query ข้อมูล widget และ design-system ได้
+- `AGENTS.md` และ `MEMORY.md` เป็น repo-specific agent context ที่ช่วยให้ agent ทำงานกับ repo นี้ได้ตรงกฎและตรงโครงสร้างจริง
 
----
+## Project Structure
 
-## 🚀 Quick Start
+```text
+lib/
+├── config/themes/            # Theme system, tokens, base theme
+├── generated/intl/           # Generated localization output
+├── l10n/                     # Localization source + ARB files
+├── providers/                # ThemeProvider / LocaleProvider
+├── widgets/                  # Reusable UI components
+├── main.dart                 # Demo app entry
+├── widgetbook.dart           # Widgetbook entry
+└── widgetbook_use_cases.dart # Manual Widgetbook use cases
+
+mcp-server/                   # MCP server for AI agents
+scripts/                      # Schema / docs tooling
+test/                         # Flutter tests
+task/                         # Backlog / execution tracking
+```
+
+## Quick Start
 
 ### Prerequisites
 
-- Flutter SDK ^3.7.2
+- Flutter SDK `^3.7.2`
 - Dart SDK
-- IDE (VS Code, Android Studio, or IntelliJ)
+- Node.js `18+` สำหรับ MCP tooling และ docs/schema scripts
 
-### Installation
+### Run the Flutter project
 
 ```bash
-# Clone the repository
-git clone https://github.com/nengniwatyah/Wi_Wallet_Flutter_Widget_2.0.git
-cd Wi_Wallet_Flutter_Widget_2.0
-
-# Install dependencies
 flutter pub get
-
-# Generate localization files
 dart run tool/generate_arb.dart
 flutter gen-l10n
-
-# Run the app
-flutter run
-```
-
-### Up-To-Date Repo Rules
-
-If you are using an AI agent or onboarding to the repository, prefer these files over broad overview docs when they disagree:
-
-1. `AGENTS.md`
-2. `MEMORY.md`
-3. live source files and build scripts
-
-This matters because some overview docs can lag behind the current Flutter tree.
-
----
-
-## 🏗️ Foundation Setup
-
-### 1. Localization (i18n)
-
-#### Step-by-Step Implementation
-
-**Step 1:** Add dependencies to `pubspec.yaml`
-
-```yaml
-dependencies:
-  flutter_localizations:
-    sdk: flutter
-  intl: ^0.20.2
-  google_fonts: ^6.1.0  # For multi-language font support
-```
-
-**Step 2:** Create `l10n.yaml` at project root
-
-```yaml
-arb-dir: lib/l10n
-template-arb-file: app_en.arb
-output-localization-file: app_localizations.dart
-output-class: AppLocalizations
-output-dir: lib/generated/intl
-```
-
-**Step 3:** Update `lib/l10n/localization.json`
-
-```json
-[
-  {
-    "Name": "app_name",
-    "EN": "My App",
-    "TH": "แอปของฉัน",
-    "description": "Application name"
-  },
-  {
-    "Name": "home",
-    "EN": "Home",
-    "TH": "หน้าหลัก"
-  },
-  {
-    "Name": "settings",
-    "EN": "Settings",
-    "TH": "ตั้งค่า"
-  }
-]
-```
-
-**Step 4:** Generate localization files
-
-```bash
-dart run tool/generate_arb.dart
-flutter gen-l10n
-```
-
-**Step 5:** Setup MaterialApp
-
-```dart
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:your_app/generated/intl/app_localizations.dart';
-
-MaterialApp(
-  localizationsDelegates: [
-    AppLocalizations.delegate,
-    GlobalMaterialLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
-  ],
-  supportedLocales: const [
-    Locale('en'),
-    Locale('th'),
-    Locale('zh'),
-  ],
-  // For Thai language, use Noto Sans Thai
-  theme: ThemeData(
-    textTheme: GoogleFonts.notoSansThaiTextTheme(),
-  ),
-)
-```
-
-**Step 6:** Use in widgets
-
-```dart
-Text(AppLocalizations.of(context)!.home)
-```
-
-#### Runtime Language Switching
-
-```dart
-// Create LocaleProvider
-class LocaleProvider extends ChangeNotifier {
-  Locale? _locale;
-  Locale? get locale => _locale;
-  
-  void setLocale(Locale newLocale) {
-    _locale = newLocale;
-    notifyListeners();
-  }
-}
-
-// Use in MaterialApp
-Consumer<LocaleProvider>(
-  builder: (context, localeProvider, child) {
-    return MaterialApp(
-      locale: localeProvider.locale,
-      // ... other properties
-    );
-  },
-)
-
-// Change language
-Provider.of<LocaleProvider>(context, listen: false)
-  .setLocale(Locale('th'));
-```
-
----
-
-### 2. Theme System
-
-#### Step-by-Step Implementation
-
-**Step 1:** Create `lib/config/themes/theme_color.dart`
-
-```dart
-import 'package:flutter/material.dart';
-
-class ThemeColors {
-  static Color _hex(String hex) {
-    hex = hex.replaceAll('#', '');
-    if (hex.length == 6) hex = 'FF$hex';
-    else if (hex.length == 8) {
-      hex = '${hex.substring(6)}${hex.substring(0, 6)}';
-    }
-    return Color(int.parse(hex, radix: 16));
-  }
-
-  static final Map<String, Color> light = {
-    'primary/400': _hex('#FFC23D'),
-    'fill/base/100': _hex('#FFFFFF'),
-    'fill/base/300': _hex('#F5F5F5'),
-    'text/base/600': _hex('#0F0F0F'),
-    'stroke/base/100': _hex('#EDEDED'),
-    // Add more colors...
-  };
-
-  static final Map<String, Color> dark = {
-    'primary/400': _hex('#F2C564'),
-    'fill/base/100': _hex('#242424'),
-    'fill/base/300': _hex('#1A1A1A'),
-    'text/base/600': _hex('#FFFFFF'),
-    'stroke/base/100': _hex('#383838'),
-    // Add more colors...
-  };
-
-  static Color get(String theme, String key) {
-    if (theme == 'light') {
-      return light[key] ?? dark[key] ?? Colors.transparent;
-    } else {
-      return dark[key] ?? light[key] ?? Colors.transparent;
-    }
-  }
-}
-```
-
-**Step 2:** Create ThemeProvider
-
-```dart
-class ThemeProvider extends ChangeNotifier {
-  ThemeMode _themeMode = ThemeMode.light;
-  ThemeMode get themeMode => _themeMode;
-
-  void toggleTheme() {
-    _themeMode = _themeMode == ThemeMode.light 
-      ? ThemeMode.dark 
-      : ThemeMode.light;
-    notifyListeners();
-  }
-}
-```
-
-**Step 3:** Setup MaterialApp
-
-```dart
-Consumer<ThemeProvider>(
-  builder: (context, themeProvider, child) {
-    return MaterialApp(
-      theme: ThemeData.from(
-        colorScheme: ColorScheme(
-          primary: ThemeColors.get('light', 'primary/400'),
-          surface: ThemeColors.get('light', 'fill/base/100'),
-          brightness: Brightness.light,
-        ),
-        useMaterial3: true,
-      ),
-      darkTheme: ThemeData.from(
-        colorScheme: ColorScheme(
-          primary: ThemeColors.get('dark', 'primary/400'),
-          surface: ThemeColors.get('dark', 'fill/base/100'),
-          brightness: Brightness.dark,
-        ),
-        useMaterial3: true,
-      ),
-      themeMode: themeProvider.themeMode,
-    );
-  },
-)
-```
-
-**Step 4:** Use in widgets
-
-```dart
-final brightnessKey = Theme.of(context).brightness == Brightness.light 
-  ? 'light' 
-  : 'dark';
-
-Container(
-  color: ThemeColors.get(brightnessKey, 'fill/base/300'),
-  child: Text(
-    'Hello',
-    style: TextStyle(
-      color: ThemeColors.get(brightnessKey, 'text/base/600'),
-    ),
-  ),
-)
-```
-
----
-
-### 3. Design Tokens
-
-#### Token Naming Convention
-
-```
-Format: {category}/{variant}/{intensity}
-
-Categories:
-- fill/      → Background colors
-- text/      → Text colors
-- stroke/    → Border colors
-- primary/   → Primary brand colors
-- success/   → Success state colors
-- danger/    → Error state colors
-- warning/   → Warning state colors
-- info/      → Info state colors
-
-Variants:
-- base       → Base colors
-- contrast   → Contrast colors
-
-Intensity: 100-600 (100=lightest, 600=darkest)
-
-Examples:
-- fill/base/300      → Main background
-- text/base/600      → Primary text (darkest)
-- primary/400        → Primary brand color
-- stroke/contrast/600 → Contrast border
-```
-
-#### How to Add New Colors
-
-1. Add to `theme_color.dart`:
-
-```dart
-static final Map<String, Color> light = {
-  // ... existing colors
-  'custom/brand/500': _hex('#FF5733'),
-};
-
-static final Map<String, Color> dark = {
-  // ... existing colors
-  'custom/brand/500': _hex('#FF8C66'),
-};
-```
-
-2. Use in your app:
-
-```dart
-ThemeColors.get(brightnessKey, 'custom/brand/500')
-```
-
----
-
-### 4. Reusable Widgets
-
-#### Creating Theme-Aware Widgets
-
-```dart
-class ThemedCard extends StatelessWidget {
-  final Widget child;
-  
-  const ThemedCard({required this.child});
-
-  @override
-  Widget build(BuildContext context) {
-    final brightnessKey = Theme.of(context).brightness == Brightness.light 
-      ? 'light' 
-      : 'dark';
-    
-    return Container(
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: ThemeColors.get(brightnessKey, 'fill/base/100'),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: ThemeColors.get(brightnessKey, 'stroke/base/100'),
-        ),
-      ),
-      child: child,
-    );
-  }
-}
-```
-
----
-
-## 📁 Project Structure
-
-```
-lib/
-├── assets/
-│   ├── hugeicons/          # Icon library
-│   ├── images/             # SVG/PNG assets
-│   └── lottie/             # Lottie assets
-├── config/
-│   └── themes/
-│       ├── theme_color.dart      # Design tokens
-│       ├── base_theme.dart       # ColorScheme definitions
-├── generated/
-│   └── intl/               # Generated localization files
-├── l10n/
-│   ├── localization.json   # Editable localization source of truth
-│   └── app_*.arb           # Generated ARB files
-├── providers/
-│   ├── locale_provider.dart
-│   └── theme_provider.dart
-├── widgets/
-│   ├── announce/
-│   ├── avatar/
-│   ├── button/
-│   ├── card/
-│   ├── drawer/
-│   ├── image_carousel/
-│   ├── input/
-│   ├── item_list/
-│   ├── loading/
-│   ├── navigator_bar/
-│   ├── receipt/
-│   ├── shortcut_menu/
-│   ├── skeleton/
-│   ├── snack_bar/
-│   ├── tab/
-│   └── visa/
-├── widgetbook.dart
-├── widgetbook_use_cases.dart
-├── widgetbook.directories.g.dart
-└── main.dart
-```
-
-### Widget Folder Convention
-
-Most reusable widget folders follow this structure:
-
-```text
-lib/widgets/<feature>/
-├── <widget>.dart
-├── preview_<widget>.dart
-└── <WIDGET>_GUIDE.md | <WIDGET>_CONTEXT.md | <widget>_spec.md
-```
-
-## 🧭 Development Workflows
-
-### Run Main App
-
-```bash
 flutter run
 ```
 
@@ -480,477 +90,228 @@ flutter run
 flutter run -t lib/widgetbook.dart -d chrome
 ```
 
-### Run A Standalone Widget Preview
+### Run MCP server locally
 
 ```bash
-flutter run -t lib/widgets/tab/preview_horizontal_tabs.dart -d <device>
+cd mcp-server
+npm install
+npm start
 ```
 
-### Regenerate Widgetbook Directories
+## Design System Foundation
+
+repo นี้ไม่ได้เก็บแค่ widget ปลายทาง แต่เก็บ foundation ที่พร้อมนำไปใช้ต่อได้ทั้งระบบ:
+
+- `Design Tokens`
+  ใช้ token-based color access ผ่าน theme layer แทนการ hardcode สีใน shared widgets
+- `Themes`
+  รองรับ light/dark mode และใช้ theme primitives ร่วมกันทั้ง library
+- `i18n`
+  มี editable source (`lib/l10n/localization.json`) และ generation pipeline ไปสู่ ARB/intl outputs
+- `Widgetbook + Standalone Preview`
+  ใช้ preview ได้ทั้งแบบ catalog และแบบ run แยกไฟล์สำหรับ debug component
+- `Foundation for Financial UI`
+  widget และ naming หลายส่วนถูกออกแบบมาสำหรับ use cases แนว wallet, payment, account summary, receipt, transaction, drawer actions และ navigation patterns
+
+รองรับภาษาหลักในระบบปัจจุบัน:
+
+- English (`en`)
+- Thai (`th`)
+- Chinese (`zh`)
+- Russian (`ru`)
+- Myanmar (`my`)
+
+## MCP Server และ Agent Skills
+
+### MCP Server คืออะไร
+
+MCP หรือ Model Context Protocol คือมาตรฐานสำหรับเปิดให้ AI agents เรียกใช้ tools ภายนอกได้แบบเป็นโครงสร้างเดียวกัน เช่น ค้นหา widget, อ่าน metadata, ดึง source code หรืออ่าน design-system rules จาก repo นี้โดยตรง
+
+ใน repo นี้ MCP server อยู่ที่ `mcp-server/` และรองรับทั้ง:
+
+- `local stdio`
+  เหมาะกับคนที่ clone repo ลงเครื่องและอยากให้ agent อ่าน source ล่าสุดจาก working tree จริง
+- `hosted streamable-http`
+  เหมาะกับ zero-clone / remote access โดยให้ client เชื่อมผ่าน URL แทน local path
+
+### Agent Skills ในบริบทของ repo นี้คืออะไร
+
+ในทางปฏิบัติ repo นี้มี 2 ชั้นที่ช่วย agent ทำงานได้ดีขึ้น:
+
+1. `AGENTS.md` และ `MEMORY.md`
+   เป็น repo-specific operating rules / memory ที่บอกลำดับการอ่านไฟล์, source-of-truth, คำสั่งที่ใช้จริง, และข้อควรระวังของโปรเจกต์
+2. `MCP tools`
+   เป็น machine-callable tools ที่ agent ใช้ query ข้อมูลจาก repo ได้โดยไม่ต้องเดาโครงสร้างเอง
+
+แนวคิดนี้ทำให้หลาย agent เช่น Codex, Claude Code, Cursor, Antigravity หรือ Kiro สามารถทำงานบนฐานความเข้าใจเดียวกันได้ง่ายขึ้น แม้ระดับการรองรับจริงของแต่ละ client จะไม่เท่ากัน
+
+### MCP server ช่วยอะไรได้บ้าง
+
+tools หลักที่ repo นี้เปิดให้ agent ใช้งาน เช่น:
+
+- `list_categories`
+- `list_widgets`
+- `search_widgets`
+- `get_widget_details`
+- `get_widget_metadata`
+- `get_widget_code`
+- `get_widget_preview`
+- `get_design_system_info`
+- `get_color_token`
+- `get_codebase_patterns`
+- `generate_widget_code`
+
+ผลคือ agent สามารถ:
+
+- ค้นหา widget ที่มีอยู่ก่อนสร้างใหม่ซ้ำ
+- อ่าน preview/doc/widget metadata ได้ตรงจาก repo
+- ดึงโค้ด component ไป reuse หรืออ้างอิงต่อได้
+- เข้าใจกฎ design-system และ codebase patterns ก่อน generate code
+- ใช้ข้อมูลจาก design system นี้ไปสร้าง component ใหม่ใน project ปลายทางได้แม่นขึ้น
+
+ถ้าใช้งานผ่าน `hosted streamable-http` endpoint agent ไม่จำเป็นต้อง clone repo นี้ลงเครื่องก่อนก็ยังสามารถ:
+
+- ค้นหา widget ที่ใกล้เคียงกับสิ่งที่ต้องการ
+- อ่าน metadata, props, preview และแนวทาง implementation
+- ดึง source code ของ widget ที่มีอยู่
+- ใช้ pattern/token/theme rules เดิมไป generate component สำหรับ project ของตัวเองได้เลย
+
+สรุปคือ repo นี้สามารถทำหน้าที่เป็น `remote source of truth` สำหรับ UI library ได้ โดย external project หรือ AI agent เชื่อมผ่าน MCP แล้วนำ component widgets เข้าไปสร้างหรือปรับใช้ต่อใน project ปลายทางได้ทันที แม้ไม่ได้ clone repo นี้ไว้ในเครื่อง
+
+## Setup MCP สำหรับ Codex, Claude Code, Kiro
+
+หัวข้อนี้แสดงเฉพาะการ config แบบ `remote` เท่านั้น โดยสมมติว่าคุณมี hosted MCP endpoint อยู่แล้ว เช่น:
+
+- `https://flutter-widget-wallet-mcp.onrender.com/mcp`
+- และมี access token สำหรับ reverse proxy / gateway ของ endpoint นั้น
+
+config อ้างอิงหลักของ repo อยู่ที่ `mcp-server/examples/remote.generic.mcp.json`
+
+### 1. Codex
+
+ใช้ remote MCP URL พร้อม `Authorization` header:
+
+```json
+{
+  "mcpServers": {
+    "flutter-widget-wallet-mcp-remote": {
+      "url": "https://flutter-widget-wallet-mcp.onrender.com/mcp",
+      "headers": {
+        "Authorization": "Bearer <EDGE_ACCESS_TOKEN>"
+      }
+    }
+  }
+}
+```
+
+### 2. Claude Code
+
+ใช้ remote MCP URL shape เดียวกัน:
+
+```json
+{
+  "mcpServers": {
+    "flutter-widget-wallet-mcp-remote": {
+      "url": "https://flutter-widget-wallet-mcp.onrender.com/mcp",
+      "headers": {
+        "Authorization": "Bearer <EDGE_ACCESS_TOKEN>"
+      }
+    }
+  }
+}
+```
+
+### 3. Kiro
+
+ถ้า Kiro เวอร์ชันที่ใช้อยู่รองรับ remote MCP แบบ `url` + `headers` ก็ใช้ generic shape เดียวกันได้:
+
+```json
+{
+  "mcpServers": {
+    "flutter-widget-wallet-mcp-remote": {
+      "url": "https://flutter-widget-wallet-mcp.onrender.com/mcp",
+      "headers": {
+        "Authorization": "Bearer <EDGE_ACCESS_TOKEN>"
+      }
+    }
+  }
+}
+```
+
+หมายเหตุ:
+
+- remote example ของ repo คือ `mcp-server/examples/remote.generic.mcp.json`
+- ฝั่ง protocol ของ remote `streamable-http` รองรับจริงใน repo นี้
+- แต่ remote integration แบบ host-app โดยตรงสำหรับ `Claude Code` และ `Codex` ยังเป็น `best-effort / unverified` ตาม `mcp-server/COMPATIBILITY_POLICY.md`
+- `Kiro` ไม่มี template ที่ repo generate ให้โดยตรง จึงควรมองเป็น generic remote example เช่นกัน
+- ถ้าต้องการตรวจ endpoint ที่ deploy จริง ให้ใช้ `cd mcp-server && npm run verify:mcp:remote`
+
+## ทำไมการใช้ MCP + Skills ของ repo นี้จึงมีประโยชน์
+
+### 1. ลดการเดาโครงสร้าง repo
+
+agent ไม่ต้องเดาเองว่า widget อยู่ไหน ใช้ theme ยังไง หรือ localization source อยู่ไฟล์ไหน เพราะมีทั้ง repo rules และ machine-callable tools บอกไว้อยู่แล้ว
+
+### 2. ลดการสร้าง component ซ้ำ
+
+แทนที่จะ generate widget ใหม่ทุกครั้ง agent สามารถ `search_widgets` และ `get_widget_metadata` ก่อน เพื่อดูว่ามีของเดิมที่ reuse ได้หรือไม่
+
+### 3. ดึงโค้ดจริงจาก source-of-truth ได้
+
+agent สามารถดึงตัวอย่างโค้ด, preview, metadata และ design-system patterns จาก repo จริง ไม่ต้องอาศัยคำอธิบายกว้างๆ อย่างเดียว
+
+### 4. ไม่ต้อง clone repo ก็ยังสร้าง widget เข้า project ปลายทางได้
+
+ถ้า MCP endpoint ถูก host ไว้แล้ว agent สามารถเชื่อมผ่าน remote URL, อ่าน widget catalog, ดึงโค้ด/metadata, แล้วสร้างหรือปรับ component ลงใน project ปลายทางได้เลย โดยไม่ต้อง clone repo design-system นี้มาก่อน
+
+### 5. ทำงานข้ามหลาย agent ได้สม่ำเสมอขึ้น
+
+เมื่อ repo เดียวกันมีทั้ง MCP tools และ agent context docs การย้ายงานระหว่าง Codex, Claude Code, Cursor หรือ client อื่นจะมีโอกาส drift น้อยลง
+
+### 6. เหมาะกับ workflow จาก Figma ไปสู่ Flutter
+
+เพราะ repo นี้วางตัวเป็นแหล่งรวม design components ที่ถูกแปลงสู่ Flutter widgets พร้อม foundations ทำให้ agent ใช้เป็นฐานสำหรับ generate/compare/refactor งานจาก design specs ได้ดี
+
+## Useful Commands
+
+### Flutter
 
 ```bash
-dart run build_runner build --delete-conflicting-outputs
+flutter pub get
+flutter analyze
+flutter test
+flutter run
+flutter run -t lib/widgetbook.dart -d chrome
 ```
 
-### Regenerate Localization
+### Localization
 
 ```bash
 dart run tool/generate_arb.dart
 flutter gen-l10n
 ```
 
-### Regenerate Documentation Schema
+### Widgetbook / Generated files
 
 ```bash
-npm run generate-schema
+dart run build_runner build --delete-conflicting-outputs
 ```
 
-`docs/schema.json` is generated output from:
-- `CODEBASE_CONTEXT.md`
-- `WIDGETS_GUIDE.md`
-- widget-local markdown under `lib/widgets/`
-
-Do not edit `docs/schema.json` by hand.
-
-### Verification
-
-```bash
-flutter analyze
-flutter test
-```
-
-## 🎯 How to Apply to Your Project
-
-### Option 1: Copy Entire Foundation
-
-1. Copy these folders to your project:
-   ```
-   lib/config/themes/
-   lib/l10n/
-   lib/generated/intl/
-   lib/providers/
-   ```
-2. Copy `l10n.yaml` to your project root
-3. Add dependencies to `pubspec.yaml`
-4. Run `flutter pub get`, `dart run tool/generate_arb.dart`, and `flutter gen-l10n`
-
-### Option 2: Copy Specific Components
-
-#### Copy Theme System Only
-1. Copy `lib/config/themes/theme_color.dart`
-2. Copy `lib/config/themes/base_theme.dart`
-3. Create or reuse a ThemeProvider
-4. Setup MaterialApp with theme configuration
-
-#### Copy Localization Only
-1. Copy `lib/l10n/` folder
-2. Copy `l10n.yaml`
-3. Add dependencies and run `flutter gen-l10n`
-4. Setup MaterialApp with localization delegates
-
-#### Copy Individual Widgets
-Each widget in `lib/widgets/` is self-contained:
-1. Copy the widget file
-2. Copy required assets
-3. Ensure `ThemeColors` is available
-4. Read the local guide/spec markdown for that widget
-5. Import and use in your app
-
----
-
-## 🧩 Available Components
-
-### 1. NavigatorBar
-
-Bottom navigation with floating center button.
-
-```dart
-NavigatorBar(opacity: 0.9)
-```
-
-**Features:**
-- 5 menu items
-- Floating scan button
-- Theme-aware colors
-- Localized labels
-
-### 2. FullAmountInput
-
-Amount input with validation.
-
-```dart
-FullAmountInput(
-  controller: _controller,
-  onChanged: (value) => print(value),
-  infoText: 'Minimum 100 THB',
-)
-```
-
-**Features:**
-- Decimal number support
-- Min/max validation
-- Clear button
-- Error/success states
-
-### 3. VisaCard
-
-Gradient visa card display.
-
-```dart
-VisaCard(
-  cardNumber: '1234 5678 9012 3456',
-  expiryDate: '12/25',
-  balance: 50000.00,
-)
-```
-
-### 4. AnnouncementStack
-
-Animated announcement cards.
-
-```dart
-AnnouncementStack(
-  messages: ['Message 1', 'Message 2'],
-)
-```
-
-**Features:**
-- Auto-rotation
-- Slide animations
-- Dismissible cards
-
-### 5. SearchInput
-
-Search input with icon.
-
-```dart
-SearchInput(
-  controller: _searchController,
-  onChanged: (value) => search(value),
-)
-```
-
-### 6. MobileCodeInput
-
-Country code + phone number input.
-
-```dart
-MobileCodeInput(
-  onChanged: (code, number) => print('$code $number'),
-)
-```
-
-### 7. DrawerReviewTransaction
-
-Bottom sheet drawer for transaction review.
-
-```dart
-DrawerReviewTransaction.show(
-  context,
-  warningTitle: 'Please recheck information',
-  warningDescription: 'Cannot be changed once confirmed.',
-  totalAmount: '5,000.00',
-  // ... other properties
-);
-```
-
-**Features:**
-- Transaction details display
-- Warning message
-- Confirmation flow
-- X button only dismiss (secure)
-
-### 8. DrawerBalanceDetail
-
-Balance breakdown drawer with hold amount details.
-
-```dart
-DrawerBalanceDetail.show(
-  context,
-  totalBalanceAmount: '100,000.00',
-  holdAmountValue: '5,030.20',
-  ledgerBalanceValue: '15,030.20',
-  // ... other properties
-);
-```
-
-**Features:**
-- Balance breakdown display
-- Hold amount explanation
-- Full-wallet image asset
-- Button only dismiss
-
-### 9. DrawerDepositChannel
-
-Bank selection drawer for deposit channels.
-
-```dart
-DrawerDepositChannel(
-  onBankSelected: (bank) => print('Selected: $bank'),
-  onClose: () => Navigator.pop(context),
-)
-```
-
-**Features:**
-- Bank logo display
-- Mobile banking options
-- Scrollable bank list
-- Selection callback
-
-### 10. Avatar
-
-Profile card with status badge and skeleton loading.
-
-```dart
-Avatar(
-  name: 'Tony Stark',
-  handle: '@ironman',
-  status: AvatarStatus.warning,
-)
-```
-
-### 11. ImageCarousel
-
-Image slider with auto-play support.
-
-```dart
-ImageCarousel(
-  pages: [Image.asset('banner1.png')],
-  autoPlay: true,
-)
-```
-
-### 12. ItemList
-
-Versatile list item for menus and transactions.
-
-```dart
-ItemList(
-  type: ItemListType.transaction,
-  title: 'Payment',
-  amount: '-500.00 THB',
-)
-```
-
-### 13. PreLoading
-
-Full-screen loading overlay with blur effect.
-
-```dart
-if (isLoading) const PreLoading()
-```
-
-### 14. LottieSkeleton
-
-Skeleton loading wrapper using Lottie.
-
-```dart
-LottieSkeleton(
-  isLoading: true,
-  child: Text('Content'),
-)
-```
-
-### 15. SnackBarWidget
-
-Custom styled notifications.
-
-```dart
-SnackBarWidget.show(
-  context,
-  title: 'Success',
-  type: SnackBarType.success,
-);
-```
-
----
-
-## 📱 Preview Widgets with Widgetbook
-
-Widgetbook provides an interactive UI to explore and test your widgets locally and in CI.
-
-### Local Preview
-
-```bash
-# Run Widgetbook locally (web)
-flutter pub run widgetbook --target lib/widgetbook.dart
-# Or, if you have a custom entrypoint:
-flutter pub run widgetbook -t lib/widgetbook.dart
-```
-
-Open `http://localhost:8080` in your browser to browse the widget catalogue.
-
-### Widgetbook Cloud (CI preview)
-
-The repository includes a GitHub Actions workflow (`.github/workflows/widgetbook.yml`) that builds and publishes a preview to Widgetbook Cloud.
-
-After a successful run you will see a comment on the PR with a link, e.g.:
-
-```
-Widgetbook preview: https://preview.widgetbook.io/your-repo/commit/<sha>
-```
-
-You can also manually trigger the workflow:
-
-```bash
-gh workflow run widgetbook.yml
-```
-
-### External Device Preview (Web Server)
-
-You can also serve any preview widget on your local network:
-
-```bash
-flutter run -d web-server --web-hostname=0.0.0.0 --web-port=8000 -t lib/<path_to_preview_file>.dart
-```
-
-Then open `http://<YOUR_IP>:8000` on any device on the same Wi‑Fi.
-
-#### Available Preview Widgets
-
-- Drawer components
-  - `preview_drawer_balance_detail.dart`
-  - `preview_drawer_review_transaction.dart`
-  - `preview_drawer_deposit_channel.dart`
-- Card components
-  - `preview_card_review_transaction.dart`
-- Announcement components
-  - `preview_announcement_warning.dart`
-- New Widgets
-  - `preview_avatar.dart`
-  - `preview_image_carousel.dart`
-  - `preview_item_list.dart`
-  - `preview_pre_loading.dart`
-  - `preview_lottie_skeleton.dart`
-  - `preview_snack_bar.dart`
-
-
----
-
-## 🤖 AI Integration (`flutter-widget-wallet-mcp`)
-
-This repository includes an MCP server that lets AI clients connect to this repo and use tools to access Flutter widget code, preview files, metadata, design-system context, and related implementation guidance.
-
-### 1. Local Team Installation (Automated) 🚀
-
-Install the MCP config for your client from the `mcp-server/` directory:
+### MCP Server
 
 ```bash
 cd mcp-server
 npm install
-npm run install-mcp
-```
-*Note: Restart your IDE after the script finishes.*
-
-This generates client config examples and local MCP settings for supported clients such as:
-- Claude Code
-- Codex
-- Cursor
-
-See:
-- `mcp-server/README.md`
-- `mcp-server/examples/`
-- `mcp-server/mcp.json.example`
-
-### 2. Auto-generate JSON Schema
-
-Convert `GUIDE.md`, `spec.md`, and project structure into a single `docs/schema.json` file that AI can easily understand.
-
-**Run command:**
-```bash
-npm run generate-schema
-```
-
-**Features:**
-*   **Auto-Scan**: Finds all `lib/widgets/**/*.{md,MD}` files (GUIDE, spec, CONTEXT).
-*   **Implementation Details**: Automatically extracts localization and theme import paths.
-*   **Smart Merge**: Combines data from the main guide and individual files.
-
-### 3. MCP Capabilities
-
-The MCP server can be used by AI tools to:
-
-**Capabilities:**
-*   **Discover Widgets**: List categories and search widgets by name or keyword.
-*   **Read Widget Metadata**: Inspect props, dependencies, preview paths, assets, and related docs.
-*   **Extract Source Code**: Access base widget Dart code and preview/demo files.
-*   **Use Design-System Context**: Read tokens, patterns, and implementation guidance from this repo.
-
-### 4. MCP Verification Commands
-
-Use these commands before pushing MCP changes:
-
-```bash
-cd mcp-server
-npm run ci:mcp
+npm start
+npm run start:http
+npm run verify:mcp
+npm run verify:mcp:http
+npm run verify:mcp:remote
 npm run validate:onboarding
 ```
 
-Useful lower-level commands:
+## Notes
 
-```bash
-cd mcp-server
-npm run check:mcp-syntax
-npm test
-npm run verify:mcp
-npm run verify:mcp:http
-npm run evaluate:mcp
-```
-
----
-
-## 📦 Dependencies
-
-```yaml
-dependencies:
-  flutter_svg: ^2.0.9          # SVG support
-  google_fonts: ^6.1.0         # Multi-language fonts
-  hugeicons: ^0.0.9            # Icon library
-  provider: ^6.1.1             # State management
-  intl: ^0.20.2                # Internationalization
-  lottie: ^3.1.0               # Animations
-```
-
----
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
----
-
-## Docs
-
-https://docs.flutter.dev/ui/internationalization
-https://docs.flutter.dev/cookbook/design/themes
-https://docs.flutter.dev/release/breaking-changes/material-3-migration
-https://docs.flutter.dev/ui/advanced/material-3
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 🙏 Acknowledgments
-
-- Design tokens inspired by modern design systems
-- Multi-language support following Flutter best practices
-- UI components designed for financial applications
-
----
-
-## 📞 Support
-
-- 📧 Email: niwat.yah@gmail.com
-- 🐛 Issues: [GitHub Issues](https://github.com/nengniwatyah/Wi_Wallet_Flutter_Widget_2.0/issues)
-
----
-
-**Made with ❤️ for the Flutter community**
+- ถ้าข้อมูลใน overview docs ไม่ตรงกับ source code ให้เชื่อ `AGENTS.md`, `MEMORY.md`, และ live source files ก่อน
+- generated files เช่น localization outputs, Widgetbook generated directories, และ `docs/schema.json` ไม่ควรแก้ด้วยมือ
+- ถ้าจะใช้ AI agent กับ repo นี้แบบจริงจัง แนะนำให้อ่าน `AGENTS.md` และ `MEMORY.md` ก่อนทุกครั้ง

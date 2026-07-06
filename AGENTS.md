@@ -177,6 +177,12 @@ Use these default execution recipes unless the user explicitly asks for a differ
 - ใช้ไฟล์นั้นเป็น source สำหรับคำอธิบาย/คำแนะนำเกี่ยวกับ slash commands แทนการบันทึกรายการคำสั่งทั้งหมดไว้ใน `AGENTS.md`
 - หากต้องการยืนยันว่าคำสั่งใดใช้ได้จริงในเครื่อง ให้ตรวจด้วย `/help` และ `/release-notes` เสมอ เพราะ availability เปลี่ยนตาม version, platform และ plan
 
+## Render P8-01 Knowledge Base
+
+- เมื่อผู้ใช้ถามหรือให้ทำซ้ำ workflow เรื่อง Render hosting pilot ของ `P8-01` ให้ใช้อ้างอิง knowledge base ในโฟลเดอร์ `/Users/Niwat.yah/Documents/Obsidian Vault/MCP Knowledge/`
+- ใช้โฟลเดอร์นั้นเป็นที่เก็บคู่มือ step-by-step สำหรับการ deploy `flutter-widget-wallet-mcp` ขึ้น Render, การตั้งค่า env vars/secret, การตรวจ `/health` และ `/info`, และปัญหาที่เคยเจอจริงในรอบ deploy แรก
+- ถ้ามีการเปลี่ยน workflow จริงของ Render pilot หรือค่า config source-of-truth ใน repo ให้ปรับ knowledge base ในโฟลเดอร์นั้นและ `MEMORY.md` ในงานเดียวกัน
+
 ## Code Conventions
 
 ### Flutter and Dart
