@@ -1,7 +1,7 @@
 # Theme V3 + MCP + Skills Tasks
 
 สร้างเมื่อ: `2026-07-10 21:49:05 +0700`
-อัปเดตล่าสุดเมื่อ: `2026-07-10 23:47:26 +0700`
+อัปเดตล่าสุดเมื่อ: `2026-07-11 02:23:43 +0700`
 
 Execution checklist นี้แตกจาก [`docs/V3_THEME_MCP_SKILLS_PLAN.md`](../docs/V3_THEME_MCP_SKILLS_PLAN.md) และเป็น source of truth สำหรับติดตามการสร้าง Theme V3, Widget V3, MCP tools V3, Skills V3 และ rollout บน Render service เดิม
 
@@ -27,7 +27,7 @@ Execution checklist นี้แตกจาก [`docs/V3_THEME_MCP_SKILLS_PLAN.
 Evidence (`2026-07-10 23:47:26 +0700`):
 
 - V3 work อยู่เฉพาะ V3 paths, tests, checklist และ memory; legacy theme/widget/MCP/skills ไม่มี source diff
-- `npm run check:v3-boundaries`: PASS — 55 Dart files, 19 changed paths
+- `npm run check:v3-boundaries`: PASS — 57 Dart files, 17 changed paths
 - `npm run test:v3-boundaries`: PASS — 6/6
 - Legacy MCP contract snapshot และ integration tests: PASS — 21/21
 - Render architecture ยังใช้ service `flutter-widget-wallet-mcp` และ endpoint `/mcp` เดิม; ไม่มี service/config ชุดที่สอง
@@ -36,10 +36,10 @@ Evidence (`2026-07-10 23:47:26 +0700`):
 
 ## Exit Criteria
 
-- [x] Theme V3 โหลด primitive 145 tokens และ semantic Light/Dark อย่างละ 55 tokens
+- [x] Theme V3 โหลด primitive 145 tokens และ semantic Light/Dark อย่างละ 55 tokens จาก direct Figma exports
 - [x] Light/Dark semantic paths ตรงกันและ alias resolve ได้
 - [x] V3 generator deterministic และ validation tests ผ่าน
-- [ ] Pilot widget V3 มี source, preview, guide และ tests
+- [x] Pilot widget V3 มี source, preview, guide และ tests
 - [x] Legacy Flutter/MCP baseline ยังผ่าน
 - [ ] MCP endpoint เดิม expose V3 read-only tools โดย legacy contracts ไม่เปลี่ยน
 - [ ] Skills V3 พร้อมสำหรับ Codex, Claude Code และ Kiro
@@ -47,14 +47,15 @@ Evidence (`2026-07-10 23:47:26 +0700`):
 
 Evidence (`2026-07-10 23:47:26 +0700`):
 
-- Theme V3 targeted tests: PASS — 15/15; counts 145/55/55, mode parity, aliases, failure paths, snapshots และ deterministic generation
+- Theme V3 targeted tests: PASS — counts 145/55/55, mode parity, multi-hop aliases, failure paths, snapshots และ deterministic generation
 - `flutter analyze`: PASS — `No issues found`
-- `flutter test`: PASS — 128/128
+- `flutter test`: PASS — 139/139
 - `npm run check:mcp-syntax`: PASS — 34 files
 - `npm test`: PASS — 21/21
 - `npm run verify:mcp`: PASS — Inspector stdio workflows
 - `npm run verify:mcp:http`: PASS — 12 read-only tools และ hosted workflow
-- Exit Criteria ที่เหลือผูกกับ `V3-11` ถึง `V3-25` จึงยังไม่ติ๊กก่อนมี source, tests และ deployed evidence จริง
+- Widget V3 pilot: PASS — `V3MiniButton` ตรง 12 Figma Size=Mini nodes ด้วย 3 variants × 4 states, icon slots, Light/Dark toggle preview, Widgetbook use case, local guide/metadata และ targeted tests 9/9
+- Exit Criteria ที่เหลือผูกกับ `V3-14` ถึง `V3-25` จึงยังไม่ติ๊กก่อนมี source, tests และ deployed evidence จริง
 
 ## Phase 1 — Baseline And Freeze
 
@@ -131,11 +132,11 @@ Depends on: V3-03
 
 Lane: Theme inputs
 
-Evidence (`2026-07-10 23:24:54 +0700`):
+Evidence (`2026-07-11 01:56:32 +0700`):
 
 - Source inputs: `lib/config/themes/v3/tokens/primitive.tokens.json`, `lib/config/themes/v3/tokens/semantic/light.tokens.json`, `lib/config/themes/v3/tokens/semantic/dark.tokens.json`
-- `flutter test test/config/themes/v3`: PASS — parser โหลด JSON ทั้งสามไฟล์และยืนยัน primitive 145, Light 55, Dark 55 พร้อม path parity
-- Generator summary: `Theme V3 generated: primitives=145, light=55, dark=55`
+- `flutter test test/config/themes/v3`: PASS — parser โหลด direct Figma exports ทั้งสามไฟล์และยืนยัน primitive 145, Light 55, Dark 55 พร้อม path parity และ semantic alias chains
+- Generator summary ล่าสุด: `Theme V3 generated: primitives=145, light=55, dark=55, changedFiles=0`
 
 ### V3-05: Define V3 public model and runtime API
 
@@ -250,46 +251,46 @@ Evidence (`2026-07-10 23:24:54 +0700`):
 
 ### V3-11: Define Widget V3 conventions
 
-- [ ] สร้าง `docs/v3/V3_WIDGET_CONVENTIONS.md`
-- [ ] กำหนด folder/file/class naming
-- [ ] กำหนด preview, test และ local guide requirements
-- [ ] กำหนด semantic-first และ localization/accessibility rules
-- [ ] กำหนด metadata section สำหรับ theme version และ tokens
+- [x] สร้าง `docs/v3/V3_WIDGET_CONVENTIONS.md`
+- [x] กำหนด folder/file/class naming
+- [x] กำหนด preview, test และ local guide requirements
+- [x] กำหนด semantic-first และ localization/accessibility rules
+- [x] กำหนด metadata section สำหรับ theme version และ tokens
 
 Depends on: V3-06
 
 Lane: Widget architecture
 
-Evidence: conventions document
+Evidence (`2026-07-11 00:20:19 +0700`): `docs/v3/V3_WIDGET_CONVENTIONS.md` กำหนด V3 path/class naming, semantic-only theme boundary, localization/accessibility, preview/test/local-guide requirements และ YAML metadata contract
 
 ### V3-12: Build one pilot V3 widget
 
-- [ ] เลือก reusable widget ขนาดเล็กสำหรับ pilot
-- [ ] เพิ่ม source ใต้ `lib/widgets/v3/<category>/`
-- [ ] ใช้ `V3ThemeScope.colorsOf(context)` เท่านั้น
-- [ ] เพิ่ม standalone Light/Dark preview
-- [ ] เพิ่ม local guide ระบุ V3 tokens
-- [ ] เพิ่ม targeted widget tests
+- [x] เลือก reusable widget ขนาดเล็กสำหรับ pilot
+- [x] เพิ่ม source ใต้ `lib/widgets/v3/<category>/`
+- [x] ใช้ `V3ThemeScope.colorsOf(context)` เท่านั้น
+- [x] เพิ่ม standalone Light/Dark preview
+- [x] เพิ่ม local guide ระบุ V3 tokens
+- [x] เพิ่ม targeted widget tests
 
 Depends on: V3-10, V3-11
 
 Lane: Widget pilot
 
-Evidence: source, preview, guide, tests
+Evidence (`2026-07-11`): `lib/widgets/v3/button/v3_mini_button.dart`, `preview_v3_mini_button.dart`, `V3_MINI_BUTTON_GUIDE.md` และ `test/widgets/v3/button/v3_mini_button_test.dart`; ดึง context/screenshot จาก 12 Figma Size=Mini nodes, รองรับ 3 variants × 4 states × icon slots, standalone preview เริ่ม Light และสลับทั้ง matrix ด้วย Light/Dark toggle, targeted tests PASS 9/9
 
 ### V3-13: Validate pilot UX and integration
 
-- [ ] ตรวจ Light/Dark visual behavior
-- [ ] ตรวจ contrast/readability และ interactive states ที่เกี่ยวข้อง
-- [ ] ตรวจ localization-friendly copy
-- [ ] ตรวจไม่มี raw/legacy colors ที่ไม่อนุญาต
-- [ ] ตรวจ Widgetbook/standalone preview usability
+- [x] ตรวจ Light/Dark visual behavior
+- [x] ตรวจ contrast/readability และ interactive states ที่เกี่ยวข้อง
+- [x] ตรวจ localization-friendly copy
+- [x] ตรวจไม่มี raw/legacy colors ที่ไม่อนุญาต
+- [x] ตรวจ Widgetbook/standalone preview usability
 
 Depends on: V3-12
 
 Lane: Widget QA
 
-Evidence: test/preview output และ audit note
+Evidence (`2026-07-11 02:23:43 +0700`): `docs/v3/V3_WIDGET_PILOT_AUDIT.md`; Figma/Simulator visual comparison PASS, Light/Dark toggle/state token tests PASS, contrast audit PASS, web preview build PASS, Widgetbook registry regenerate PASS, schema regenerate PASS, `flutter analyze` PASS, full `flutter test` PASS 139/139 และ V3 boundary tests PASS 6/6
 
 ## Phase 5 — MCP V3 On Existing Server
 
@@ -491,6 +492,6 @@ Mitigation checklist:
 - [ ] ทุก V3 path/class/tool/skill มี `v3` ชัดเจน
 - [ ] MCP V3 ไม่ fallback ไป legacy theme
 - [ ] Legacy contract snapshots เป็น merge gate
-- [ ] Import-boundary checks ผ่าน
-- [ ] Rollout เริ่มจาก pilot widget เดียว
+- [x] Import-boundary checks ผ่าน
+- [x] Rollout เริ่มจาก pilot widget เดียว
 - [ ] Rollback ใช้ previous Render commit โดยไม่เปลี่ยน URL/secrets

@@ -164,6 +164,48 @@ void main() {
       expect(resolved.single.primitive.path, 'core/black');
     });
 
+    test('resolves semantic-to-semantic aliases from Figma exports', () {
+      final primitives = parser.parseDocument({
+        'White': {
+          r'$type': 'color',
+          r'$value': {'hex': '#FFFFFF'},
+        },
+      });
+      final semantics = parser.parseDocument({
+        'Core': {
+          'White': {
+            r'$type': 'color',
+            r'$value': {'hex': '#FFFFFF'},
+            r'$extensions': {
+              'com.figma.aliasData': {'targetVariableName': 'White'},
+            },
+          },
+        },
+        'Button': {
+          'Content': {
+            r'$type': 'color',
+            r'$value': {'hex': '#FFFFFF'},
+            r'$extensions': {
+              'com.figma.aliasData': {'targetVariableName': 'Core/White'},
+            },
+          },
+        },
+      });
+
+      final resolved = resolver.resolve(
+        primitives: primitives,
+        semantics: semantics,
+      );
+      expect(resolved, hasLength(2));
+      expect(
+        resolved
+            .singleWhere((token) => token.token.path == 'button/content')
+            .primitive
+            .path,
+        'white',
+      );
+    });
+
     test('rejects missing primitive target', () {
       final semantic = parser.parseDocument({
         'Semantic': {

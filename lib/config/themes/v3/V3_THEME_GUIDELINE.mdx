@@ -63,7 +63,7 @@ Quick start ของ Theme V3 ใช้สำหรับดู source-of-truth
 
 ### `tokens/primitive.tokens.json`
 
-Editable source สำหรับ primitive color จำนวน 145 รายการ เช่น `Core/Slate/900`, `Core/Blue/600`, `Core/White` และ `Core/Focus`
+Editable source สำหรับ primitive color จาก Figma จำนวน 145 รายการ เช่น `Slate/950`, `Blue/50`, `White` และ `Navy/600`
 
 Primitive token ตอบคำถามว่า “ค่าสีจริงคืออะไร” จึงเก็บข้อมูลระดับ raw color ได้แก่:
 
@@ -295,6 +295,85 @@ class V3ExampleCard extends StatelessWidget {
 ```
 
 ## End-to-End Workflow
+
+### อัปเดต Figma token exports ทั้งชุด
+
+เมื่อทีม Design ส่ง token JSON ชุดใหม่มา **ไม่ต้อง generate JSON ซ้ำ** เพราะไฟล์จาก Figma เป็น editable source of truth โดยตรง แต่ต้องนำไฟล์ทั้งสามมาแทน source ใน repo แล้ว generate Dart ใหม่ทุกครั้ง
+
+ไฟล์ที่ต้อง export และตำแหน่งปลายทาง:
+
+| Figma export | ตำแหน่งใน repo |
+|---|---|
+| `primitive.tokens.json` | `lib/config/themes/v3/tokens/primitive.tokens.json` |
+| Light `semantic/light.tokens.json` | `lib/config/themes/v3/tokens/semantic/light.tokens.json` |
+| Dark `semantic/dark.tokens.json` | `lib/config/themes/v3/tokens/semantic/dark.tokens.json` |
+
+ชื่อไฟล์ export ต้องตรงกับชื่อ canonical ในตารางเท่านั้น โดยเปรียบเทียบแบบ case-sensitive:
+
+- `primitive.tokens.json`
+- `light.tokens.json`
+- `dark.tokens.json`
+
+ห้ามใช้ชื่ออื่น เช่น `primitive.tokens (1).json`, `Light.tokens.json` หรือ `dark-token.json` เป็น source ใน repo หากไฟล์ที่ดาวน์โหลดมาถูกระบบปฏิบัติการหรือ browser เติม suffix ให้ rename กลับเป็นชื่อ canonical และตรวจให้แน่ใจว่า Light/Dark ไม่สลับกันก่อนแทนที่ไฟล์เดิม Generator อ่านเฉพาะ path และชื่อ canonical เหล่านี้ จึงไม่ค้นหาไฟล์ชื่ออื่นให้อัตโนมัติ
+
+ควรอัปเดตทั้งสามไฟล์จาก export batch เดียวกัน เพื่อป้องกัน semantic aliases ชี้ primitive คนละ version ห้ามแก้ไฟล์ใต้ `generated/` ด้วยมือ
+
+ขั้นตอนมาตรฐาน:
+
+1. ตรวจชื่อไฟล์ export ให้ตรงกับชื่อ canonical ทั้งสามชื่อแบบ case-sensitive และยืนยันว่าไม่มี suffix หรือชื่อซ้ำจากการดาวน์โหลด
+2. เก็บ diff ของ token sources เดิมไว้ตรวจสอบ และยืนยันว่าไฟล์ใหม่เป็น JSON ที่อ่านได้
+3. นำ Figma exports ทั้งสามไฟล์มาแทนตำแหน่ง source ด้านบน โดยคงชื่อและตำแหน่งปลายทางเดิม
+4. ตรวจว่า Light/Dark มี semantic paths ชุดเดียวกัน
+5. รัน generator จาก repo root:
+
+   ```bash
+   dart run lib/config/themes/v3/v3_theme_generator.dart
+   ```
+
+6. อ่าน summary ที่ generator แสดง เช่น:
+
+   ```text
+   Theme V3 generated: primitives=145, light=55, dark=55, changedFiles=2
+   ```
+
+   `changedFiles=2` เป็นผลปกติเมื่อ generated Dart เปลี่ยนตาม source ใหม่ หลังจากนั้นรัน generator ซ้ำและคาดหวัง `changedFiles=0` เพื่อยืนยัน deterministic output
+
+7. รัน validation ขั้นต่ำ:
+
+   ```bash
+   flutter test test/config/themes/v3
+   npm run check:v3-boundaries
+   flutter analyze
+   ```
+
+8. ถ้า semantic paths, ชื่อ Dart properties หรือ mapping ที่ widget ใช้เปลี่ยน ให้ปรับ widget, local guide และ targeted tests แล้วตรวจ regression เพิ่มเติม:
+
+   ```bash
+   flutter test test/widgets/v3
+   flutter test
+   ```
+
+9. เปิด Light/Dark preview ของ widgets ที่ได้รับผลกระทบ และใช้ Hot Restart เมื่อ generated class/property เปลี่ยน เพราะ Hot Reload อาจไม่สามารถเปลี่ยนโครงสร้าง class ที่โหลดอยู่ได้อย่างปลอดภัย
+
+10. หาก token counts เปลี่ยน ให้อัปเดต expected counts ใน `test/config/themes/v3/v3_theme_generator_test.dart`, เอกสารนี้, `README.md`, `MEMORY.md` และหลักฐานใน `task/V3_THEME_MCP_SKILLS_TASKS.md` หลัง verification ผ่าน
+
+การเปลี่ยนต่อไปนี้ควรผ่าน pipeline ปัจจุบันโดยไม่ต้องแก้ generator:
+
+- เปลี่ยน HEX หรือ alpha ของ token เดิม
+- เพิ่มหรือลบ primitive ด้วย DTCG/Figma color schema ที่รองรับ
+- เปลี่ยน primitive alias target
+- เพิ่มหรือลบ semantic path โดยแก้ Light/Dark ให้ตรงกัน
+- ใช้ semantic-to-semantic alias chain ที่สุดท้าย resolve ไป primitive ได้
+
+ต้องตรวจและอาจขยาย `V3TokenParser`, `V3TokenResolver` หรือ `V3ThemeGenerator` เมื่อ Figma export เปลี่ยน contract เช่น:
+
+- ใช้ token type อื่นนอกจาก `color`
+- ใช้ color space อื่นนอกจาก `srgb`
+- เปลี่ยนรูปแบบ `$value`, alias metadata หรือ path nesting
+- เพิ่ม alias behavior ที่ resolver ปัจจุบันยังไม่รองรับ
+- ทำให้ normalized paths หรือ Dart properties ชนกัน
+
+หาก generator หยุดด้วย error ห้ามแก้ generated Dart เพื่อข้าม validation ให้แก้ source export/mapping หรือเพิ่มความสามารถใน parser/resolver พร้อม tests ก่อน generate ใหม่
 
 ### เปลี่ยนค่าสีเดิม
 

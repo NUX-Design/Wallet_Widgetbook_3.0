@@ -9,6 +9,7 @@ final class V3TokenResolver {
     required List<V3ColorToken> semantics,
   }) {
     final primitiveByPath = {for (final token in primitives) token.path: token};
+    final semanticByPath = {for (final token in semantics) token.path: token};
     final resolved = <V3ResolvedColorToken>[];
     for (final semantic in semantics) {
       final alias = semantic.aliasPath;
@@ -17,12 +18,44 @@ final class V3TokenResolver {
           '${semantic.sourcePath}: semantic token must alias a primitive token',
         );
       }
-      final primitive = _resolvePrimitive(alias, primitiveByPath, <String>[]);
+      final primitive = _resolveAlias(
+        alias,
+        primitiveByPath,
+        semanticByPath,
+        <String>[semantic.path],
+      );
       resolved.add(V3ResolvedColorToken(token: semantic, primitive: primitive));
     }
     return List.unmodifiable(
       resolved..sort((a, b) => a.token.path.compareTo(b.token.path)),
     );
+  }
+
+  V3ColorToken _resolveAlias(
+    String path,
+    Map<String, V3ColorToken> primitives,
+    Map<String, V3ColorToken> semantics,
+    List<String> chain,
+  ) {
+    if (chain.contains(path)) {
+      throw V3TokenFormatException(
+        'alias cycle: ${[...chain, path].join(' -> ')}',
+      );
+    }
+    if (primitives.containsKey(path)) {
+      return _resolvePrimitive(path, primitives, chain);
+    }
+    final semantic = semantics[path];
+    if (semantic == null) {
+      throw V3TokenFormatException('missing primitive target "$path"');
+    }
+    final alias = semantic.aliasPath;
+    if (alias == null) {
+      throw V3TokenFormatException(
+        '${semantic.sourcePath}: semantic alias has no target',
+      );
+    }
+    return _resolveAlias(alias, primitives, semantics, [...chain, path]);
   }
 
   V3ColorToken _resolvePrimitive(

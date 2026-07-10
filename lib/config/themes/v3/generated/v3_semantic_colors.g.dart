@@ -7,232 +7,232 @@ import 'v3_primitive_colors.g.dart';
 
 final class V3ColorPalette {
   const V3ColorPalette({
-    required this.actionDanger,
-    required this.actionDangerHover,
-    required this.actionFocus,
-    required this.actionPrimary,
-    required this.actionPrimaryDisabled,
-    required this.actionPrimaryHover,
-    required this.actionPrimaryPressed,
-    required this.actionSecondary,
-    required this.actionSecondaryHover,
-    required this.actionSecondaryPressed,
-    required this.backgroundBrand,
-    required this.backgroundBrandSubtle,
-    required this.backgroundDangerSubtle,
-    required this.backgroundElevated,
-    required this.backgroundInverse,
+    required this.backgroundBlue,
+    required this.backgroundExtensionBlue,
+    required this.backgroundExtensionGold,
+    required this.backgroundExtensionGreen,
+    required this.backgroundExtensionIndigo,
+    required this.backgroundExtensionNavy,
+    required this.backgroundExtensionNeutral,
+    required this.backgroundExtensionOrange,
+    required this.backgroundExtensionPurple,
+    required this.backgroundExtensionRed,
+    required this.backgroundExtensionSky,
+    required this.backgroundExtensionSlate,
+    required this.backgroundExtensionViolet,
+    required this.backgroundExtensionYellow,
+    required this.backgroundNeutral,
     required this.backgroundPrimary,
-    required this.backgroundSecondary,
-    required this.backgroundSuccessSubtle,
-    required this.backgroundTertiary,
-    required this.backgroundWarningSubtle,
-    required this.borderDanger,
-    required this.borderDisabled,
-    required this.borderFocus,
+    required this.backgroundWhite,
+    required this.borderExtensionError,
+    required this.borderExtensionInfo,
+    required this.borderExtensionSuccess,
+    required this.borderExtensionWarning,
     required this.borderPrimary,
     required this.borderSecondary,
-    required this.borderStrong,
-    required this.borderSuccess,
-    required this.borderWarning,
-    required this.contentBrand,
-    required this.contentDanger,
-    required this.contentDisabled,
-    required this.contentInfo,
-    required this.contentInverse,
+    required this.borderSlate,
+    required this.borderTertiary,
+    required this.buttonPrimary,
+    required this.buttonSecondary,
+    required this.contentBlue,
+    required this.contentExtensionBlue,
+    required this.contentExtensionGold,
+    required this.contentExtensionGreen,
+    required this.contentExtensionIndigo,
+    required this.contentExtensionNavy,
+    required this.contentExtensionNeutral,
+    required this.contentExtensionOrange,
+    required this.contentExtensionPurple,
+    required this.contentExtensionRed,
+    required this.contentExtensionSky,
+    required this.contentExtensionSlate,
+    required this.contentExtensionViolet,
+    required this.contentExtensionYellow,
+    required this.contentNeutral,
+    required this.contentNeutral2,
     required this.contentPrimary,
     required this.contentSecondary,
-    required this.contentSuccess,
     required this.contentTertiary,
-    required this.contentWarning,
-    required this.iconBrand,
-    required this.iconDanger,
-    required this.iconDisabled,
-    required this.iconInverse,
-    required this.iconPrimary,
-    required this.iconSecondary,
-    required this.iconSuccess,
-    required this.iconWarning,
-    required this.statusDanger,
-    required this.statusDangerSubtle,
-    required this.statusInfo,
-    required this.statusInfoSubtle,
-    required this.statusNeutral,
-    required this.statusSuccess,
-    required this.statusSuccessSubtle,
-    required this.statusWarning,
-    required this.statusWarningSubtle,
+    required this.contentWhite,
+    required this.black,
+    required this.white,
+    required this.focusInner,
+    required this.focusOuter,
+    required this.focusPrimary,
+    required this.stateError,
+    required this.stateSuccess,
+    required this.stateWarning,
   });
 
-  final Color actionDanger;
-  final Color actionDangerHover;
-  final Color actionFocus;
-  final Color actionPrimary;
-  final Color actionPrimaryDisabled;
-  final Color actionPrimaryHover;
-  final Color actionPrimaryPressed;
-  final Color actionSecondary;
-  final Color actionSecondaryHover;
-  final Color actionSecondaryPressed;
-  final Color backgroundBrand;
-  final Color backgroundBrandSubtle;
-  final Color backgroundDangerSubtle;
-  final Color backgroundElevated;
-  final Color backgroundInverse;
+  final Color backgroundBlue;
+  final Color backgroundExtensionBlue;
+  final Color backgroundExtensionGold;
+  final Color backgroundExtensionGreen;
+  final Color backgroundExtensionIndigo;
+  final Color backgroundExtensionNavy;
+  final Color backgroundExtensionNeutral;
+  final Color backgroundExtensionOrange;
+  final Color backgroundExtensionPurple;
+  final Color backgroundExtensionRed;
+  final Color backgroundExtensionSky;
+  final Color backgroundExtensionSlate;
+  final Color backgroundExtensionViolet;
+  final Color backgroundExtensionYellow;
+  final Color backgroundNeutral;
   final Color backgroundPrimary;
-  final Color backgroundSecondary;
-  final Color backgroundSuccessSubtle;
-  final Color backgroundTertiary;
-  final Color backgroundWarningSubtle;
-  final Color borderDanger;
-  final Color borderDisabled;
-  final Color borderFocus;
+  final Color backgroundWhite;
+  final Color borderExtensionError;
+  final Color borderExtensionInfo;
+  final Color borderExtensionSuccess;
+  final Color borderExtensionWarning;
   final Color borderPrimary;
   final Color borderSecondary;
-  final Color borderStrong;
-  final Color borderSuccess;
-  final Color borderWarning;
-  final Color contentBrand;
-  final Color contentDanger;
-  final Color contentDisabled;
-  final Color contentInfo;
-  final Color contentInverse;
+  final Color borderSlate;
+  final Color borderTertiary;
+  final Color buttonPrimary;
+  final Color buttonSecondary;
+  final Color contentBlue;
+  final Color contentExtensionBlue;
+  final Color contentExtensionGold;
+  final Color contentExtensionGreen;
+  final Color contentExtensionIndigo;
+  final Color contentExtensionNavy;
+  final Color contentExtensionNeutral;
+  final Color contentExtensionOrange;
+  final Color contentExtensionPurple;
+  final Color contentExtensionRed;
+  final Color contentExtensionSky;
+  final Color contentExtensionSlate;
+  final Color contentExtensionViolet;
+  final Color contentExtensionYellow;
+  final Color contentNeutral;
+  final Color contentNeutral2;
   final Color contentPrimary;
   final Color contentSecondary;
-  final Color contentSuccess;
   final Color contentTertiary;
-  final Color contentWarning;
-  final Color iconBrand;
-  final Color iconDanger;
-  final Color iconDisabled;
-  final Color iconInverse;
-  final Color iconPrimary;
-  final Color iconSecondary;
-  final Color iconSuccess;
-  final Color iconWarning;
-  final Color statusDanger;
-  final Color statusDangerSubtle;
-  final Color statusInfo;
-  final Color statusInfoSubtle;
-  final Color statusNeutral;
-  final Color statusSuccess;
-  final Color statusSuccessSubtle;
-  final Color statusWarning;
-  final Color statusWarningSubtle;
+  final Color contentWhite;
+  final Color black;
+  final Color white;
+  final Color focusInner;
+  final Color focusOuter;
+  final Color focusPrimary;
+  final Color stateError;
+  final Color stateSuccess;
+  final Color stateWarning;
 
   static const light = V3ColorPalette(
-    actionDanger: V3PrimitiveColors.red600,
-    actionDangerHover: V3PrimitiveColors.red700,
-    actionFocus: V3PrimitiveColors.focus,
-    actionPrimary: V3PrimitiveColors.blue600,
-    actionPrimaryDisabled: V3PrimitiveColors.blue300,
-    actionPrimaryHover: V3PrimitiveColors.blue700,
-    actionPrimaryPressed: V3PrimitiveColors.blue800,
-    actionSecondary: V3PrimitiveColors.white,
-    actionSecondaryHover: V3PrimitiveColors.slate100,
-    actionSecondaryPressed: V3PrimitiveColors.slate200,
-    backgroundBrand: V3PrimitiveColors.blue600,
-    backgroundBrandSubtle: V3PrimitiveColors.blue100,
-    backgroundDangerSubtle: V3PrimitiveColors.red100,
-    backgroundElevated: V3PrimitiveColors.white,
-    backgroundInverse: V3PrimitiveColors.slate900,
-    backgroundPrimary: V3PrimitiveColors.white,
-    backgroundSecondary: V3PrimitiveColors.slate100,
-    backgroundSuccessSubtle: V3PrimitiveColors.green100,
-    backgroundTertiary: V3PrimitiveColors.slate200,
-    backgroundWarningSubtle: V3PrimitiveColors.amber100,
-    borderDanger: V3PrimitiveColors.red500,
-    borderDisabled: V3PrimitiveColors.slate200,
-    borderFocus: V3PrimitiveColors.focus,
-    borderPrimary: V3PrimitiveColors.slate200,
-    borderSecondary: V3PrimitiveColors.slate300,
-    borderStrong: V3PrimitiveColors.slate500,
-    borderSuccess: V3PrimitiveColors.green500,
-    borderWarning: V3PrimitiveColors.amber500,
-    contentBrand: V3PrimitiveColors.blue700,
-    contentDanger: V3PrimitiveColors.red600,
-    contentDisabled: V3PrimitiveColors.slate400,
-    contentInfo: V3PrimitiveColors.cyan700,
-    contentInverse: V3PrimitiveColors.white,
+    backgroundBlue: V3PrimitiveColors.blue100,
+    backgroundExtensionBlue: V3PrimitiveColors.blue100,
+    backgroundExtensionGold: V3PrimitiveColors.gold100,
+    backgroundExtensionGreen: V3PrimitiveColors.green50,
+    backgroundExtensionIndigo: V3PrimitiveColors.indigo100,
+    backgroundExtensionNavy: V3PrimitiveColors.navy100,
+    backgroundExtensionNeutral: V3PrimitiveColors.neutral100,
+    backgroundExtensionOrange: V3PrimitiveColors.orange100,
+    backgroundExtensionPurple: V3PrimitiveColors.purple100,
+    backgroundExtensionRed: V3PrimitiveColors.red100,
+    backgroundExtensionSky: V3PrimitiveColors.sky100,
+    backgroundExtensionSlate: V3PrimitiveColors.slate100,
+    backgroundExtensionViolet: V3PrimitiveColors.violet100,
+    backgroundExtensionYellow: V3PrimitiveColors.yellow100,
+    backgroundNeutral: V3PrimitiveColors.neutral200,
+    backgroundPrimary: V3PrimitiveColors.blue50,
+    backgroundWhite: V3PrimitiveColors.white,
+    borderExtensionError: V3PrimitiveColors.red500,
+    borderExtensionInfo: V3PrimitiveColors.navy500,
+    borderExtensionSuccess: V3PrimitiveColors.green500,
+    borderExtensionWarning: V3PrimitiveColors.yellow500,
+    borderPrimary: V3PrimitiveColors.blue200,
+    borderSecondary: V3PrimitiveColors.blue400,
+    borderSlate: V3PrimitiveColors.slate400,
+    borderTertiary: V3PrimitiveColors.blue700,
+    buttonPrimary: V3PrimitiveColors.blue800,
+    buttonSecondary: V3PrimitiveColors.white,
+    contentBlue: V3PrimitiveColors.blue400,
+    contentExtensionBlue: V3PrimitiveColors.blue800,
+    contentExtensionGold: V3PrimitiveColors.gold700,
+    contentExtensionGreen: V3PrimitiveColors.green700,
+    contentExtensionIndigo: V3PrimitiveColors.indigo700,
+    contentExtensionNavy: V3PrimitiveColors.navy700,
+    contentExtensionNeutral: V3PrimitiveColors.neutral700,
+    contentExtensionOrange: V3PrimitiveColors.orange700,
+    contentExtensionPurple: V3PrimitiveColors.purple700,
+    contentExtensionRed: V3PrimitiveColors.red700,
+    contentExtensionSky: V3PrimitiveColors.sky700,
+    contentExtensionSlate: V3PrimitiveColors.slate700,
+    contentExtensionViolet: V3PrimitiveColors.violet700,
+    contentExtensionYellow: V3PrimitiveColors.yellow700,
+    contentNeutral: V3PrimitiveColors.neutral400,
+    contentNeutral2: V3PrimitiveColors.neutral700,
     contentPrimary: V3PrimitiveColors.slate900,
-    contentSecondary: V3PrimitiveColors.slate700,
-    contentSuccess: V3PrimitiveColors.green700,
-    contentTertiary: V3PrimitiveColors.slate500,
-    contentWarning: V3PrimitiveColors.amber700,
-    iconBrand: V3PrimitiveColors.blue600,
-    iconDanger: V3PrimitiveColors.red600,
-    iconDisabled: V3PrimitiveColors.slate400,
-    iconInverse: V3PrimitiveColors.white,
-    iconPrimary: V3PrimitiveColors.slate800,
-    iconSecondary: V3PrimitiveColors.slate600,
-    iconSuccess: V3PrimitiveColors.green600,
-    iconWarning: V3PrimitiveColors.amber600,
-    statusDanger: V3PrimitiveColors.red600,
-    statusDangerSubtle: V3PrimitiveColors.red100,
-    statusInfo: V3PrimitiveColors.cyan700,
-    statusInfoSubtle: V3PrimitiveColors.cyan100,
-    statusNeutral: V3PrimitiveColors.slate600,
-    statusSuccess: V3PrimitiveColors.green700,
-    statusSuccessSubtle: V3PrimitiveColors.green100,
-    statusWarning: V3PrimitiveColors.amber700,
-    statusWarningSubtle: V3PrimitiveColors.amber100,
+    contentSecondary: V3PrimitiveColors.slate500,
+    contentTertiary: V3PrimitiveColors.blue300,
+    contentWhite: V3PrimitiveColors.white,
+    black: V3PrimitiveColors.black,
+    white: V3PrimitiveColors.white,
+    focusInner: V3PrimitiveColors.white,
+    focusOuter: V3PrimitiveColors.navy600,
+    focusPrimary: V3PrimitiveColors.navy600,
+    stateError: V3PrimitiveColors.red600,
+    stateSuccess: V3PrimitiveColors.green600,
+    stateWarning: V3PrimitiveColors.yellow600,
   );
 
   static const dark = V3ColorPalette(
-    actionDanger: V3PrimitiveColors.red500,
-    actionDangerHover: V3PrimitiveColors.red400,
-    actionFocus: V3PrimitiveColors.focus,
-    actionPrimary: V3PrimitiveColors.blue500,
-    actionPrimaryDisabled: V3PrimitiveColors.blue800,
-    actionPrimaryHover: V3PrimitiveColors.blue400,
-    actionPrimaryPressed: V3PrimitiveColors.blue300,
-    actionSecondary: V3PrimitiveColors.slate900,
-    actionSecondaryHover: V3PrimitiveColors.slate800,
-    actionSecondaryPressed: V3PrimitiveColors.slate700,
-    backgroundBrand: V3PrimitiveColors.blue500,
-    backgroundBrandSubtle: V3PrimitiveColors.blue900,
-    backgroundDangerSubtle: V3PrimitiveColors.red900,
-    backgroundElevated: V3PrimitiveColors.slate800,
-    backgroundInverse: V3PrimitiveColors.white,
-    backgroundPrimary: V3PrimitiveColors.slate900,
-    backgroundSecondary: V3PrimitiveColors.slate800,
-    backgroundSuccessSubtle: V3PrimitiveColors.green900,
-    backgroundTertiary: V3PrimitiveColors.slate700,
-    backgroundWarningSubtle: V3PrimitiveColors.amber900,
-    borderDanger: V3PrimitiveColors.red500,
-    borderDisabled: V3PrimitiveColors.slate700,
-    borderFocus: V3PrimitiveColors.focus,
+    backgroundBlue: V3PrimitiveColors.slate800,
+    backgroundExtensionBlue: V3PrimitiveColors.blue950,
+    backgroundExtensionGold: V3PrimitiveColors.gold950,
+    backgroundExtensionGreen: V3PrimitiveColors.green950,
+    backgroundExtensionIndigo: V3PrimitiveColors.indigo950,
+    backgroundExtensionNavy: V3PrimitiveColors.navy950,
+    backgroundExtensionNeutral: V3PrimitiveColors.neutral950,
+    backgroundExtensionOrange: V3PrimitiveColors.orange950,
+    backgroundExtensionPurple: V3PrimitiveColors.purple950,
+    backgroundExtensionRed: V3PrimitiveColors.red950,
+    backgroundExtensionSky: V3PrimitiveColors.sky950,
+    backgroundExtensionSlate: V3PrimitiveColors.slate950,
+    backgroundExtensionViolet: V3PrimitiveColors.violet950,
+    backgroundExtensionYellow: V3PrimitiveColors.yellow950,
+    backgroundNeutral: V3PrimitiveColors.neutral400,
+    backgroundPrimary: V3PrimitiveColors.slate950,
+    backgroundWhite: V3PrimitiveColors.slate900,
+    borderExtensionError: V3PrimitiveColors.red500,
+    borderExtensionInfo: V3PrimitiveColors.navy500,
+    borderExtensionSuccess: V3PrimitiveColors.green500,
+    borderExtensionWarning: V3PrimitiveColors.yellow500,
     borderPrimary: V3PrimitiveColors.slate700,
-    borderSecondary: V3PrimitiveColors.slate600,
-    borderStrong: V3PrimitiveColors.slate400,
-    borderSuccess: V3PrimitiveColors.green500,
-    borderWarning: V3PrimitiveColors.amber500,
-    contentBrand: V3PrimitiveColors.blue300,
-    contentDanger: V3PrimitiveColors.red400,
-    contentDisabled: V3PrimitiveColors.slate600,
-    contentInfo: V3PrimitiveColors.cyan300,
-    contentInverse: V3PrimitiveColors.slate900,
+    borderSecondary: V3PrimitiveColors.slate700,
+    borderSlate: V3PrimitiveColors.blue300,
+    borderTertiary: V3PrimitiveColors.blue300,
+    buttonPrimary: V3PrimitiveColors.blue800,
+    buttonSecondary: V3PrimitiveColors.slate800,
+    contentBlue: V3PrimitiveColors.slate400,
+    contentExtensionBlue: V3PrimitiveColors.blue400,
+    contentExtensionGold: V3PrimitiveColors.gold400,
+    contentExtensionGreen: V3PrimitiveColors.green400,
+    contentExtensionIndigo: V3PrimitiveColors.indigo400,
+    contentExtensionNavy: V3PrimitiveColors.navy400,
+    contentExtensionNeutral: V3PrimitiveColors.neutral400,
+    contentExtensionOrange: V3PrimitiveColors.orange400,
+    contentExtensionPurple: V3PrimitiveColors.purple400,
+    contentExtensionRed: V3PrimitiveColors.red400,
+    contentExtensionSky: V3PrimitiveColors.sky400,
+    contentExtensionSlate: V3PrimitiveColors.slate400,
+    contentExtensionViolet: V3PrimitiveColors.violet400,
+    contentExtensionYellow: V3PrimitiveColors.yellow400,
+    contentNeutral: V3PrimitiveColors.neutral400,
+    contentNeutral2: V3PrimitiveColors.neutral50,
     contentPrimary: V3PrimitiveColors.white,
     contentSecondary: V3PrimitiveColors.slate200,
-    contentSuccess: V3PrimitiveColors.green400,
-    contentTertiary: V3PrimitiveColors.slate400,
-    contentWarning: V3PrimitiveColors.amber300,
-    iconBrand: V3PrimitiveColors.blue400,
-    iconDanger: V3PrimitiveColors.red400,
-    iconDisabled: V3PrimitiveColors.slate600,
-    iconInverse: V3PrimitiveColors.slate900,
-    iconPrimary: V3PrimitiveColors.slate100,
-    iconSecondary: V3PrimitiveColors.slate300,
-    iconSuccess: V3PrimitiveColors.green400,
-    iconWarning: V3PrimitiveColors.amber400,
-    statusDanger: V3PrimitiveColors.red400,
-    statusDangerSubtle: V3PrimitiveColors.red900,
-    statusInfo: V3PrimitiveColors.cyan300,
-    statusInfoSubtle: V3PrimitiveColors.cyan900,
-    statusNeutral: V3PrimitiveColors.slate400,
-    statusSuccess: V3PrimitiveColors.green400,
-    statusSuccessSubtle: V3PrimitiveColors.green900,
-    statusWarning: V3PrimitiveColors.amber300,
-    statusWarningSubtle: V3PrimitiveColors.amber900,
+    contentTertiary: V3PrimitiveColors.blue800,
+    contentWhite: V3PrimitiveColors.white,
+    black: V3PrimitiveColors.white,
+    white: V3PrimitiveColors.white,
+    focusInner: V3PrimitiveColors.slate950,
+    focusOuter: V3PrimitiveColors.navy300,
+    focusPrimary: V3PrimitiveColors.navy600,
+    stateError: V3PrimitiveColors.red300,
+    stateSuccess: V3PrimitiveColors.green300,
+    stateWarning: V3PrimitiveColors.yellow200,
   );
 }
