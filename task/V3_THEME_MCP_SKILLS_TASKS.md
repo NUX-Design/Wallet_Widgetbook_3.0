@@ -1,7 +1,7 @@
 # Theme V3 + MCP + Skills Tasks
 
 สร้างเมื่อ: `2026-07-10 21:49:05 +0700`
-อัปเดตล่าสุดเมื่อ: `2026-07-11 02:23:43 +0700`
+อัปเดตล่าสุดเมื่อ: `2026-07-11 03:07:08 +0700`
 
 Execution checklist นี้แตกจาก [`docs/V3_THEME_MCP_SKILLS_PLAN.md`](../docs/V3_THEME_MCP_SKILLS_PLAN.md) และเป็น source of truth สำหรับติดตามการสร้าง Theme V3, Widget V3, MCP tools V3, Skills V3 และ rollout บน Render service เดิม
 
@@ -21,7 +21,7 @@ Execution checklist นี้แตกจาก [`docs/V3_THEME_MCP_SKILLS_PLAN.
 - [x] ไม่เปลี่ยนชื่อ/required args/response types/error semantics ของ legacy MCP tools
 - [x] ไม่แก้ skills เดิม; เพิ่มเฉพาะ `skills-v3/**`
 - [x] ใช้ Render service และ `/mcp` endpoint เดิม ไม่สร้าง service ตัวที่สอง
-- [ ] V3 remote tools เป็น read-only เท่านั้น
+- [x] V3 remote tools เป็น read-only เท่านั้น
 - [x] Generated files ถูกสร้างจาก source tokens ไม่แก้ด้วยมือ
 
 Evidence (`2026-07-10 23:47:26 +0700`):
@@ -41,7 +41,7 @@ Evidence (`2026-07-10 23:47:26 +0700`):
 - [x] V3 generator deterministic และ validation tests ผ่าน
 - [x] Pilot widget V3 มี source, preview, guide และ tests
 - [x] Legacy Flutter/MCP baseline ยังผ่าน
-- [ ] MCP endpoint เดิม expose V3 read-only tools โดย legacy contracts ไม่เปลี่ยน
+- [x] MCP endpoint เดิม expose V3 read-only tools โดย legacy contracts ไม่เปลี่ยน
 - [ ] Skills V3 พร้อมสำหรับ Codex, Claude Code และ Kiro
 - [ ] Render `/health`, `/info` และ remote verifier ผ่านบน deployed commit เดียวกัน
 
@@ -56,6 +56,7 @@ Evidence (`2026-07-10 23:47:26 +0700`):
 - `npm run verify:mcp:http`: PASS — 12 read-only tools และ hosted workflow
 - Widget V3 pilot: PASS — `V3MiniButton` ตรง 12 Figma Size=Mini nodes ด้วย 3 variants × 4 states, icon slots, Light/Dark toggle preview, Widgetbook use case, local guide/metadata และ targeted tests 9/9
 - Exit Criteria ที่เหลือผูกกับ `V3-14` ถึง `V3-25` จึงยังไม่ติ๊กก่อนมี source, tests และ deployed evidence จริง
+- Phase 5 เพิ่ม V3 tools แบบ additive 17 รายการบน dispatcher/HTTP server เดิม; registry ปัจจุบันมี 31 tools รวมและ remote expose 27 read-only tools โดย exclude generation tools เดิม 2 + V3 2; legacy 14 contract definitions ตรง baseline ทุก field และลำดับ
 
 ## Phase 1 — Baseline And Freeze
 
@@ -296,77 +297,77 @@ Evidence (`2026-07-11 02:23:43 +0700`): `docs/v3/V3_WIDGET_PILOT_AUDIT.md`; Figm
 
 ### V3-14: Implement V3 token catalog
 
-- [ ] สร้าง modules ใต้ `mcp-server/v3/`
-- [ ] อ่านเฉพาะ `lib/config/themes/v3/**`
-- [ ] รองรับ list/search/get token
-- [ ] คืน Light/Dark, alias และ Dart usage metadata
-- [ ] เพิ่ม actionable suggestions เมื่อไม่พบ token
+- [x] สร้าง modules ใต้ `mcp-server/v3/`
+- [x] อ่านเฉพาะ `lib/config/themes/v3/**`
+- [x] รองรับ list/search/get token
+- [x] คืน Light/Dark, alias และ Dart usage metadata
+- [x] เพิ่ม actionable suggestions เมื่อไม่พบ token
 
 Depends on: V3-10
 
 Lane: MCP V3 tokens
 
-Evidence: modules และ unit tests
+Evidence (`2026-07-11 02:48:23 +0700`): `mcp-server/v3/token_parser.js`, `token_resolver.js`, `token_catalog.js`; fixture/unit tests ใน `mcp-server/tests/v3/token_catalog.test.js` PASS; real catalog อ่าน semantic Light/Dark 55 paths และ `get_v3_color_token(content/primary)` คืน Light `#0F172A`, Dark `#FFFFFF`, aliases `slate/900`/`white` และ `V3ThemeScope.colorsOf(context).contentPrimary`
 
 ### V3-15: Implement V3 widget catalog
 
-- [ ] index เฉพาะ `lib/widgets/v3/**`
-- [ ] อ่าน source, preview และ local docs
-- [ ] ระบุ theme version และ token dependencies
-- [ ] รองรับ list/search/metadata/code/preview
-- [ ] เพิ่ม audit check สำหรับ legacy imports และ raw colors
+- [x] index เฉพาะ `lib/widgets/v3/**`
+- [x] อ่าน source, preview และ local docs
+- [x] ระบุ theme version และ token dependencies
+- [x] รองรับ list/search/metadata/code/preview
+- [x] เพิ่ม audit check สำหรับ legacy imports และ raw colors
 
 Depends on: V3-12
 
 Lane: MCP V3 widgets
 
-Evidence: modules, fixture และ tests
+Evidence (`2026-07-11 02:48:23 +0700`): `mcp-server/v3/widget_parser.js`, `widget_catalog.js`, `handlers.js`; isolated fixture ใต้ `mcp-server/tests/fixtures/v3_repo/` มี V3 compliant/broken widgets และ legacy bait; `widget_catalog.test.js`/`tool_integration.test.js` PASS; real `V3MiniButton` metadata/code/preview retrieval และ audit PASS โดยรายงาน `themeVersion=v3` และ semantic dependencies จาก local guide
 
 ### V3-16: Define V3 MCP tool contracts
 
-- [ ] เพิ่ม contracts สำหรับ `list_v3_color_tokens`
-- [ ] เพิ่ม contracts สำหรับ `search_v3_color_tokens`
-- [ ] เพิ่ม contract สำหรับ `get_v3_color_token`
-- [ ] เพิ่ม V3 widget retrieval contracts
-- [ ] เพิ่ม `audit_v3_widget`
-- [ ] ใส่ read-only annotations ครบทุก V3 tool
+- [x] เพิ่ม contracts สำหรับ `list_v3_color_tokens`
+- [x] เพิ่ม contracts สำหรับ `search_v3_color_tokens`
+- [x] เพิ่ม contract สำหรับ `get_v3_color_token`
+- [x] เพิ่ม V3 widget retrieval contracts
+- [x] เพิ่ม `audit_v3_widget`
+- [x] ใส่ read-only annotations ครบทุก V3 tool
 
 Depends on: V3-14, V3-15
 
 Lane: MCP contracts
 
-Evidence: contracts และ contract tests
+Evidence (`2026-07-11 03:07:08 +0700`): `mcp-server/v3/tool_contracts.js` ประกาศ 17 V3-prefixed contracts: capability parity กับ legacy 14 กลุ่ม พร้อม token list/search และ audit เพิ่มเติม; ทุก contract มี read-only/non-destructive/idempotent/closed-world annotations; `mcp-server/tests/tool_contracts.test.js` และ reviewed `tool_definitions.contracts.json` PASS
 
 ### V3-17: Register V3 tools additively
 
-- [ ] register V3 handlers โดยไม่แก้ handler เดิม
-- [ ] รักษา `get_color_token` ให้ใช้ legacy `theme.json`
-- [ ] ตรวจ tools/list มี legacy + V3 ครบ
-- [ ] ตรวจ remote registry expose เฉพาะ read-only tools
-- [ ] ตรวจ generation/write tools ยังถูก exclude
+- [x] register V3 handlers โดยไม่แก้ handler เดิม
+- [x] รักษา `get_color_token` ให้ใช้ legacy `theme.json`
+- [x] ตรวจ tools/list มี legacy + V3 ครบ
+- [x] ตรวจ remote registry expose เฉพาะ read-only tools
+- [x] ตรวจ generation/write tools ยังถูก exclude
 
 Depends on: V3-16
 
 Lane: MCP integration
 
-Evidence: app/registry diff และ integration tests
+Evidence (`2026-07-11 03:07:08 +0700`): additive imports/injection/handler spread ใน `mcp-server/app.js` และ append-only spread ใน `tool_contracts.js`; baseline audit ยืนยัน legacy 14 definitions ไม่เปลี่ยนและ V3 17 definitions ถูก append; tools/list รวม 31 tools, remote registry 27 read-only tools; generation tools เดิม 2 + V3 2 ถูก exclude และ read-only V3 tools อยู่ remote ครบ; legacy `get_color_token(primary/400)` ยังคืน `ThemeColors.get(brightnessKey, 'primary/400')`
 
 ### V3-18: Pass MCP regression and V3 verification
 
-- [ ] legacy contract tests ผ่าน
-- [ ] legacy integration/snapshot tests ผ่าน
-- [ ] V3 parser/catalog/tool tests ผ่าน
-- [ ] `npm run check:mcp-syntax` ผ่าน
-- [ ] `npm test` ผ่าน
-- [ ] `npm run verify:mcp` ผ่าน
-- [ ] `npm run verify:mcp:http` ผ่าน
-- [ ] `npm run ci:mcp` ผ่าน
+- [x] legacy contract tests ผ่าน
+- [x] legacy integration/snapshot tests ผ่าน
+- [x] V3 parser/catalog/tool tests ผ่าน
+- [x] `npm run check:mcp-syntax` ผ่าน
+- [x] `npm test` ผ่าน
+- [x] `npm run verify:mcp` ผ่าน
+- [x] `npm run verify:mcp:http` ผ่าน
+- [x] `npm run ci:mcp` ผ่าน
 
 Depends on: V3-17
 
 Lane: MCP verification
 
-Evidence: command output และ reviewed snapshots
+Evidence (`2026-07-11 03:07:08 +0700`): `npm run check:mcp-syntax` PASS 44 files; `npm test` PASS 28/28; `npm run verify:mcp` PASS; `npm run verify:mcp:http` PASS พร้อม 27 read-only tools; `npm run ci:mcp` PASS รวม syntax, tests, Inspector stdio, HTTP และ legacy evaluation 7/7; parity tests ยืนยัน V3 paths/prefix/ThemeScope/Figma mapping/generation guardrails และ remote exclusions; snapshot refresh ถูก review ว่าเป็น append-only V3 contracts และ legacy definitions ตรง baseline
 
 ## Phase 6 — Skills V3
 

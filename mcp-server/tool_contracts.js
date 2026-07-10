@@ -1,3 +1,5 @@
+import { v3ToolDefinitions } from "./v3/tool_contracts.js";
+
 const readOnly = {
   readOnlyHint: true,
   destructiveHint: false,
@@ -471,4 +473,5 @@ export const toolDefinitions = [
     outputSchema: genericObjectSchema,
     annotations: readOnly,
   },
+  ...v3ToolDefinitions,
 ];

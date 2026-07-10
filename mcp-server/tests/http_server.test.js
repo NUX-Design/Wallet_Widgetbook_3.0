@@ -52,6 +52,10 @@ test("remote HTTP exposes the read-only registry and matches stdio tool output",
   assert.deepEqual(tools.tools, REMOTE_READ_ONLY_TOOL_DEFINITIONS);
   assert.ok(!tools.tools.some((tool) => tool.name === "generate_widget_code"));
   assert.ok(!tools.tools.some((tool) => tool.name === "generate_widgetbook_use_case"));
+  assert.ok(!tools.tools.some((tool) => tool.name === "generate_v3_widget_code"));
+  assert.ok(!tools.tools.some((tool) => tool.name === "generate_v3_widgetbook_use_case"));
+  assert.ok(tools.tools.some((tool) => tool.name === "get_v3_design_system_info"));
+  assert.ok(tools.tools.some((tool) => tool.name === "get_v3_figma_to_flutter_mapping"));
 
   const remoteResult = await client.callTool({
     name: "list_widgets",

@@ -270,7 +270,19 @@ get_v3_widget_metadata
 get_v3_widget_code
 get_v3_widget_preview
 audit_v3_widget
+get_v3_design_system_info
+list_v3_categories
+get_v3_widget_details
+get_v3_flutter_widget_template
+get_v3_codebase_patterns
+get_v3_figma_to_flutter_mapping
+generate_v3_widget_code
+generate_v3_widgetbook_use_case
 ```
+
+ชุด V3 ต้องรักษา capability parity กับ MCP เดิมทั้ง 14 กลุ่มตาม requirement ของทีม โดยเพิ่ม token search/list และ audit เฉพาะ V3 เป็นความสามารถเสริม รวมทั้งหมด 17 V3 tools ทุก tool ใช้ชื่อ/path/theme contract ที่มี `v3` ชัดเจนและห้าม fallback ไป legacy
+
+`generate_v3_widget_code` และ `generate_v3_widgetbook_use_case` คืน source/instructions เท่านั้นและไม่เขียนไฟล์ แต่ยังถูก exclude จาก Remote MCP เช่นเดียวกับ generation tools เดิม ส่วน tools V3 ที่เหลือต้องเป็น read-only และ expose ผ่าน existing remote registry
 
 ตัวอย่าง `get_v3_color_token`:
 

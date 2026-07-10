@@ -27,6 +27,8 @@ flowchart LR
 - ห้าม import `theme_color.dart`, เรียก `ThemeColors.get()` หรือ fallback ไป legacy theme
 - Light และ Dark ต้องมี semantic paths ชุดเดียวกัน
 
+Widget ที่ consume Theme V3 ต้องทำตาม workflow, โครงสร้างไฟล์, preview, test และ metadata ใน [`../../../widgets/v3/V3_WIDGETS_CONTEXT.md`](../../../widgets/v3/V3_WIDGETS_CONTEXT.md) เอกสารทั้งสองเป็นคู่กัน: ไฟล์นี้กำหนด source/generation/runtime contract ของสี ส่วน Widget V3 Context กำหนดวิธีนำ semantic palette ไปสร้าง reusable widgets
+
 ## โครงสร้าง Directory
 
 ```text
@@ -468,3 +470,4 @@ Tests ที่เกี่ยวข้องอยู่ใต้ `test/config/
 | `v3_theme_scope.dart` | ได้ | Runtime semantic palette accessor |
 | `README.md` | ได้ | Quick start |
 | `V3_THEME_GUIDELINE.mdx` | ได้ | Architecture และ maintenance guide |
+| `../../../widgets/v3/V3_WIDGETS_CONTEXT.md` | ได้ | Widget V3 creation workflow และ consumer contract ของ Theme V3 |

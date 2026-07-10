@@ -8,6 +8,8 @@ import { WidgetCatalog } from "./widget_catalog.js";
 const REMOTE_EXCLUDED_TOOL_NAMES = new Set([
   "generate_widget_code",
   "generate_widgetbook_use_case",
+  "generate_v3_widget_code",
+  "generate_v3_widgetbook_use_case",
 ]);
 
 export const REMOTE_READ_ONLY_TOOL_DEFINITIONS = toolDefinitions.filter(
