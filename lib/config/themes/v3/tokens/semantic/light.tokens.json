@@ -1,0 +1,457 @@
+{
+  "Semantic": {
+    "$type": "color",
+    "Content": {
+      "Primary": {
+        "$value": "{Core.Slate.900}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Slate/900"
+          }
+        }
+      },
+      "Secondary": {
+        "$value": "{Core.Slate.700}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Slate/700"
+          }
+        }
+      },
+      "Tertiary": {
+        "$value": "{Core.Slate.500}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Slate/500"
+          }
+        }
+      },
+      "Disabled": {
+        "$value": "{Core.Slate.400}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Slate/400"
+          }
+        }
+      },
+      "Inverse": {
+        "$value": "{Core.White}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/White"
+          }
+        }
+      },
+      "Brand": {
+        "$value": "{Core.Blue.700}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Blue/700"
+          }
+        }
+      },
+      "Danger": {
+        "$value": "{Core.Red.600}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Red/600"
+          }
+        }
+      },
+      "Warning": {
+        "$value": "{Core.Amber.700}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Amber/700"
+          }
+        }
+      },
+      "Success": {
+        "$value": "{Core.Green.700}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Green/700"
+          }
+        }
+      },
+      "Info": {
+        "$value": "{Core.Cyan.700}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Cyan/700"
+          }
+        }
+      }
+    },
+    "Background": {
+      "Primary": {
+        "$value": "{Core.White}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/White"
+          }
+        }
+      },
+      "Secondary": {
+        "$value": "{Core.Slate.100}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Slate/100"
+          }
+        }
+      },
+      "Tertiary": {
+        "$value": "{Core.Slate.200}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Slate/200"
+          }
+        }
+      },
+      "Elevated": {
+        "$value": "{Core.White}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/White"
+          }
+        }
+      },
+      "Inverse": {
+        "$value": "{Core.Slate.900}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Slate/900"
+          }
+        }
+      },
+      "Brand": {
+        "$value": "{Core.Blue.600}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Blue/600"
+          }
+        }
+      },
+      "BrandSubtle": {
+        "$value": "{Core.Blue.100}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Blue/100"
+          }
+        }
+      },
+      "DangerSubtle": {
+        "$value": "{Core.Red.100}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Red/100"
+          }
+        }
+      },
+      "WarningSubtle": {
+        "$value": "{Core.Amber.100}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Amber/100"
+          }
+        }
+      },
+      "SuccessSubtle": {
+        "$value": "{Core.Green.100}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Green/100"
+          }
+        }
+      }
+    },
+    "Border": {
+      "Primary": {
+        "$value": "{Core.Slate.200}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Slate/200"
+          }
+        }
+      },
+      "Secondary": {
+        "$value": "{Core.Slate.300}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Slate/300"
+          }
+        }
+      },
+      "Strong": {
+        "$value": "{Core.Slate.500}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Slate/500"
+          }
+        }
+      },
+      "Disabled": {
+        "$value": "{Core.Slate.200}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Slate/200"
+          }
+        }
+      },
+      "Focus": {
+        "$value": "{Core.Focus}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Focus"
+          }
+        }
+      },
+      "Danger": {
+        "$value": "{Core.Red.500}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Red/500"
+          }
+        }
+      },
+      "Warning": {
+        "$value": "{Core.Amber.500}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Amber/500"
+          }
+        }
+      },
+      "Success": {
+        "$value": "{Core.Green.500}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Green/500"
+          }
+        }
+      }
+    },
+    "Icon": {
+      "Primary": {
+        "$value": "{Core.Slate.800}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Slate/800"
+          }
+        }
+      },
+      "Secondary": {
+        "$value": "{Core.Slate.600}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Slate/600"
+          }
+        }
+      },
+      "Disabled": {
+        "$value": "{Core.Slate.400}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Slate/400"
+          }
+        }
+      },
+      "Inverse": {
+        "$value": "{Core.White}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/White"
+          }
+        }
+      },
+      "Brand": {
+        "$value": "{Core.Blue.600}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Blue/600"
+          }
+        }
+      },
+      "Danger": {
+        "$value": "{Core.Red.600}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Red/600"
+          }
+        }
+      },
+      "Warning": {
+        "$value": "{Core.Amber.600}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Amber/600"
+          }
+        }
+      },
+      "Success": {
+        "$value": "{Core.Green.600}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Green/600"
+          }
+        }
+      }
+    },
+    "Action": {
+      "Primary": {
+        "$value": "{Core.Blue.600}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Blue/600"
+          }
+        }
+      },
+      "PrimaryHover": {
+        "$value": "{Core.Blue.700}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Blue/700"
+          }
+        }
+      },
+      "PrimaryPressed": {
+        "$value": "{Core.Blue.800}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Blue/800"
+          }
+        }
+      },
+      "PrimaryDisabled": {
+        "$value": "{Core.Blue.300}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Blue/300"
+          }
+        }
+      },
+      "Secondary": {
+        "$value": "{Core.White}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/White"
+          }
+        }
+      },
+      "SecondaryHover": {
+        "$value": "{Core.Slate.100}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Slate/100"
+          }
+        }
+      },
+      "SecondaryPressed": {
+        "$value": "{Core.Slate.200}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Slate/200"
+          }
+        }
+      },
+      "Danger": {
+        "$value": "{Core.Red.600}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Red/600"
+          }
+        }
+      },
+      "DangerHover": {
+        "$value": "{Core.Red.700}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Red/700"
+          }
+        }
+      },
+      "Focus": {
+        "$value": "{Core.Focus}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Focus"
+          }
+        }
+      }
+    },
+    "Status": {
+      "Danger": {
+        "$value": "{Core.Red.600}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Red/600"
+          }
+        }
+      },
+      "DangerSubtle": {
+        "$value": "{Core.Red.100}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Red/100"
+          }
+        }
+      },
+      "Warning": {
+        "$value": "{Core.Amber.700}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Amber/700"
+          }
+        }
+      },
+      "WarningSubtle": {
+        "$value": "{Core.Amber.100}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Amber/100"
+          }
+        }
+      },
+      "Success": {
+        "$value": "{Core.Green.700}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Green/700"
+          }
+        }
+      },
+      "SuccessSubtle": {
+        "$value": "{Core.Green.100}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Green/100"
+          }
+        }
+      },
+      "Info": {
+        "$value": "{Core.Cyan.700}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Cyan/700"
+          }
+        }
+      },
+      "InfoSubtle": {
+        "$value": "{Core.Cyan.100}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Cyan/100"
+          }
+        }
+      },
+      "Neutral": {
+        "$value": "{Core.Slate.600}",
+        "$extensions": {
+          "com.figma.aliasData": {
+            "targetVariableName": "Core/Slate/600"
+          }
+        }
+      }
+    }
+  }
+}

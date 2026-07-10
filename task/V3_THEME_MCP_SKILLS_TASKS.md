@@ -1,7 +1,7 @@
 # Theme V3 + MCP + Skills Tasks
 
 สร้างเมื่อ: `2026-07-10 21:49:05 +0700`
-อัปเดตล่าสุดเมื่อ: `2026-07-10 23:06:44 +0700`
+อัปเดตล่าสุดเมื่อ: `2026-07-10 23:47:26 +0700`
 
 Execution checklist นี้แตกจาก [`docs/V3_THEME_MCP_SKILLS_PLAN.md`](../docs/V3_THEME_MCP_SKILLS_PLAN.md) และเป็น source of truth สำหรับติดตามการสร้าง Theme V3, Widget V3, MCP tools V3, Skills V3 และ rollout บน Render service เดิม
 
@@ -16,24 +16,45 @@ Execution checklist นี้แตกจาก [`docs/V3_THEME_MCP_SKILLS_PLAN.
 
 ## Global Guardrails
 
-- [ ] ไม่แก้ behavior ของ legacy theme files
-- [ ] ไม่ migrate widget เดิมที่อยู่นอก `lib/widgets/v3/**`
-- [ ] ไม่เปลี่ยนชื่อ/required args/response types/error semantics ของ legacy MCP tools
-- [ ] ไม่แก้ skills เดิม; เพิ่มเฉพาะ `skills-v3/**`
-- [ ] ใช้ Render service และ `/mcp` endpoint เดิม ไม่สร้าง service ตัวที่สอง
+- [x] ไม่แก้ behavior ของ legacy theme files
+- [x] ไม่ migrate widget เดิมที่อยู่นอก `lib/widgets/v3/**`
+- [x] ไม่เปลี่ยนชื่อ/required args/response types/error semantics ของ legacy MCP tools
+- [x] ไม่แก้ skills เดิม; เพิ่มเฉพาะ `skills-v3/**`
+- [x] ใช้ Render service และ `/mcp` endpoint เดิม ไม่สร้าง service ตัวที่สอง
 - [ ] V3 remote tools เป็น read-only เท่านั้น
-- [ ] Generated files ถูกสร้างจาก source tokens ไม่แก้ด้วยมือ
+- [x] Generated files ถูกสร้างจาก source tokens ไม่แก้ด้วยมือ
+
+Evidence (`2026-07-10 23:47:26 +0700`):
+
+- V3 work อยู่เฉพาะ V3 paths, tests, checklist และ memory; legacy theme/widget/MCP/skills ไม่มี source diff
+- `npm run check:v3-boundaries`: PASS — 55 Dart files, 19 changed paths
+- `npm run test:v3-boundaries`: PASS — 6/6
+- Legacy MCP contract snapshot และ integration tests: PASS — 21/21
+- Render architecture ยังใช้ service `flutter-widget-wallet-mcp` และ endpoint `/mcp` เดิม; ไม่มี service/config ชุดที่สอง
+- Generated outputs ตรงกับ token sources และ generator รอบสองรายงาน `changedFiles=0`
+- `V3 remote tools เป็น read-only เท่านั้น` ยังไม่ติ๊ก เพราะ V3 MCP tools จะถูกสร้างและตรวจจริงใน `V3-14` ถึง `V3-18`
 
 ## Exit Criteria
 
-- [ ] Theme V3 โหลด primitive 145 tokens และ semantic Light/Dark อย่างละ 55 tokens
-- [ ] Light/Dark semantic paths ตรงกันและ alias resolve ได้
-- [ ] V3 generator deterministic และ validation tests ผ่าน
+- [x] Theme V3 โหลด primitive 145 tokens และ semantic Light/Dark อย่างละ 55 tokens
+- [x] Light/Dark semantic paths ตรงกันและ alias resolve ได้
+- [x] V3 generator deterministic และ validation tests ผ่าน
 - [ ] Pilot widget V3 มี source, preview, guide และ tests
-- [ ] Legacy Flutter/MCP baseline ยังผ่าน
+- [x] Legacy Flutter/MCP baseline ยังผ่าน
 - [ ] MCP endpoint เดิม expose V3 read-only tools โดย legacy contracts ไม่เปลี่ยน
 - [ ] Skills V3 พร้อมสำหรับ Codex, Claude Code และ Kiro
 - [ ] Render `/health`, `/info` และ remote verifier ผ่านบน deployed commit เดียวกัน
+
+Evidence (`2026-07-10 23:47:26 +0700`):
+
+- Theme V3 targeted tests: PASS — 15/15; counts 145/55/55, mode parity, aliases, failure paths, snapshots และ deterministic generation
+- `flutter analyze`: PASS — `No issues found`
+- `flutter test`: PASS — 128/128
+- `npm run check:mcp-syntax`: PASS — 34 files
+- `npm test`: PASS — 21/21
+- `npm run verify:mcp`: PASS — Inspector stdio workflows
+- `npm run verify:mcp:http`: PASS — 12 read-only tools และ hosted workflow
+- Exit Criteria ที่เหลือผูกกับ `V3-11` ถึง `V3-25` จึงยังไม่ติ๊กก่อนมี source, tests และ deployed evidence จริง
 
 ## Phase 1 — Baseline And Freeze
 
@@ -100,105 +121,130 @@ Evidence:
 
 ### V3-04: Add token source structure
 
-- [ ] สร้าง `lib/config/themes/v3/tokens/primitive.tokens.json`
-- [ ] สร้าง `lib/config/themes/v3/tokens/semantic/light.tokens.json`
-- [ ] สร้าง `lib/config/themes/v3/tokens/semantic/dark.tokens.json`
-- [ ] ตรวจ JSON syntax ทุกไฟล์
-- [ ] ยืนยัน token counts: primitive 145, Light 55, Dark 55
+- [x] สร้าง `lib/config/themes/v3/tokens/primitive.tokens.json`
+- [x] สร้าง `lib/config/themes/v3/tokens/semantic/light.tokens.json`
+- [x] สร้าง `lib/config/themes/v3/tokens/semantic/dark.tokens.json`
+- [x] ตรวจ JSON syntax ทุกไฟล์
+- [x] ยืนยัน token counts: primitive 145, Light 55, Dark 55
 
 Depends on: V3-03
 
 Lane: Theme inputs
 
-Evidence: token files และ validation output
+Evidence (`2026-07-10 23:24:54 +0700`):
+
+- Source inputs: `lib/config/themes/v3/tokens/primitive.tokens.json`, `lib/config/themes/v3/tokens/semantic/light.tokens.json`, `lib/config/themes/v3/tokens/semantic/dark.tokens.json`
+- `flutter test test/config/themes/v3`: PASS — parser โหลด JSON ทั้งสามไฟล์และยืนยัน primitive 145, Light 55, Dark 55 พร้อม path parity
+- Generator summary: `Theme V3 generated: primitives=145, light=55, dark=55`
 
 ### V3-05: Define V3 public model and runtime API
 
-- [ ] สร้าง `v3_color_token.dart`
-- [ ] สร้าง `v3_color_palette.dart`
-- [ ] สร้าง `v3_theme_scope.dart`
-- [ ] ใช้ `Theme.of(context).brightness` โดยไม่แก้ ThemeData เดิม
-- [ ] ตั้งชื่อ public classes ด้วย prefix `V3`
+- [x] สร้าง `v3_color_token.dart`
+- [x] สร้าง `v3_color_palette.dart`
+- [x] สร้าง `v3_theme_scope.dart`
+- [x] ใช้ `Theme.of(context).brightness` โดยไม่แก้ ThemeData เดิม
+- [x] ตั้งชื่อ public classes ด้วย prefix `V3`
 
 Depends on: V3-04
 
 Lane: Flutter API
 
-Evidence: Dart source และ targeted tests
+Evidence:
+
+- Runtime/model: `lib/config/themes/v3/v3_color_token.dart`, `v3_color_palette.dart`, `v3_theme_scope.dart`
+- `test/config/themes/v3/v3_theme_scope_test.dart`: PASS — เลือก `V3ColorPalette.light`/`.dark` จาก `Theme.of(context).brightness`
 
 ### V3-06: Document V3 source-of-truth rules
 
-- [ ] สร้าง `lib/config/themes/v3/README.md`
-- [ ] ระบุ editable inputs และ generated outputs
-- [ ] ระบุ semantic-first usage rule
-- [ ] ระบุ Light/Dark workflow และ generation command
-- [ ] ระบุห้ามใช้ legacy theme ภายใน V3
+- [x] สร้าง `lib/config/themes/v3/README.md`
+- [x] ระบุ editable inputs และ generated outputs
+- [x] ระบุ semantic-first usage rule
+- [x] ระบุ Light/Dark workflow และ generation command
+- [x] ระบุห้ามใช้ legacy theme ภายใน V3
 
 Depends on: V3-04, V3-05
 
 Lane: Theme docs
 
-Evidence: README
+Evidence: `lib/config/themes/v3/README.md`
 
 ## Phase 3 — Generator And Validation
 
 ### V3-07: Implement DTCG/Figma token parser
 
-- [ ] รองรับ `$type`, `$value.hex`, alpha, components และ colorSpace
-- [ ] รองรับ `com.figma.aliasData`
-- [ ] รองรับ alias แบบ `{Core.white}`
-- [ ] normalize token paths อย่าง deterministic
-- [ ] คืน error พร้อม token path เมื่อ parse ไม่ได้
+- [x] รองรับ `$type`, `$value.hex`, alpha, components และ colorSpace
+- [x] รองรับ `com.figma.aliasData`
+- [x] รองรับ alias แบบ `{Core.white}`
+- [x] normalize token paths อย่าง deterministic
+- [x] คืน error พร้อม token path เมื่อ parse ไม่ได้
 
 Depends on: V3-04
 
 Lane: Generator
 
-Evidence: parser source และ parser tests
+Evidence:
+
+- Parser: `lib/config/themes/v3/v3_token_parser.dart`
+- `test/config/themes/v3/v3_token_parser_test.dart`: PASS — DTCG values, HEX/alpha/components/colorSpace, Figma aliasData, brace aliases, PascalCase normalization และ actionable malformed input errors
 
 ### V3-08: Implement alias resolution and validation
 
-- [ ] resolve semantic → primitive aliases
-- [ ] ตรวจ missing primitive target
-- [ ] ตรวจ alias cycle
-- [ ] ตรวจ duplicate normalized paths
-- [ ] ตรวจ Light/Dark path parity
-- [ ] ตรวจ Dart property collision
+- [x] resolve semantic → primitive aliases
+- [x] ตรวจ missing primitive target
+- [x] ตรวจ alias cycle
+- [x] ตรวจ duplicate normalized paths
+- [x] ตรวจ Light/Dark path parity
+- [x] ตรวจ Dart property collision
 
 Depends on: V3-07
 
 Lane: Generator
 
-Evidence: resolver source และ failure-path tests
+Evidence:
+
+- Resolver: `lib/config/themes/v3/v3_token_resolver.dart`
+- `test/config/themes/v3/v3_token_parser_test.dart`: PASS — alias chain, missing target, cycle, duplicate normalized path, mode parity และ Dart property collision failure paths
 
 ### V3-09: Generate V3 Dart outputs
 
-- [ ] สร้าง `v3_theme_generator.dart`
-- [ ] generate `v3_primitive_colors.g.dart`
-- [ ] generate `v3_semantic_colors.g.dart`
-- [ ] แปลง HEX/alpha เป็น Flutter `Color` ถูกต้อง
-- [ ] ใช้ primitive constants ใน semantic palette เมื่อ resolve alias ได้
-- [ ] แสดง token summary หลัง generate
+- [x] สร้าง `v3_theme_generator.dart`
+- [x] generate `v3_primitive_colors.g.dart`
+- [x] generate `v3_semantic_colors.g.dart`
+- [x] แปลง HEX/alpha เป็น Flutter `Color` ถูกต้อง
+- [x] ใช้ primitive constants ใน semantic palette เมื่อ resolve alias ได้
+- [x] แสดง token summary หลัง generate
 
 Depends on: V3-05, V3-08
 
 Lane: Generator
 
-Evidence: generator และ generated outputs
+Evidence:
+
+- Generator: `lib/config/themes/v3/v3_theme_generator.dart`
+- Outputs: `lib/config/themes/v3/generated/v3_primitive_colors.g.dart`, `v3_semantic_colors.g.dart`
+- Alpha evidence: generated `V3PrimitiveColors.focus = Color(0x663B82F6)` จาก alpha `0.4`; semantic palettes อ้าง `V3PrimitiveColors.*`
+- Command output: `Theme V3 generated: primitives=145, light=55, dark=55, changedFiles=2` ในรอบแรก
 
 ### V3-10: Verify deterministic generation
 
-- [ ] รัน generator สองครั้งแล้วไม่มี diff รอบสอง
-- [ ] เพิ่ม golden/snapshot test ของ generated output
-- [ ] เพิ่ม test สำหรับ malformed token inputs
-- [ ] รัน targeted V3 theme tests
-- [ ] รัน `flutter analyze`
+- [x] รัน generator สองครั้งแล้วไม่มี diff รอบสอง
+- [x] เพิ่ม golden/snapshot test ของ generated output
+- [x] เพิ่ม test สำหรับ malformed token inputs
+- [x] รัน targeted V3 theme tests
+- [x] รัน `flutter analyze`
 
 Depends on: V3-09
 
 Lane: Theme verification
 
-Evidence: tests และ clean second-run diff
+Evidence (`2026-07-10 23:24:54 +0700`):
+
+- `dart run lib/config/themes/v3/v3_theme_generator.dart` รอบสอง: PASS — `changedFiles=0`
+- `flutter test test/config/themes/v3`: PASS — 15/15 รวม checked-in output snapshot และ deterministic second-run tests
+- `flutter analyze`: PASS — `No issues found`
+- `flutter test`: PASS — 128/128 full regression
+- `npm run check:v3-boundaries`: PASS — 55 Dart files, 15 changed paths
+- `npm run test:v3-boundaries`: PASS — 6/6
 
 ## Phase 4 — Widget V3 Pilot
 
