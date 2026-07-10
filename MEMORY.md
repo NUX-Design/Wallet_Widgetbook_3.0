@@ -49,6 +49,10 @@
 - Token definitions live in `lib/config/themes/theme_color.dart`
 - Base color schemes live in `lib/config/themes/base_theme.dart`
 - Shared UI should use theme tokens instead of hardcoded colors where possible.
+- A separate additive Theme V3 initiative is planned, not yet implemented. Its architecture source of truth is `docs/V3_THEME_MCP_SKILLS_PLAN.md`, and its execution/progress source of truth is `task/V3_THEME_MCP_SKILLS_TASKS.md`.
+- The planned V3 boundary keeps legacy theme files and widgets unchanged, places V3 theme code under `lib/config/themes/v3/`, and places V3 widgets under `lib/widgets/v3/`.
+- Planned V3 inputs are Figma/DTCG primitive plus semantic Light/Dark JSON tokens; V3 widgets should consume semantic colors through a V3-prefixed API rather than `ThemeColors.get()`.
+- V3 change boundaries are enforced by `npm run check:v3-boundaries` with unit coverage from `npm run test:v3-boundaries`. The checker blocks legacy theme use inside V3 theme code, V3 imports from legacy widgets, and legacy `skills/**` changes when a diff contains V3 work. Flutter CI supplies the PR/push base SHA so changed-path checks cover committed diffs; `docs/v3/V3_REVIEW_CHECKLIST.md` is the reviewer source for frozen files and additive-only MCP integration boundaries.
 
 ### Widgetbook
 
@@ -121,6 +125,7 @@
 
 - `flutter analyze` passed on 2026-06-25.
 - `flutter test` passed on 2026-06-25.
+- Theme V3 baseline `V3-01`/`V3-02` was captured on 2026-07-10 at commit `18ed97af7e62579cceea7bc8dd4100d716a159d9`; evidence is stored inline in `task/V3_THEME_MCP_SKILLS_TASKS.md`. `flutter analyze` and all 114 Flutter tests pass after the test-only `PlaceholderAssetBundle` was updated to serve Flutter's binary `AssetManifest.bin`; targeted tests explicitly preserve SVG markup and Lottie JSON behavior. All four MCP baseline gates passed after `npm ci`; the legacy registry contained 14 local tools and 12 remotely exposed read-only tools, and the existing contract snapshot passed unchanged.
 - Flutter commands may require permissions to write to the external Flutter SDK cache, depending on sandbox/runtime.
 
 ## Testing Layout
@@ -138,6 +143,7 @@
 - Shared test setup now lives in `test/support/widget_test_harness.dart` and covers `MaterialApp` + `Scaffold` pumping, localized light/dark themes, modal bottom sheet and snackbar hosts, settle helpers, and a placeholder asset bundle for `SvgPicture.asset`/`Image.asset`/`Lottie.asset` smoke tests.
 - Active task backlogs live under `task/`.
 - `task/TASKS.md` currently tracks the MCP production-ready execution checklist and keeps a short historical reference to the completed widget-test backlog; `WIDGET_TEST_PLAN.md` still holds the higher-level widget testing analysis and prioritization.
+- `task/V3_THEME_MCP_SKILLS_TASKS.md` is a separate backlog for Theme V3, Widget V3, additive MCP V3 tools, Skills V3, and rollout through the existing hosted Render MCP service. Do not merge its progress into `task/TASKS.md`.
 - When updating `task/TASKS.md`, always refresh the `อัปเดตล่าสุดเมื่อ` timestamp whenever any checklist item, note, or progress detail changes.
 - When asked for the latest work, latest completed item, or current execution progress, inspect `task/TASKS.md` first and answer from its checklist state plus the `อัปเดตล่าสุดเมื่อ` timestamp.
 - Batch 1 widget coverage now exists under `test/widgets/input/input_widgets_test.dart`, `test/widgets/tab/horizontal_tabs_test.dart`, `test/widgets/navigator_bar/navigator_bar_test.dart`, `test/widgets/avatar/avatar_test.dart`, and `test/widgets/snack_bar/snack_bar_test.dart`.
@@ -158,6 +164,10 @@
 - Root `package.json` and `scripts/` support schema/doc generation.
 - `task/` stores task-tracking markdown for active execution backlogs.
 - `mcp-server/` is the single Node-based MCP server for both design-system guidance and cross-repo widget discovery/source extraction.
+- The approved V3 hosting direction is to extend this same MCP server additively and continue using the existing Remote Streamable HTTP endpoint `https://flutter-widget-wallet-mcp.onrender.com/mcp`, service name `flutter-widget-wallet-mcp`, and existing bearer-auth mechanism. A second Render service is not planned.
+- Planned MCP V3 code should be isolated under `mcp-server/v3/`; existing MCP registry/entry files may change only for additive V3 registration/integration, and published legacy tool contracts/behavior must remain protected by regression tests.
+- Planned V3 MCP tools must use V3-specific names, remain read-only for hosted exposure, read only V3 theme/widget paths, and never silently fall back to the legacy theme.
+- Existing skills remain unchanged; the planned V3 skill distributions live separately under `skills-v3/` for Codex, Claude Code, and Kiro while using the same hosted MCP endpoint.
 - `mcp-server/app.js` is the reusable source-of-truth factory for tool dispatching and MCP server setup; `mcp-server/index.js` is now the thin stdio entrypoint wrapper.
 - `mcp-server/http-server.js` is the hosted Streamable HTTP entrypoint and reuses the same dispatcher/tool contracts from `app.js`.
 - `mcp-server/remote_support.js` owns the remote read-only registry filter, commit-scoped snapshot namespace, and refresh/freshness helpers for hosted mode.
@@ -230,12 +240,21 @@ Read in this order:
 2. `lib/config/themes/base_theme.dart`
 3. consuming widget files
 
+### For Planned Theme V3 Work
+
+Read in this order:
+1. `docs/V3_THEME_MCP_SKILLS_PLAN.md`
+2. `task/V3_THEME_MCP_SKILLS_TASKS.md`
+3. the specific V3 token/theme/widget/MCP/skill files required by the selected task
+4. legacy files only as read-only compatibility references unless the task explicitly calls for additive MCP registration
+
 ## Known Constraints And Gotchas
 
 - The repo may contain unrelated local changes; avoid overwriting them.
 - Generated files exist alongside hand-written sources, so confirm whether a target file is authoritative before editing.
 - Some docs still describe the project as a broader app foundation, but the current repo also serves as a design-system/widget catalog with Widgetbook and MCP-related tooling.
 - Root overview docs can drift from the live Flutter tree; verify paths against the filesystem before acting on them.
+- V3 plan/task documents describe approved future architecture and execution, not completed implementation. Check the V3 task checkboxes and evidence before reporting availability.
 - Widget-local markdown is not just human documentation; it can also feed the schema generation pipeline.
 - Secret scanning risk exists for local MCP setup docs/configs; never commit PATs or API keys into tracked files.
 - Flutter verification may fail in restricted environments unless the runtime can write to the Flutter SDK cache.

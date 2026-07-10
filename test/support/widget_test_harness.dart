@@ -226,6 +226,10 @@ class PlaceholderAssetBundle extends CachingAssetBundle {
 
   @override
   Future<ByteData> load(String key) async {
+    if (key == 'AssetManifest.bin') {
+      return const StandardMessageCodec().encodeMessage(_manifestBinary)!;
+    }
+
     if (key == 'AssetManifest.json') {
       return ByteData.view(
         Uint8List.fromList(utf8.encode(_manifestJson)).buffer,
@@ -270,6 +274,15 @@ class PlaceholderAssetBundle extends CachingAssetBundle {
       for (final path in assetPaths) path: <String>[path],
     };
     return jsonEncode(manifest);
+  }
+
+  Map<String, List<Map<String, Object>>> get _manifestBinary {
+    return <String, List<Map<String, Object>>>{
+      for (final path in assetPaths)
+        path: <Map<String, Object>>[
+          <String, Object>{'asset': path},
+        ],
+    };
   }
 
   static bool _isSvg(String key) => key.toLowerCase().endsWith('.svg');
