@@ -20,6 +20,28 @@ Use this skill to make Widget V3 components easy to inspect and validate visuall
 
 When connected through Remote MCP, use `get_v3_widget_preview` and `get_v3_widget_metadata`, then author the local standalone preview or Widgetbook use case directly from those read-only results and the host repo conventions. Do not call `generate_v3_widgetbook_use_case` or fall back to a legacy generation tool.
 
+## Live Browser Preview (On Request)
+
+Use this when the requester names a specific Widget V3 component and wants to see it rendered live, not just read the preview source.
+
+1. Resolve the component:
+   - If it is already installed locally, use its existing `lib/widgets/v3/<category>/preview_v3_<widget>.dart`.
+   - If it is not installed yet, first run the `flutter-widget-v3-install` workflow (`get_v3_widget_metadata` + `get_v3_widget_code` + `get_v3_widget_preview`) so a real preview file exists before launching anything.
+   - Never invent a preview path; if no widget or preview matches the request, say so and suggest `flutter-widget-v3-search`.
+2. Pick a free local port (`8090` is a reasonable default; increment if that port is already bound to another running preview).
+3. Launch it as a background process, completely independent of Widgetbook:
+   ```bash
+   flutter run -t lib/widgets/v3/<category>/preview_v3_<widget>.dart -d web-server --web-hostname 127.0.0.1 --web-port <port>
+   ```
+4. Read the process output until it reports the serving URL (for example `http://127.0.0.1:<port>`), then share that exact URL with the requester so they can open it in their own browser.
+5. Keep the dev server running for the rest of the session. Stop it explicitly when the requester is done, or before starting a different component's live preview on the same port.
+
+Guardrails for this flow:
+
+- Never touch `lib/widgetbook.dart`, `lib/widgetbook_use_cases.dart`, or `lib/widgetbook.directories.g.dart` — this path only runs the widget's own standalone `preview_v3_*.dart` entrypoint.
+- Never reuse a port already bound to another running dev server; check first or pick a different one.
+- Only launch a preview file that already exists or was just created via `flutter-widget-v3-install`.
+
 ## MCP Tools
 
 - `get_v3_widget_preview`
