@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lottie/lottie.dart';
@@ -59,18 +62,30 @@ void main() {
     expect(find.byType(Image), findsOneWidget);
     expect(find.byType(Lottie), findsOneWidget);
 
+    final binaryManifest =
+        const StandardMessageCodec().decodeMessage(
+              await bundle.load('AssetManifest.bin'),
+            )
+            as Map<Object?, Object?>;
+    expect(binaryManifest['lib/assets/images/placeholder.png'], <Object?>[
+      <Object?, Object?>{'asset': 'lib/assets/images/placeholder.png'},
+    ]);
+
     expect(
       await bundle.loadString('AssetManifest.json'),
       contains('lib/assets/images/placeholder.svg'),
     );
     expect(
       await bundle.loadString('lib/assets/images/placeholder.svg'),
-      isNotEmpty,
+      allOf(startsWith('<svg'), contains('</svg>')),
     );
-    expect(
-      await bundle.loadString('lib/assets/lottie/placeholder.json'),
-      isNotEmpty,
-    );
+    final lottieJson =
+        jsonDecode(
+              await bundle.loadString('lib/assets/lottie/placeholder.json'),
+            )
+            as Map<String, dynamic>;
+    expect(lottieJson['v'], '5.7.4');
+    expect(lottieJson['layers'], isEmpty);
   });
 
   testWidgets('Snack bar host can show a snackbar', (

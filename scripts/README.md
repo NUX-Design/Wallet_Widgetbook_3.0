@@ -6,6 +6,8 @@ This directory contains utility scripts to transform the Wi_Wallet Design System
 
 *   **`parser.js`**: The core logic that reads raw Markdown text and extracts structured data (Widgets, Props, Design Tokens) using Regular Expressions.
 *   **`generate-schema.js`**: The main execution script. It reads the source files, calls the parser, and writes the output JSON.
+*   **`check-v3-boundaries.js`**: Enforces Theme/Widget/Skill V3 isolation rules and supports base-ref-aware changed-file checks for CI.
+*   **`check-v3-boundaries.test.js`**: Covers allowed and rejected V3 boundary scenarios with Node's built-in test runner.
 
 ## 🚀 Usage
 
@@ -17,6 +19,13 @@ npm run generate-schema
 
 # Watch for changes and auto-regenerate
 npm run generate-schema:watch
+
+# Check Theme/Widget/Skill V3 boundaries
+npm run check:v3-boundaries
+npm run test:v3-boundaries
+
+# Compare changed paths with a review base
+npm run check:v3-boundaries -- --base-ref origin/main
 ```
 
 ### Direct Execution

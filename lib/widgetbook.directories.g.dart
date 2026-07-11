@@ -12,6 +12,8 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:mcp_test_app/widgetbook_use_cases.dart'
     as _mcp_test_app_widgetbook_use_cases;
+import 'package:mcp_test_app/widgets/v3/button/preview_v3_mini_button.dart'
+    as _mcp_test_app_widgets_v3_button_preview_v3_mini_button;
 import 'package:widgetbook/widgetbook.dart' as _widgetbook;
 
 final directories = <_widgetbook.WidgetbookNode>[
@@ -334,6 +336,47 @@ final directories = <_widgetbook.WidgetbookNode>[
                 name: 'Warning',
                 builder:
                     _mcp_test_app_widgetbook_use_cases.buildSnackBarWarning,
+              ),
+            ],
+          ),
+        ],
+      ),
+      _widgetbook.WidgetbookFolder(
+        name: 'tab',
+        children: [
+          _widgetbook.WidgetbookComponent(
+            name: 'HorizontalTabs',
+            useCases: [
+              _widgetbook.WidgetbookUseCase(
+                name: '2 Tabs',
+                builder:
+                    _mcp_test_app_widgetbook_use_cases.buildHorizontalTabs2,
+              ),
+              _widgetbook.WidgetbookUseCase(
+                name: '3 Tabs',
+                builder:
+                    _mcp_test_app_widgetbook_use_cases.buildHorizontalTabs3,
+              ),
+            ],
+          ),
+        ],
+      ),
+      _widgetbook.WidgetbookFolder(
+        name: 'v3',
+        children: [
+          _widgetbook.WidgetbookFolder(
+            name: 'button',
+            children: [
+              _widgetbook.WidgetbookComponent(
+                name: 'V3MiniButton',
+                useCases: [
+                  _widgetbook.WidgetbookUseCase(
+                    name: 'All Figma states',
+                    builder:
+                        _mcp_test_app_widgets_v3_button_preview_v3_mini_button
+                            .buildV3MiniButtonUseCase,
+                  ),
+                ],
               ),
             ],
           ),

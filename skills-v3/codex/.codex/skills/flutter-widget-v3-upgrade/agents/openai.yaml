@@ -1,0 +1,7 @@
+interface:
+  display_name: "Flutter Widget V3 Upgrade"
+  short_description: "Upgrade a local Widget V3 component against the latest MCP V3 source"
+  default_prompt: "Use $flutter-widget-v3-upgrade to compare a local Widget V3 component against the latest flutter-widget-wallet-mcp V3 source and upgrade it safely."
+
+policy:
+  allow_implicit_invocation: true

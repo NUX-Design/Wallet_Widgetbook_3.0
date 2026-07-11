@@ -35,6 +35,8 @@ Operational rules for agents working in this repository. This repo is a Flutter 
 - Widgetbook registry: `lib/widgetbook_use_cases.dart`, `lib/widgetbook.directories.g.dart`
 - Standalone widget previews: `lib/widgets/**/preview_*.dart`
 - Theme system: `lib/config/themes/`
+- Theme V3 architecture plan: `docs/V3_THEME_MCP_SKILLS_PLAN.md`
+- Theme V3 execution backlog: `task/V3_THEME_MCP_SKILLS_TASKS.md`
 - Localization source: `lib/l10n/localization.json`
 - Generated localization artifacts: `lib/l10n/*.arb`, `lib/generated/intl/`
 - Reusable widgets: `lib/widgets/`
@@ -42,6 +44,14 @@ Operational rules for agents working in this repository. This repo is a Flutter 
 - Task backlogs: `task/`
 - Root documentation/schema tooling: `CODEBASE_CONTEXT.md`, `WIDGETS_GUIDE.md`, `scripts/`, `package.json`, `docs/schema.json`
 - MCP helper server: `mcp-server/`
+
+### Theme V3 Planning Boundary
+
+- `docs/V3_THEME_MCP_SKILLS_PLAN.md` is the architecture source of truth for the planned additive Theme V3 + Widget V3 + MCP V3 tools + Skills V3 initiative.
+- `task/V3_THEME_MCP_SKILLS_TASKS.md` is the execution checklist and progress source of truth for that initiative.
+- Until the V3 task checklist contains verified completed work, do not claim that Theme V3, V3 MCP tools, V3 skills, or Render V3 exposure are implemented.
+- The V3 initiative keeps the existing Render service and endpoint (`https://flutter-widget-wallet-mcp.onrender.com/mcp`); it does not create a second Render service.
+- Legacy theme files, widgets outside `lib/widgets/v3/`, published MCP tool behavior/contracts, and existing skills are frozen boundaries for V3 work. Existing MCP integration files may be changed only additively when required to register V3 tools, with legacy regression tests as a gate.
 
 ### Trust Order For Context
 
@@ -121,6 +131,16 @@ Use these default execution recipes unless the user explicitly asks for a differ
 4. Change tokens or theme primitives before changing many widgets individually.
 5. Validate in both light and dark themes through preview or Widgetbook.
 
+#### Theme V3 Change Playbook
+
+1. Read `docs/V3_THEME_MCP_SKILLS_PLAN.md`.
+2. Read `task/V3_THEME_MCP_SKILLS_TASKS.md` and select the smallest unchecked task whose dependencies are complete.
+3. Preserve the legacy theme system; V3 source files belong under `lib/config/themes/v3/` and V3 widgets under `lib/widgets/v3/`.
+4. Treat V3 token JSON as source input and V3 generated Dart files as derived output.
+5. Use V3-prefixed paths/classes/tools/skills and do not silently fall back to legacy theme tokens.
+6. Validate Light/Dark parity, alias resolution, generated output, preview/tests, and legacy regression gates appropriate to the task.
+7. Update the V3 task timestamp and evidence only after verification succeeds.
+
 #### Widgetbook Change Playbook
 
 1. Read `lib/widgetbook.dart`.
@@ -149,6 +169,8 @@ Use these default execution recipes unless the user explicitly asks for a differ
 3. When the user asks what the latest work is, what was done most recently, or current progress, answer from `task/TASKS.md` by inspecting the latest checklist state together with the `อัปเดตล่าสุดเมื่อ` timestamp.
 4. If a backlog file moves or its ownership changes, update both `AGENTS.md` and `MEMORY.md` in the same task.
 5. `mcp-server/RENDER_HOSTING_PLAN.md` is the design doc for hosting the MCP remote endpoint on Render for multi-client zero-clone access, backed by a checked-in `render.yaml` Blueprint at repo root; its execution checklist lives in `task/TASKS.md` under "Phase 8: Render Hosting Pilot". This is a pilot/proposal separate from the already-closed production-ready plan — do not treat it as done until `task/TASKS.md` Phase 8 checkboxes are checked. `mcp-server/KOYEB_HOSTING_PLAN.md` is a superseded historical reference only (Koyeb closed its free tier to new users in early 2026); do not propose it as an active plan.
+6. For Theme V3, Widget V3, MCP V3 tools, Skills V3, or their Render rollout, use `task/V3_THEME_MCP_SKILLS_TASKS.md` instead of appending work to `task/TASKS.md`.
+7. When asked for V3 progress, inspect the V3 checklist timestamp, checkboxes, dependencies, and attached evidence; do not infer progress from the architecture plan alone.
 
 ### Change Workflow
 
@@ -193,6 +215,7 @@ Use these default execution recipes unless the user explicitly asks for a differ
 - Keep public widget APIs explicit and predictable.
 - Use `ThemeColors.get(...)` and existing theme primitives instead of raw color literals for design-system UI.
 - Reuse `BaseTheme`, providers, and existing token naming patterns rather than introducing parallel theme systems.
+- Exception for explicitly scoped V3 work: follow `docs/V3_THEME_MCP_SKILLS_PLAN.md`, use V3 semantic APIs under `lib/config/themes/v3/`, and keep V3 imports out of legacy widgets.
 - Keep user-facing copy localization-friendly.
 
 ### Localization

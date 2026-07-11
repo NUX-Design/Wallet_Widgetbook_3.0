@@ -25,7 +25,7 @@ void main() {
   };
 
   final binding = TestWidgetsFlutterBinding.ensureInitialized();
-  final fontBytes = File('/System/Library/Fonts/SFNS.ttf').readAsBytesSync();
+  final fontBytes = _testFontFile().readAsBytesSync();
 
   setUp(() {
     binding.defaultBinaryMessenger.setMockMessageHandler('flutter/assets', (
@@ -76,7 +76,7 @@ void main() {
         find.byType(_ReceiptImageGoldenProbe),
         matchesGoldenFile('goldens/receipt_image_component_light.png'),
       );
-    });
+    }, skip: !Platform.isMacOS);
 
     testWidgets(
       'renders header logo fallback, background fallback, and detail rows',
@@ -124,6 +124,20 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   });
+}
+
+File _testFontFile() {
+  final systemFont = File('/System/Library/Fonts/SFNS.ttf');
+  if (systemFont.existsSync()) return systemFont;
+
+  final configuredFlutterRoot = Platform.environment['FLUTTER_ROOT'];
+  final flutterRoot =
+      configuredFlutterRoot == null
+          ? File(Platform.resolvedExecutable).parent.parent.parent.parent.parent
+          : Directory(configuredFlutterRoot);
+  return File(
+    '${flutterRoot.path}/bin/cache/artifacts/material_fonts/Roboto-Regular.ttf',
+  );
 }
 
 Future<void> _pumpReceiptImageApp(

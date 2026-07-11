@@ -1,0 +1,7 @@
+interface:
+  display_name: "Flutter Widget V3 Audit"
+  short_description: "Audit a Widget V3 integration for Theme V3 alignment issues"
+  default_prompt: "Use $flutter-widget-v3-audit to audit a Widget V3 component for legacy leakage, raw colors, and Theme V3 alignment issues."
+
+policy:
+  allow_implicit_invocation: true

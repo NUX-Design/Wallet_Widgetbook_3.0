@@ -1,0 +1,112 @@
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { v3ToolDefinitions } from "../mcp-server/v3/tool_contracts.js";
+import { REMOTE_READ_ONLY_TOOL_NAMES } from "../mcp-server/remote_support.js";
+
+const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const skillNames = [
+  "flutter-widget-v3-beginner",
+  "flutter-widget-v3-search",
+  "flutter-widget-v3-install",
+  "flutter-widget-v3-adapt",
+  "flutter-widget-v3-preview",
+  "flutter-widget-v3-figma-to-code",
+  "flutter-widget-v3-audit",
+  "flutter-widget-v3-upgrade",
+];
+const packs = [
+  { name: "codex", root: "skills-v3/codex/.codex/skills", openAiMetadata: true },
+  { name: "claude-code", root: "skills-v3/claude-code/.claude/skills", readme: true },
+  { name: "kiro", root: "skills-v3/kiro/.kiro/skills", readme: true },
+];
+const localOnlyTools = new Set([
+  "generate_v3_widget_code",
+  "generate_v3_widgetbook_use_case",
+]);
+const knownTools = new Set(v3ToolDefinitions.map((tool) => tool.name));
+const violations = [];
+
+function read(relativePath) {
+  const absolutePath = path.join(repoRoot, relativePath);
+  if (!fs.existsSync(absolutePath)) {
+    violations.push(`${relativePath}: missing required file`);
+    return "";
+  }
+  return fs.readFileSync(absolutePath, "utf8");
+}
+
+function toolNames(source) {
+  const section = source.match(/## MCP Tools\s+([\s\S]*?)(?=\n## |$)/)?.[1] ?? "";
+  return [...section.matchAll(/^- `([^`]+)`/gm)].map((match) => match[1]);
+}
+
+for (const pack of packs) {
+  const packRoot = path.join(repoRoot, pack.root);
+  const actualSkills = fs.existsSync(packRoot)
+    ? fs.readdirSync(packRoot, { withFileTypes: true })
+        .filter((entry) => entry.isDirectory())
+        .map((entry) => entry.name)
+        .sort()
+    : [];
+  if (JSON.stringify(actualSkills) !== JSON.stringify([...skillNames].sort())) {
+    violations.push(`${pack.root}: expected exactly 8 canonical Skills V3 folders`);
+  }
+  if (pack.readme) {
+    const readme = read(`${pack.root}/README.md`);
+    if (!readme.includes("Remote-safe fallback")) {
+      violations.push(`${pack.root}/README.md: missing Remote-safe fallback guidance`);
+    }
+  }
+  for (const skillName of skillNames) {
+    const relativeSkill = `${pack.root}/${skillName}/SKILL.md`;
+    const source = read(relativeSkill);
+    const frontmatter = source.match(/^---\n([\s\S]*?)\n---/i)?.[1] ?? "";
+    if (!frontmatter.includes(`name: ${skillName}`) || !/^description:\s*.+/m.test(frontmatter)) {
+      violations.push(`${relativeSkill}: invalid name/description frontmatter`);
+    }
+    if (!source.includes("lib/widgets/v3/**") && !source.includes("Widget V3")) {
+      violations.push(`${relativeSkill}: missing explicit Widget V3 scope`);
+    }
+    if (!/legacy|ThemeColors\.get\(\)/i.test(source)) {
+      violations.push(`${relativeSkill}: missing legacy isolation guardrail`);
+    }
+    const tools = toolNames(source);
+    for (const toolName of tools) {
+      if (!knownTools.has(toolName)) violations.push(`${relativeSkill}: unknown MCP tool ${toolName}`);
+      if (!toolName.includes("v3")) violations.push(`${relativeSkill}: legacy/ambiguous MCP tool ${toolName}`);
+    }
+    if (tools.some((toolName) => localOnlyTools.has(toolName)) && !source.includes("## Remote-Safe Fallback")) {
+      violations.push(`${relativeSkill}: local-only generation tool lacks Remote-Safe Fallback`);
+    }
+    if (skillName === "flutter-widget-v3-beginner") {
+      for (const step of ["Ask discovery questions", "Scan the workspace", "Summarize", "confirmation", "Execute only"]) {
+        if (!source.includes(step)) violations.push(`${relativeSkill}: missing beginner flow marker ${step}`);
+      }
+    }
+    if (pack.openAiMetadata) {
+      const metadataPath = `${pack.root}/${skillName}/agents/openai.yaml`;
+      const metadata = read(metadataPath);
+      if (!metadata.includes("display_name:") || !metadata.includes(`$${skillName}`)) {
+        violations.push(`${metadataPath}: metadata does not match ${skillName}`);
+      }
+    }
+  }
+}
+
+for (const toolName of localOnlyTools) {
+  if (REMOTE_READ_ONLY_TOOL_NAMES.has(toolName)) {
+    violations.push(`${toolName}: generation tool must remain excluded from remote registry`);
+  }
+}
+
+if (violations.length > 0) {
+  console.error("Skills V3 validation failed:");
+  for (const violation of violations) console.error(`- ${violation}`);
+  process.exitCode = 1;
+} else {
+  console.log(
+    `Skills V3 validation passed (${packs.length} packs, ${skillNames.length} skills each, ` +
+      `${knownTools.size} known V3 tools).`,
+  );
+}

@@ -4,8 +4,11 @@
     "description": "Flutter framework for building financial applications",
     "type": "module",
     "scripts": {
+        "check:v3-boundaries": "node scripts/check-v3-boundaries.js",
+        "validate:v3-skills": "node scripts/validate-v3-skills.js",
         "generate-schema": "node scripts/generate-schema.js",
-        "generate-schema:watch": "nodemon --exec 'npm run generate-schema' --watch CODEBASE_CONTEXT.md --watch WIDGETS_GUIDE.md"
+        "generate-schema:watch": "nodemon --exec 'npm run generate-schema' --watch CODEBASE_CONTEXT.md --watch WIDGETS_GUIDE.md",
+        "test:v3-boundaries": "node --test scripts/check-v3-boundaries.test.js"
     },
     "devDependencies": {
         "nodemon": "^3.0.1"

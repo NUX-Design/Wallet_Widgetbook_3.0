@@ -21,7 +21,7 @@
 
 ### 🧠 Cross-Agent Skill Packs
 - **Skill Packs for Claude Code, Codex, and Kiro** - Added `skills/claude-code/`, `skills/codex/`, and `skills/kiro/` with 8 shared skills each: `flutter-widget-adapt`, `flutter-widget-audit`, `flutter-widget-beginner`, `flutter-widget-figma-to-code`, `flutter-widget-install`, `flutter-widget-preview`, `flutter-widget-search`, `flutter-widget-upgrade`.
-- **Agent Packs** - Added `agent-packs/antigravity/` and `agent-packs/cursor/` with `AGENTS.md` and local/remote MCP config templates for those clients.
+- **Supported Skill Distributions** - Cross-agent distributions are maintained only for the verified native skill layouts under `skills/`; the unverified Cursor and Antigravity fallback packs have been removed.
 - **Repo-Level Agent Context** - Added/expanded `AGENTS.md` and `MEMORY.md` as repo-specific operating rules for AI agents.
 
 ### ✅ Test Coverage
