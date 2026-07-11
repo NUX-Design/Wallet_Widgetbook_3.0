@@ -14,6 +14,7 @@ Use this skill to identify which widgets under `lib/widgets/v3/**` in `flutter-w
 - the user asks what V3 widget should be used for a screen or feature
 - the user describes behavior without knowing V3 widget names
 - the user wants alternatives before installing anything, and wants them on Theme V3
+- the user wants to actually see a V3 widget rendered live in a browser (identify it here, then hand off to `flutter-widget-v3-preview` to launch it)
 
 ## Workflow
 
@@ -38,3 +39,4 @@ Use this skill to identify which widgets under `lib/widgets/v3/**` in `flutter-w
 - Only consider widgets indexed from `lib/widgets/v3/**`; never suggest migrating a legacy widget as if it were V3.
 - Prefer widgets with preview coverage and lower token/dependency weight for starter recommendations.
 - If no strong V3 match exists, say so and recommend `flutter-widget-v3-figma-to-code` or `flutter-widget-v3-beginner` instead of falling back to a legacy widget.
+- If the request is really "show me this component running," confirm the widget name here and hand off to `flutter-widget-v3-preview`'s Live Browser Preview flow instead of trying to launch anything from this skill.

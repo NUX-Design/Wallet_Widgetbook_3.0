@@ -113,7 +113,7 @@ generate_v3_widgetbook_use_case
 4. `get_v3_widget_metadata` กับ candidate อันดับต้น ๆ
 5. สรุป 1-3 ตัวเลือกพร้อม theme version (`v3`), semantic token dependencies, และ preview availability
 
-Guardrail: ถ้าไม่พบ widget V3 ที่ตรง ให้แนะนำ `flutter-widget-v3-figma-to-code` หรือ `flutter-widget-v3-beginner` แทนที่จะเสนอ widget เดิม (legacy) ให้ migrate
+Guardrail: ถ้าไม่พบ widget V3 ที่ตรง ให้แนะนำ `flutter-widget-v3-figma-to-code` หรือ `flutter-widget-v3-beginner` แทนที่จะเสนอ widget เดิม (legacy) ให้ migrate ถ้า request จริง ๆ คือ "อยากดู component นี้รันจริง" ให้ระบุชื่อ widget ให้ชัดในสกิลนี้ก่อน แล้ว hand off ไป `flutter-widget-v3-preview` (Live Browser Preview) เพื่อรัน ไม่ใช่พยายามรันเองจากสกิลนี้
 
 ## Canonical Workflow — `flutter-widget-v3-install`
 
@@ -139,6 +139,21 @@ Guardrail: ถ้าไม่พบ widget V3 ที่ตรง ให้แน
 3. ถ้าต้อง Widgetbook use case ใหม่ ให้ local/stdio ใช้ `generate_v3_widgetbook_use_case` ได้แบบ optional; Remote MCP ให้เขียน use case เองจาก preview/metadata และ conventions
 4. คง Light/Dark toggle coverage เหมือน pilot `V3MiniButton`
 5. ห้ามแก้ `lib/widgetbook.directories.g.dart` ด้วยมือ
+
+### Live Browser Preview (ตามคำขอ)
+
+เมื่อผู้ใช้ระบุชื่อ component และต้องการ "เห็นมันรันจริง" ไม่ใช่แค่อ่าน source:
+
+1. หา preview entrypoint: ถ้ามีอยู่แล้วใช้ `lib/widgets/v3/<category>/preview_v3_<widget>.dart` ที่มีอยู่; ถ้ายังไม่มีให้ทำ `flutter-widget-v3-install` ก่อนเพื่อให้มีไฟล์ preview จริงก่อนรัน — ห้ามเดา path เอง
+2. เลือก local port ที่ยังไม่ถูกใช้ (แนะนำ `8090` เป็นค่าเริ่มต้น เพิ่มทีละ 1 ถ้าชนกับ preview อื่นที่รันอยู่)
+3. รันเป็น background process โดยไม่พึ่ง Widgetbook เลย:
+   ```bash
+   flutter run -t lib/widgets/v3/<category>/preview_v3_<widget>.dart -d web-server --web-hostname 127.0.0.1 --web-port <port>
+   ```
+4. อ่าน process output จนเจอ URL ที่ serve จริง (เช่น `http://127.0.0.1:<port>`) แล้วส่ง URL นั้นให้ผู้ใช้เปิดในเบราว์เซอร์ของตัวเอง
+5. คง dev server ไว้ตลอด session; ปิดเมื่อผู้ใช้บอกว่าเสร็จแล้ว หรือก่อนจะรัน component อื่นบน port เดิม
+
+Guardrail เฉพาะ flow นี้: ห้ามแก้ `lib/widgetbook.dart`, `lib/widgetbook_use_cases.dart`, หรือ `lib/widgetbook.directories.g.dart` เพราะ flow นี้ใช้แค่ `preview_v3_*.dart` ของ widget เอง; ห้ามใช้ port ที่ถูกจองโดย dev server อื่นอยู่แล้ว; ห้ามรัน path ที่ยังไม่มีไฟล์จริง
 
 ## Canonical Workflow — `flutter-widget-v3-figma-to-code`
 
