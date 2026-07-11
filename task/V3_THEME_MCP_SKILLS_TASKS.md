@@ -1,7 +1,7 @@
 # Theme V3 + MCP + Skills Tasks
 
 สร้างเมื่อ: `2026-07-10 21:49:05 +0700`
-อัปเดตล่าสุดเมื่อ: `2026-07-12 00:55:00 +0700`
+อัปเดตล่าสุดเมื่อ: `2026-07-12 01:40:00 +0700`
 
 Execution checklist นี้แตกจาก [`docs/V3_THEME_MCP_SKILLS_PLAN.md`](../docs/V3_THEME_MCP_SKILLS_PLAN.md) และเป็น source of truth สำหรับติดตามการสร้าง Theme V3, Widget V3, MCP tools V3, Skills V3 และ rollout บน Render service เดิม
 
@@ -518,4 +518,6 @@ Mitigation checklist:
 - [x] Legacy contract snapshots เป็น merge gate
 - [x] Import-boundary checks ผ่าน
 - [x] Rollout เริ่มจาก pilot widget เดียว
-- [ ] Rollback ใช้ previous Render commit โดยไม่เปลี่ยน URL/secrets
+- [x] Rollback ใช้ previous Render commit โดยไม่เปลี่ยน URL/secrets
+
+Evidence (`2026-07-12 01:40:00 +0700`): user rollback deploy ของ service `flutter-widget-wallet-mcp` บน Render กลับไป build ก่อนหน้า commit ปัจจุบันจริง; URL (`https://flutter-widget-wallet-mcp.onrender.com/mcp`) และ Bearer secret เดิมยังใช้งานได้ทันทีโดยไม่ต้องหมุน token/endpoint ใหม่ สิ่งเดียวที่ต้องปรับให้ตรงคือ env var `MCP_REMOTE_COMMIT_SHA` ใน Render Dashboard ต้องอัปเดตให้ตรงกับ SHA ของ commit ที่ rollback ไป เพราะ `resolveRemoteCommitSha()` (`mcp-server/remote_support.js:44-49`) อ่านค่านี้ก่อนเสมอถ้ามีการ set ไว้ (ไม่ fallback ไป `git rev-parse HEAD` ของ build จริง); ถ้าไม่ sync ค่านี้ `/health`/`/info` และ `namespace = repoIdentity::channel::commitSha` จะรายงาน commit ผิดจากโค้ดที่รันอยู่จริง แต่ URL/secret ไม่ได้รับผลกระทบ
