@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -21,7 +23,7 @@ void main() {
         find.byType(_VisaCardGoldenProbe),
         matchesGoldenFile('goldens/visa_card_light.png'),
       );
-    });
+    }, skip: !Platform.isMacOS);
 
     testWidgets('matches the dark-theme golden snapshot', (
       WidgetTester tester,
@@ -39,7 +41,7 @@ void main() {
         find.byType(_VisaCardGoldenProbe),
         matchesGoldenFile('goldens/visa_card_dark.png'),
       );
-    });
+    }, skip: !Platform.isMacOS);
 
     testWidgets(
       'renders the logo, expiry date, masked number, and gradient card',

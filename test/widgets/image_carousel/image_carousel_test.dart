@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mcp_test_app/config/themes/base_theme.dart';
@@ -20,7 +22,7 @@ void main() {
         find.byType(_ImageCarouselGoldenProbe),
         matchesGoldenFile('goldens/image_carousel_light.png'),
       );
-    });
+    }, skip: !Platform.isMacOS);
 
     testWidgets('matches the dark-theme golden snapshot', (
       WidgetTester tester,
@@ -36,7 +38,7 @@ void main() {
         find.byType(_ImageCarouselGoldenProbe),
         matchesGoldenFile('goldens/image_carousel_dark.png'),
       );
-    });
+    }, skip: !Platform.isMacOS);
 
     testWidgets('renders correctly with given pages', (
       WidgetTester tester,

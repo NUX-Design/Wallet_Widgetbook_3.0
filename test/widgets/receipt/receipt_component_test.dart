@@ -25,7 +25,7 @@ void main() {
   };
 
   final binding = TestWidgetsFlutterBinding.ensureInitialized();
-  final fontBytes = File('/System/Library/Fonts/SFNS.ttf').readAsBytesSync();
+  final fontBytes = _testFontFile().readAsBytesSync();
 
   setUp(() {
     binding.defaultBinaryMessenger.setMockMessageHandler('flutter/assets', (
@@ -75,7 +75,7 @@ void main() {
         find.byType(_ReceiptGoldenProbe),
         matchesGoldenFile('goldens/receipt_component_light.png'),
       );
-    });
+    }, skip: !Platform.isMacOS);
 
     testWidgets('renders the expected sections and clamps detail rows', (
       WidgetTester tester,
@@ -132,6 +132,17 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   });
+}
+
+File _testFontFile() {
+  final systemFont = File('/System/Library/Fonts/SFNS.ttf');
+  if (systemFont.existsSync()) return systemFont;
+
+  final dartExecutable = File(Platform.resolvedExecutable);
+  final flutterRoot = dartExecutable.parent.parent.parent.parent.parent;
+  return File(
+    '${flutterRoot.path}/bin/cache/artifacts/material_fonts/Roboto-Regular.ttf',
+  );
 }
 
 Future<void> _pumpReceiptApp(

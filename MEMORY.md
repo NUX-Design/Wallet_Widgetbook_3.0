@@ -138,6 +138,7 @@
 - `flutter test` passed on 2026-06-25.
 - Theme V3 baseline `V3-01`/`V3-02` was captured on 2026-07-10 at commit `18ed97af7e62579cceea7bc8dd4100d716a159d9`; evidence is stored inline in `task/V3_THEME_MCP_SKILLS_TASKS.md`. `flutter analyze` and all 114 Flutter tests pass after the test-only `PlaceholderAssetBundle` was updated to serve Flutter's binary `AssetManifest.bin`; targeted tests explicitly preserve SVG markup and Lottie JSON behavior. All four MCP baseline gates passed after `npm ci`; the legacy registry contained 14 local tools and 12 remotely exposed read-only tools, and the existing contract snapshot passed unchanged.
 - Flutter commands may require permissions to write to the external Flutter SDK cache, depending on sandbox/runtime.
+- Golden baselines for ImageCarousel, VisaCard, and receipt widgets are macOS-rendered and their pixel assertions run only on macOS; Linux CI still runs the functional tests. Receipt test font mocks use `/System/Library/Fonts/SFNS.ttf` on macOS and fall back to Flutter's bundled `Roboto-Regular.ttf` on other platforms so the test files remain loadable in Ubuntu CI.
 
 ## Testing Layout
 
