@@ -18,6 +18,7 @@ Beyond the UI side, this repo also ships an `mcp-server/` for connecting AI agen
 - [Design System Foundation](#design-system-foundation)
 - [MCP Server and Agent Skills](#mcp-server-and-agent-skills)
 - [Setup MCP for Codex, Claude Code, Kiro](#setup-mcp-for-codex-claude-code-kiro)
+- [Install Skills V3 (Recommended)](#install-skills-v3-recommended)
 - [Why using MCP + Skills from this repo is useful](#why-using-mcp--skills-from-this-repo-is-useful)
 - [Useful Commands](#useful-commands)
 
@@ -206,7 +207,15 @@ Use the remote MCP URL with an `Authorization` header:
 
 ### 2. Claude Code
 
-Use the same remote MCP URL shape:
+**Option A — CLI (recommended)**
+
+```bash
+claude mcp add --transport http flutter-widget-wallet-mcp \
+  https://flutter-widget-wallet-mcp.onrender.com/mcp \
+  --header "Authorization: Bearer <EDGE_ACCESS_TOKEN>"
+```
+
+**Option B — JSON config**
 
 ```json
 {
@@ -245,6 +254,61 @@ Notes:
 - Direct host-app remote integration for `Claude Code` and `Codex` is still `best-effort / unverified` per `mcp-server/COMPATIBILITY_POLICY.md`
 - `Kiro` has no template generated directly by the repo, so treat it as a generic remote example as well
 - To verify the actually deployed endpoint, use `cd mcp-server && npm run verify:mcp:remote`
+
+## Install Skills V3 (Recommended)
+
+After connecting to the MCP endpoint, install the **Skills V3** pack into your target project. Skills act as workflow guides that tell the agent _how_ to use the MCP tools correctly — searching before creating, using V3 theme tokens, respecting Light/Dark parity, running previews, and never overwriting existing widgets.
+
+Without skills, the agent has raw MCP tools but no guardrails. With skills, the agent follows a structured workflow every time.
+
+### What the 8 skills do
+
+| Skill | Purpose |
+|---|---|
+| `flutter-widget-v3-beginner` | Bootstrap a Flutter project to consume widgets from this library (ask → scan → confirm → execute) |
+| `flutter-widget-v3-search` | Search the widget catalog before building anything new |
+| `flutter-widget-v3-install` | Pull a widget's source + preview into your project |
+| `flutter-widget-v3-adapt` | Adapt an installed widget to match your project's theme tokens |
+| `flutter-widget-v3-preview` | Run a standalone Light/Dark preview of any widget in a browser |
+| `flutter-widget-v3-figma-to-code` | Convert a Figma component into a V3 widget using token mappings |
+| `flutter-widget-v3-audit` | Check an existing widget for legacy imports, raw colors, missing tokens |
+| `flutter-widget-v3-upgrade` | Compare a local widget against the latest source-of-truth and upgrade |
+
+### Installation per agent
+
+Skills V3 packs live in `skills-v3/` in this repo. Copy the appropriate folder into **your target project root**:
+
+**Codex**
+
+```bash
+cp -r skills-v3/codex/.codex <YOUR_PROJECT_ROOT>/
+```
+
+This places `.codex/skills/flutter-widget-v3-*` in your project so Codex auto-discovers them.
+
+**Claude Code**
+
+```bash
+cp -r skills-v3/claude-code/.claude <YOUR_PROJECT_ROOT>/
+```
+
+This places `.claude/skills/flutter-widget-v3-*` in your project. Invoke with `/flutter-widget-v3-beginner` or let Claude match from natural language.
+
+**Kiro**
+
+```bash
+cp -r skills-v3/kiro/.kiro <YOUR_PROJECT_ROOT>/
+```
+
+This places `.kiro/skills/flutter-widget-v3-*` in your project for Kiro to discover.
+
+### Notes
+
+- Skills V3 work with the **same MCP endpoint and Bearer token** you already configured above
+- Skills only operate on `lib/widgets/v3/**` — they never touch legacy widgets
+- `flutter-widget-v3-beginner` will not create Theme V3 foundation; it expects `lib/config/themes/v3/generated/` to already exist (use `flutter-widget-v3-install` to pull it)
+- Remote MCP exposes only read-only tools; skills that generate code do so locally in your project
+- For the full canonical spec, see `docs/v3/V3_SKILLS_SPEC.md`
 
 ## Why using MCP + Skills from this repo is useful
 
