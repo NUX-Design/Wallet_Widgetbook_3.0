@@ -8,6 +8,17 @@ services:
     startCommand: node http-server.js
     healthCheckPath: /health
     autoDeployTrigger: commit
+    # Auto-deploy trigger scope. The service clones the whole repo, so V3
+    # sources are always present at build time; these paths only control which
+    # commits trigger an automatic redeploy. mcp-server/** covers the server
+    # runtime, and the two lib/**/v3/** paths ensure Theme V3 / Widget V3
+    # source changes (which the V3 read-only tools serve) also redeploy.
+    # skills-v3/** is intentionally excluded because skills run client-side.
+    buildFilter:
+      paths:
+        - mcp-server/**
+        - lib/config/themes/v3/**
+        - lib/widgets/v3/**
     envVars:
       - key: MCP_REMOTE_HOST
         value: 0.0.0.0
