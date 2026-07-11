@@ -130,8 +130,11 @@ File _testFontFile() {
   final systemFont = File('/System/Library/Fonts/SFNS.ttf');
   if (systemFont.existsSync()) return systemFont;
 
-  final dartExecutable = File(Platform.resolvedExecutable);
-  final flutterRoot = dartExecutable.parent.parent.parent.parent.parent;
+  final configuredFlutterRoot = Platform.environment['FLUTTER_ROOT'];
+  final flutterRoot =
+      configuredFlutterRoot == null
+          ? File(Platform.resolvedExecutable).parent.parent.parent.parent.parent
+          : Directory(configuredFlutterRoot);
   return File(
     '${flutterRoot.path}/bin/cache/artifacts/material_fonts/Roboto-Regular.ttf',
   );
