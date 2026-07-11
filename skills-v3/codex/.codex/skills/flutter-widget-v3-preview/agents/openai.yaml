@@ -1,0 +1,7 @@
+interface:
+  display_name: "Flutter Widget V3 Preview"
+  short_description: "Create or refresh Widget V3 previews / Widgetbook use cases"
+  default_prompt: "Use $flutter-widget-v3-preview to create or refresh a standalone preview or Widgetbook use case for a Widget V3 component."
+
+policy:
+  allow_implicit_invocation: true

@@ -22,6 +22,9 @@ jobs:
           V3_BOUNDARY_BASE_REF: ${{ github.event.pull_request.base.sha || github.event.before }}
         run: npm run check:v3-boundaries && npm run test:v3-boundaries
 
+      - name: Validate Skills V3
+        run: npm run validate:v3-skills
+
       - name: Setup Java
         uses: actions/setup-java@v4
         with:

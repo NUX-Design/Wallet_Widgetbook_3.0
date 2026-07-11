@@ -1,0 +1,7 @@
+interface:
+  display_name: "Flutter Widget V3 Figma To Code"
+  short_description: "Convert Figma/design intent into a new Widget V3 component"
+  default_prompt: "Use $flutter-widget-v3-figma-to-code to turn this Figma/design handoff into a new Widget V3 component using Theme V3 tokens and templates."
+
+policy:
+  allow_implicit_invocation: true

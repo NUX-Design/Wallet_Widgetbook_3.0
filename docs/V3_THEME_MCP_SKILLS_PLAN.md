@@ -328,6 +328,7 @@ skills-v3/
 Skills ที่วางแผนไว้:
 
 ```text
+flutter-widget-v3-beginner
 flutter-widget-v3-search
 flutter-widget-v3-install
 flutter-widget-v3-adapt
@@ -345,10 +346,13 @@ Endpoint: https://flutter-widget-wallet-mcp.onrender.com/mcp
 Auth: Authorization: Bearer <TOKEN>
 ```
 
+Remote MCP เปิดเฉพาะ read-only V3 tools ดังนั้น `generate_v3_widget_code` และ `generate_v3_widgetbook_use_case` เป็น optional optimization สำหรับ local/stdio เท่านั้น เมื่อใช้ endpoint เดิมให้ skill ดึง template, metadata, tokens, code และ preview แล้วประกอบ source ใน target repo เอง ห้ามหยุด workflow หรือ fallback ไป legacy tools
+
 Skill routing:
 
 | Skill | V3 tools หลัก |
 |---|---|
+| `v3-beginner` | `get_v3_design_system_info`, `get_v3_codebase_patterns`, `list_v3_categories`, `search_v3_widgets`, `get_v3_widget_metadata`, `get_v3_widget_code`, `get_v3_widget_preview`, `get_v3_flutter_widget_template` |
 | `v3-search` | `search_v3_widgets`, `get_v3_widget_metadata` |
 | `v3-install` | `get_v3_widget_code`, `get_v3_widget_preview` |
 | `v3-adapt` | `get_v3_color_token`, token search |
@@ -359,11 +363,15 @@ Skill routing:
 
 Skills V3 ต้องบังคับ:
 
+- รักษา workflow parity กับ skills เดิมทั้ง 8 ตัว แต่ route ไปยัง V3 tools และ V3 paths เท่านั้น
+- `v3-beginner` ใช้ flow `ask → scan → summarize → confirm → execute` และห้ามแก้ไฟล์ก่อนยืนยัน scope
 - ทำงานเฉพาะ `lib/widgets/v3/**`
 - ห้าม migrate หรือ overwrite widget เดิม
 - ห้ามใช้ legacy theme ใน V3
 - ตรวจ Light/Dark, preview, tests และ docs
 - เรียก V3 token tool เมื่อ token ไม่แน่ชัด
+- ทุก workflow ที่อ้าง generation tool ต้องมี remote-safe fallback ผ่าน read-only V3 tools
+- ตรวจซ้ำด้วย `npm run validate:v3-skills` และรันคำสั่งนี้ใน CI
 
 ## Phase 7 — Verify And Roll Out On The Existing Render Service
 

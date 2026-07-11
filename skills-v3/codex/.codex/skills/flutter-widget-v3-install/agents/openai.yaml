@@ -1,0 +1,7 @@
+interface:
+  display_name: "Flutter Widget V3 Install"
+  short_description: "Install a Widget V3 component from flutter-widget-wallet-mcp"
+  default_prompt: "Use $flutter-widget-v3-install to install a specific Widget V3 component from flutter-widget-wallet-mcp into this repo."
+
+policy:
+  allow_implicit_invocation: true

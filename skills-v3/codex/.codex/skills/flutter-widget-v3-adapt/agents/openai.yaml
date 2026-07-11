@@ -1,0 +1,7 @@
+interface:
+  display_name: "Flutter Widget V3 Adapt"
+  short_description: "Adapt an imported Widget V3 component to the host repo's Theme V3 tokens"
+  default_prompt: "Use $flutter-widget-v3-adapt to adapt an imported Widget V3 component to this repo's Theme V3 semantic tokens and conventions."
+
+policy:
+  allow_implicit_invocation: true

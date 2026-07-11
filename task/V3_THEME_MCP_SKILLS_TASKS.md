@@ -1,7 +1,7 @@
 # Theme V3 + MCP + Skills Tasks
 
 สร้างเมื่อ: `2026-07-10 21:49:05 +0700`
-อัปเดตล่าสุดเมื่อ: `2026-07-11 03:07:08 +0700`
+อัปเดตล่าสุดเมื่อ: `2026-07-11 22:50:00 +0700`
 
 Execution checklist นี้แตกจาก [`docs/V3_THEME_MCP_SKILLS_PLAN.md`](../docs/V3_THEME_MCP_SKILLS_PLAN.md) และเป็น source of truth สำหรับติดตามการสร้าง Theme V3, Widget V3, MCP tools V3, Skills V3 และ rollout บน Render service เดิม
 
@@ -42,7 +42,7 @@ Evidence (`2026-07-10 23:47:26 +0700`):
 - [x] Pilot widget V3 มี source, preview, guide และ tests
 - [x] Legacy Flutter/MCP baseline ยังผ่าน
 - [x] MCP endpoint เดิม expose V3 read-only tools โดย legacy contracts ไม่เปลี่ยน
-- [ ] Skills V3 พร้อมสำหรับ Codex, Claude Code และ Kiro
+- [x] Skills V3 พร้อมสำหรับ Codex, Claude Code และ Kiro
 - [ ] Render `/health`, `/info` และ remote verifier ผ่านบน deployed commit เดียวกัน
 
 Evidence (`2026-07-10 23:47:26 +0700`):
@@ -55,8 +55,9 @@ Evidence (`2026-07-10 23:47:26 +0700`):
 - `npm run verify:mcp`: PASS — Inspector stdio workflows
 - `npm run verify:mcp:http`: PASS — 12 read-only tools และ hosted workflow
 - Widget V3 pilot: PASS — `V3MiniButton` ตรง 12 Figma Size=Mini nodes ด้วย 3 variants × 4 states, icon slots, Light/Dark toggle preview, Widgetbook use case, local guide/metadata และ targeted tests 9/9
-- Exit Criteria ที่เหลือผูกกับ `V3-14` ถึง `V3-25` จึงยังไม่ติ๊กก่อนมี source, tests และ deployed evidence จริง
 - Phase 5 เพิ่ม V3 tools แบบ additive 17 รายการบน dispatcher/HTTP server เดิม; registry ปัจจุบันมี 31 tools รวมและ remote expose 27 read-only tools โดย exclude generation tools เดิม 2 + V3 2; legacy 14 contract definitions ตรง baseline ทุก field และลำดับ
+- Skills V3 (`2026-07-11 22:41:00 +0700`): 8 skills ครบ capability parity กับ legacy 8 skills, packaged เป็น 3 native packs (`skills-v3/codex/.codex/skills/`, `skills-v3/claude-code/.claude/skills/`, `skills-v3/kiro/.kiro/skills/`); canonical spec `docs/v3/V3_SKILLS_SPEC.md`; validation evidence `docs/v3/V3_SKILLS_VALIDATION.md`; remote-safe fallbacks ครบ; `npm run validate:v3-skills` PASS 3 packs × 8 skills/17 tools; `npm run check:v3-boundaries -- --base-ref origin/main` PASS 57 Dart files/106 changed paths; `npm run test:v3-boundaries` PASS 6/6; MCP syntax PASS 44 files และ tests PASS 28/28
+- Exit Criteria ที่เหลือผูกกับ `V3-22` ถึง `V3-25` (Render rollout) จึงยังไม่ติ๊กก่อนมี deployed evidence จริง
 
 ## Phase 1 — Baseline And Freeze
 
@@ -373,45 +374,63 @@ Evidence (`2026-07-11 03:07:08 +0700`): `npm run check:mcp-syntax` PASS 44 files
 
 ### V3-19: Create canonical V3 skill specifications
 
-- [ ] สร้าง canonical workflows สำหรับ search/install/adapt/preview
-- [ ] สร้าง workflows สำหรับ figma-to-code/audit/upgrade
-- [ ] ระบุ MCP server เดิมและ V3 tool routing
-- [ ] บังคับ V3 path/theme guardrails
-- [ ] ห้าม migrate widget เดิมอัตโนมัติ
+- [x] สร้าง canonical workflow สำหรับ `flutter-widget-v3-beginner`
+- [x] สร้าง canonical workflows สำหรับ search/install/adapt/preview
+- [x] สร้าง workflows สำหรับ figma-to-code/audit/upgrade
+- [x] ยืนยัน capability parity ครบ 8 skills เท่ากับ skills เดิม
+- [x] ระบุ MCP server เดิมและ V3 tool routing
+- [x] บังคับ V3 path/theme guardrails
+- [x] ห้าม migrate widget เดิมอัตโนมัติ
 
 Depends on: V3-16
 
 Lane: Skills design
 
-Evidence: canonical skill specs
+Evidence (`2026-07-11 22:41:00 +0700`): `docs/v3/V3_SKILLS_SPEC.md` ประกาศ canonical workflow ครบทั้ง 8 skills (`v3-beginner`, `v3-search`, `v3-install`, `v3-adapt`, `v3-preview`, `v3-figma-to-code`, `v3-audit`, `v3-upgrade`) พร้อม 1:1 mapping ต่อ legacy skill เดิม, routing table อ้าง 17 V3 MCP tools จาก `mcp-server/v3/tool_contracts.js`, universal guardrails บังคับ path เฉพาะ `lib/widgets/v3/**`/`test/widgets/v3/**`, ห้าม legacy theme/tool fallback, และห้าม migrate widget เดิมอัตโนมัติ; `v3-beginner` ยังคง mandatory flow `ask → scan → summarize → confirm → execute` เหมือน legacy beginner spec (`mcp-server/FLUTTER_WIDGET_BEGINNER_SKILL_SPEC.md`) แต่ scope เฉพาะ Theme V3 foundation ที่มีอยู่แล้วเท่านั้น
 
 ### V3-20: Package V3 skills for supported agents
 
-- [ ] สร้าง Codex pack ใต้ `skills-v3/codex/.codex/skills/`
-- [ ] สร้าง Claude Code pack ใต้ `skills-v3/claude-code/.claude/skills/`
-- [ ] สร้าง Kiro pack ใต้ `skills-v3/kiro/.kiro/skills/`
-- [ ] เพิ่ม pack-level README และ installation paths
-- [ ] ยืนยัน skills เดิมไม่มี diff
+- [x] สร้าง Codex pack ใต้ `skills-v3/codex/.codex/skills/`
+- [x] สร้าง Claude Code pack ใต้ `skills-v3/claude-code/.claude/skills/`
+- [x] สร้าง Kiro pack ใต้ `skills-v3/kiro/.kiro/skills/`
+- [x] เพิ่ม pack-level README และ installation paths
+- [x] ยืนยัน skills เดิมไม่มี diff
 
 Depends on: V3-19
 
 Lane: Skills packaging
 
-Evidence: skill packs และ README files
+Evidence (`2026-07-11 22:41:00 +0700`): Codex pack ที่ `skills-v3/codex/.codex/skills/` มี 8 skill folders แต่ละตัวมี `SKILL.md` + `agents/openai.yaml` (ตรงรูปแบบ legacy `skills/codex/.codex/skills/`); Claude Code pack ที่ `skills-v3/claude-code/.claude/skills/` มี pack-level `README.md` พร้อม 8 skill folders แบบ `SKILL.md` เท่านั้น; Kiro pack มีรูปแบบเดียวกัน; README ทั้งคู่ระบุ remote-safe fallback; `npm run check:v3-boundaries -- --base-ref origin/main` PASS (57 Dart files, 106 changed paths, ไม่มี violation) ยืนยันว่าไม่มีไฟล์ใต้ legacy `skills/**` ถูกแก้ในงานนี้เลย
 
 ### V3-21: Validate skill-to-tool workflows
 
-- [ ] ทดสอบ v3-search กับ MCP V3 widget tools
-- [ ] ทดสอบ v3-adapt/figma-to-code กับ token tools
-- [ ] ทดสอบ v3-audit ตรวจ legacy import ได้
-- [ ] ทดสอบ skill ปฏิเสธการแก้ widget เดิมโดยไม่ยืนยัน
-- [ ] บันทึก prompts และ expected tool sequence
+- [x] ทดสอบ v3-beginner ใช้ flow ask → scan → summarize → confirm → execute
+- [x] ทดสอบ v3-beginner ไม่แก้ไฟล์ก่อนยืนยันและ route ไป V3 tools เท่านั้น
+- [x] ทดสอบ v3-search กับ MCP V3 widget tools
+- [x] ทดสอบ v3-adapt/figma-to-code กับ token tools
+- [x] ทดสอบ v3-audit ตรวจ legacy import ได้
+- [x] ทดสอบ skill ปฏิเสธการแก้ widget เดิมโดยไม่ยืนยัน
+- [x] บันทึก prompts และ expected tool sequence
+- [x] ยืนยันทั้ง 3 agent packs มี skills V3 ครบ 8 ตัวและ workflow parity ตรงกับ skills เดิม
+- [x] ยืนยัน remote-safe fallback สำหรับ workflow ที่ใช้ generation tools
+- [x] เพิ่ม repeatable `npm run validate:v3-skills` และ CI gate
 
 Depends on: V3-18, V3-20
 
 Lane: Skills QA
 
-Evidence: validation notes หรือ automated checks
+Evidence (`2026-07-11 22:41:00 +0700`): `docs/v3/V3_SKILLS_VALIDATION.md` บันทึก prompts + expected tool sequence สำหรับทั้ง 8 skills และผลจริงจากการเรียก `createToolDispatcher` (`mcp-server/app.js`) ตรงกับ dispatcher ที่ stdio/HTTP ใช้จริง ต่อ pilot widget `V3MiniButton`:
+  - `v3-beginner`: `get_v3_design_system_info`/`list_v3_categories` คืนสถานะ Theme V3 foundation จริง (1 widget, category `button`) ยืนยัน flow ask→scan→summarize ทำงานได้ก่อนถาม confirm; SKILL.md ทุก pack ระบุ mandatory flow และห้ามแก้ไฟล์ก่อนยืนยันชัดเจน
+  - `v3-search`/`v3-install`: `search_v3_widgets`, `get_v3_widget_metadata`, `get_v3_widget_code`, `get_v3_widget_preview` คืนข้อมูลถูกต้องครบ (props, semanticTokens, source, preview)
+  - `v3-adapt`/`v3-figma-to-code`: `get_v3_color_token`, `search_v3_color_tokens`, `get_v3_figma_to_flutter_mapping`, `get_v3_flutter_widget_template`, `get_v3_codebase_patterns` คืนค่า token/mapping/pattern ถูกต้องและตรวจพบ widget เดิมที่ตรงกับ Figma component แล้ว (แนะนำ install แทนสร้างใหม่)
+  - `v3-audit`: `audit_v3_widget("V3MiniButton")` คืน `passed: true, findings: []`; legacy-import detection ได้ยืนยันแล้วด้วย broken-widget fixture ใน `mcp-server/tests/v3/widget_catalog.test.js` (V3-15)
+  - `v3-upgrade`: `search_v3_widgets("mini")` คืนผลลัพธ์ถูกต้องสำหรับ diff workflow
+  - Negative case: `get_v3_widget_metadata("NotARealWidgetXYZ")` คืน error `NOT_FOUND` พร้อม hint โดยไม่ fallback ไป legacy catalog
+  - Generation tools: `generate_v3_widget_code`/`generate_v3_widgetbook_use_case` คืน source/instructions เท่านั้นไม่เขียนไฟล์จริง และยืนยันจาก `mcp-server/remote_support.js` ว่าถูก exclude จาก remote registry ทั้งคู่
+  - Remote-safe fallback: `v3-beginner`, `v3-preview`, `v3-figma-to-code` ใช้ read-only template/metadata/token/code/preview tools แล้ว author source locally บน Remote MCP; generation tools เป็น optional local/stdio optimization เท่านั้น
+  - Repeatable validation: `scripts/validate-v3-skills.js`; `npm run validate:v3-skills` PASS — 3 packs × 8 skills, 17 known V3 tools; Flutter CI รัน command นี้ทุก push/PR
+  - Pack parity: 3 packs มี 8 skills ครบเท่ากันทุก pack, mapping 1:1 กับ legacy 8 skills ตาม `docs/v3/V3_SKILLS_SPEC.md`
+  - Legacy isolation: `npm run check:v3-boundaries -- --base-ref origin/main` PASS, `npm run test:v3-boundaries` PASS 6/6, `mcp-server` `npm run check:mcp-syntax` PASS 44 files, `npm test` PASS 28/28 (ไม่ได้รับผลกระทบเพราะ Skills V3 ไม่แก้ไฟล์ `mcp-server/**`)
 
 ## Phase 7 — Render Rollout
 
@@ -490,9 +509,9 @@ V3 routing อาจปะปนกับ legacy theme/MCP/skills หรือ a
 
 Mitigation checklist:
 
-- [ ] ทุก V3 path/class/tool/skill มี `v3` ชัดเจน
-- [ ] MCP V3 ไม่ fallback ไป legacy theme
-- [ ] Legacy contract snapshots เป็น merge gate
+- [x] ทุก V3 path/class/tool/skill มี `v3` ชัดเจน
+- [x] MCP V3 ไม่ fallback ไป legacy theme
+- [x] Legacy contract snapshots เป็น merge gate
 - [x] Import-boundary checks ผ่าน
 - [x] Rollout เริ่มจาก pilot widget เดียว
 - [ ] Rollback ใช้ previous Render commit โดยไม่เปลี่ยน URL/secrets

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Flutter Widget V3 Beginner"
+  short_description: "Scan and bootstrap Theme V3 / Widget V3 usage from flutter-widget-wallet-mcp"
+  default_prompt: "Use $flutter-widget-v3-beginner to scan this workspace for Theme V3 / Widget V3 foundation and guide adding a V3 widget from flutter-widget-wallet-mcp."
+
+policy:
+  allow_implicit_invocation: true

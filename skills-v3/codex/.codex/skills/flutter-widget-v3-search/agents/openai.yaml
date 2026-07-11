@@ -1,0 +1,7 @@
+interface:
+  display_name: "Flutter Widget V3 Search"
+  short_description: "Find the best matching Widget V3 component from flutter-widget-wallet-mcp"
+  default_prompt: "Use $flutter-widget-v3-search to find the best matching Widget V3 components in flutter-widget-wallet-mcp for this use case."
+
+policy:
+  allow_implicit_invocation: true
