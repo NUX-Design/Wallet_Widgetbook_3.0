@@ -11,6 +11,7 @@
         "verify:mcp": "node scripts/verify-mcp.js",
         "verify:mcp:http": "node scripts/verify-http.js",
         "verify:mcp:remote": "node scripts/verify-remote.js",
+        "verify:mcp:remote:v3": "node scripts/verify-remote-v3.js",
         "evaluate:mcp": "node scripts/run-evaluations.js",
         "validate:onboarding": "node scripts/validate-onboarding.js",
         "ci:mcp": "node scripts/run-ci.js",

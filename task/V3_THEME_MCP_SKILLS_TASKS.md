@@ -1,7 +1,7 @@
 # Theme V3 + MCP + Skills Tasks
 
 สร้างเมื่อ: `2026-07-10 21:49:05 +0700`
-อัปเดตล่าสุดเมื่อ: `2026-07-11 23:59:32 +0700`
+อัปเดตล่าสุดเมื่อ: `2026-07-12 00:55:00 +0700`
 
 Execution checklist นี้แตกจาก [`docs/V3_THEME_MCP_SKILLS_PLAN.md`](../docs/V3_THEME_MCP_SKILLS_PLAN.md) และเป็น source of truth สำหรับติดตามการสร้าง Theme V3, Widget V3, MCP tools V3, Skills V3 และ rollout บน Render service เดิม
 
@@ -43,7 +43,7 @@ Evidence (`2026-07-10 23:47:26 +0700`):
 - [x] Legacy Flutter/MCP baseline ยังผ่าน
 - [x] MCP endpoint เดิม expose V3 read-only tools โดย legacy contracts ไม่เปลี่ยน
 - [x] Skills V3 พร้อมสำหรับ Codex, Claude Code และ Kiro
-- [ ] Render `/health`, `/info` และ remote verifier ผ่านบน deployed commit เดียวกัน
+- [x] Render `/health`, `/info` และ remote verifier ผ่านบน deployed commit เดียวกัน
 
 Evidence (`2026-07-10 23:47:26 +0700`):
 
@@ -58,6 +58,7 @@ Evidence (`2026-07-10 23:47:26 +0700`):
 - Phase 5 เพิ่ม V3 tools แบบ additive 17 รายการบน dispatcher/HTTP server เดิม; registry ปัจจุบันมี 31 tools รวมและ remote expose 27 read-only tools โดย exclude generation tools เดิม 2 + V3 2; legacy 14 contract definitions ตรง baseline ทุก field และลำดับ
 - Skills V3 (`2026-07-11 22:41:00 +0700`): 8 skills ครบ capability parity กับ legacy 8 skills, packaged เป็น 3 native packs (`skills-v3/codex/.codex/skills/`, `skills-v3/claude-code/.claude/skills/`, `skills-v3/kiro/.kiro/skills/`); canonical spec `docs/v3/V3_SKILLS_SPEC.md`; validation evidence `docs/v3/V3_SKILLS_VALIDATION.md`; remote-safe fallbacks ครบ; `npm run validate:v3-skills` PASS 3 packs × 8 skills/17 tools; `npm run check:v3-boundaries -- --base-ref origin/main` PASS 57 Dart files/106 changed paths; `npm run test:v3-boundaries` PASS 6/6; MCP syntax PASS 44 files และ tests PASS 28/28
 - Exit Criteria ที่เหลือผูกกับ `V3-22` ถึง `V3-25` (Render rollout) จึงยังไม่ติ๊กก่อนมี deployed evidence จริง
+- Render rollout closed (`2026-07-12`): ดู evidence ใน `V3-22` ถึง `V3-25`; deployed commit `5c3f49c1bce1feed7cc32df77d41579a17930fb0` ตรงกับ `origin/main`; `npm run verify:mcp:remote` PASS 8/8 และ `npm run verify:mcp:remote:v3` PASS 13/13 บน endpoint จริง
 
 ## Phase 1 — Baseline And Freeze
 
@@ -436,63 +437,66 @@ Evidence (`2026-07-11 22:41:00 +0700`): `docs/v3/V3_SKILLS_VALIDATION.md` บั
 
 ### V3-22: Update Render deploy trigger scope
 
-- [ ] คง service `flutter-widget-wallet-mcp` เดิม
-- [ ] คง rootDir/build/start/health settings เดิม
-- [ ] เพิ่ม include paths สำหรับ `lib/config/themes/v3/**`
-- [ ] เพิ่ม include paths สำหรับ `lib/widgets/v3/**`
-- [ ] ไม่เพิ่ม `skills-v3/**` เป็น runtime deploy trigger
-- [ ] ตรวจ secrets ยังอยู่เฉพาะ Render Dashboard
+- [x] คง service `flutter-widget-wallet-mcp` เดิม
+- [x] คง rootDir/build/start/health settings เดิม
+- [x] เพิ่ม include paths สำหรับ `lib/config/themes/v3/**`
+- [x] เพิ่ม include paths สำหรับ `lib/widgets/v3/**`
+- [x] ไม่เพิ่ม `skills-v3/**` เป็น runtime deploy trigger
+- [x] ตรวจ secrets ยังอยู่เฉพาะ Render Dashboard
 
 Depends on: V3-18
 
 Lane: Render config
 
-Evidence: Blueprint/Dashboard settings โดยไม่มี secret values
+Evidence (`2026-07-12 00:55:00 +0700`): `render.yaml` (repo root, checked-in Blueprint SOT) คง `name: flutter-widget-wallet-mcp`, `rootDir: mcp-server`, `buildCommand: npm ci`, `startCommand: node http-server.js`, `healthCheckPath: /health` เดิม; เพิ่ม `buildFilter.paths` = `mcp-server/**`, `lib/config/themes/v3/**`, `lib/widgets/v3/**` เพื่อให้ commit ที่แตะ V3 sources trigger auto-deploy ได้ (ก่อนหน้านี้ไม่มี `buildFilter` เลย); `skills-v3/**` ไม่อยู่ใน paths เพราะ skills ทำงานฝั่ง client; secrets (`MCP_REMOTE_BEARER_TOKENS`, `MCP_REMOTE_PROXY_SHARED_SECRET`, `MCP_REMOTE_REFRESH_TOKEN`, `MCP_REMOTE_COMMIT_SHA`) ยังเป็น `sync: false` ไม่มี literal value ในไฟล์. หมายเหตุ: ต้อง sync Blueprint หรือปรับ Build Filter ใน Render Dashboard ให้ตรงกับ `render.yaml` เพื่อให้มีผลกับ auto-deploy ของ service จริง
 
 ### V3-23: Deploy V3 to the existing service
 
-- [ ] deploy commit ที่ผ่าน local/CI gates
-- [ ] ตรวจ build และ start logs
-- [ ] ตรวจ `/health` ตอบ healthy
-- [ ] ตรวจ `/info` แสดง V3 tool names
-- [ ] ตรวจ commit SHA และ namespace ตรงกับ deploy
+- [x] deploy commit ที่ผ่าน local/CI gates
+- [x] ตรวจ build และ start logs
+- [x] ตรวจ `/health` ตอบ healthy
+- [x] ตรวจ `/info` แสดง V3 tool names
+- [x] ตรวจ commit SHA และ namespace ตรงกับ deploy
 
 Depends on: V3-21, V3-22
 
 Lane: Render deployment
 
-Evidence: deploy metadata, `/health`, `/info`
+Evidence (`2026-07-12 00:55:00 +0700`): deploy commit `5c3f49c1bce1feed7cc32df77d41579a17930fb0` = merge #29 `Merge Theme V3 foundation, MCP V3, and Skills V3` ตรงกับ `git rev-parse origin/main`; build `npm ci` สำเร็จ, runtime `node http-server.js` ทำงาน (user-confirmed + `transport: streamable-http` ใน `/health`); `GET /health` = `status: healthy`, `commitSha=5c3f49c1...`, `widgetCount=23`, `categoryCount=15`, `deployedAt=2026-07-11T17:21:02Z`; `GET /info` = 27 read-only tools รวม V3 tool names ครบ (`get_v3_color_token`, `list_v3_color_tokens`, `search_v3_color_tokens`, `list_v3_widgets`, `search_v3_widgets`, `get_v3_widget_metadata`, `get_v3_widget_code`, `get_v3_widget_preview`, `audit_v3_widget` ฯลฯ); `namespace=src::production::5c3f49c1...` ตรงกับ deploy commit
 
 ### V3-24: Run real remote verification
 
-- [ ] ใช้ direct remote URL + Bearer auth เดิม
-- [ ] ตรวจ `tools/list`
-- [ ] ตรวจ legacy token/widget tools
-- [ ] ตรวจ V3 token list/search/get
-- [ ] ตรวจ V3 widget list/search/metadata/code/preview
-- [ ] ตรวจ unauthenticated request ถูก reject
-- [ ] ตรวจ write/generation tools ไม่ถูก expose
+- [x] ใช้ direct remote URL + Bearer auth เดิม
+- [x] ตรวจ `tools/list`
+- [x] ตรวจ legacy token/widget tools
+- [x] ตรวจ V3 token list/search/get
+- [x] ตรวจ V3 widget list/search/metadata/code/preview
+- [x] ตรวจ unauthenticated request ถูก reject
+- [x] ตรวจ write/generation tools ไม่ถูก expose
 
 Depends on: V3-23
 
 Lane: Remote verification
 
-Evidence: remote verifier output โดยไม่บันทึก secrets
+Evidence (`2026-07-12 00:55:00 +0700`): ทดสอบบน endpoint จริง `https://flutter-widget-wallet-mcp.onrender.com/mcp` ด้วย direct `Authorization: Bearer` (secret ไม่บันทึกในไฟล์นี้):
+  - `npm run verify:mcp:remote` (legacy): PASS 8/8 — session connect, `tools/list` 27 tools, `list_widgets` (count=2 category=button), `search_widgets` (count=5), `get_widget_metadata` (name=Buttons), `/health`, `/info` (commit `5c3f49c1...`)
+  - `npm run verify:mcp:remote:v3` (V3, script ใหม่ `mcp-server/scripts/verify-remote-v3.js`): PASS 13/13 — V3 tools exposed 15/15, generation tools excluded (`generate_widget_code`, `generate_widgetbook_use_case`, `generate_v3_widget_code`, `generate_v3_widgetbook_use_case` ไม่หลุด), `get_v3_color_token(content/primary)` = Light `#0F172A` / Dark `#FFFFFF` / aliases `slate/900`,`white` / usage `V3ThemeScope.colorsOf(context).contentPrimary`, `list_v3_color_tokens` total=55, `search_v3_color_tokens` count=5, `list_v3_widgets` count=1, `search_v3_widgets` count=1, `get_v3_widget_metadata` name=V3MiniButton themeVersion=v3, `get_v3_widget_code` sourceLength=7419, `get_v3_widget_preview` previewFiles=1, `audit_v3_widget` passed=true findings=0
+  - Unauthenticated `POST /mcp` (ไม่มี auth header): `HTTP 401` reject
 
 ### V3-25: Publish onboarding and close pilot
 
-- [ ] สร้าง `docs/v3/V3_REMOTE_MCP_GUIDE.md`
-- [ ] ระบุว่า URL และ Bearer token mechanism เดิมใช้ได้
-- [ ] อธิบาย routing ระหว่าง legacy และ V3 tools/skills
-- [ ] บันทึก verified client paths และ caveats
-- [ ] ยืนยัน pilot widget ใช้งานผ่าน V3 skill + remote MCP ได้
-- [ ] อัปเดต `MEMORY.md` ด้วย verified facts หลัง deploy
+- [x] สร้าง `docs/v3/V3_REMOTE_MCP_GUIDE.md`
+- [x] ระบุว่า URL และ Bearer token mechanism เดิมใช้ได้
+- [x] อธิบาย routing ระหว่าง legacy และ V3 tools/skills
+- [x] บันทึก verified client paths และ caveats
+- [x] ยืนยัน pilot widget ใช้งานผ่าน V3 skill + remote MCP ได้
+- [x] อัปเดต `MEMORY.md` ด้วย verified facts หลัง deploy
 
 Depends on: V3-24
 
 Lane: Documentation / rollout
 
-Evidence: guide, pilot result และ memory update
+Evidence (`2026-07-12 00:55:00 +0700`): `docs/v3/V3_REMOTE_MCP_GUIDE.md` ระบุ endpoint/URL เดิม, Bearer token mechanism เดิมใช้ได้กับทั้ง legacy + V3, routing table legacy vs 15 V3 tools, Skills V3 remote usage, verified client paths (verify:mcp:remote 8/8, verify:mcp:remote:v3 13/13 บน commit `5c3f49c1...`) และ caveats (free-tier cold start, generation tools local-only, freshness จาก `/health`/`/info`); pilot widget `V3MiniButton` discoverable + ดึง metadata/code/preview ผ่าน V3 tools บน remote endpoint ได้จริง (verifier output); `MEMORY.md` อัปเดต verified Render V3 facts แล้ว
 
 ## Recommended Execution Order
 
