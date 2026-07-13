@@ -28,17 +28,17 @@ flutter doctor
 flutter run
 ```
 
-### 3. Setup Widgetbook (Optional)
+### 3. Preview Widget V3 Components (Optional)
 
-If you plan to work on UI components:
+If you plan to work on Widget V3 UI components:
 
 ```bash
-# Generate Widgetbook code
-dart run build_runner build --delete-conflicting-outputs
-
-# Run Widgetbook
-flutter run -t lib/widgetbook.dart -d chrome
+# Build and serve the local Widget V3 web preview host (one command)
+./scripts/serve-v3-preview.sh
+# V3 preview ready: http://127.0.0.1:8090/#/button/V3MiniButton
 ```
+
+Any widget's standalone `preview_*.dart` can also be run directly with `flutter run -t lib/widgets/<folder>/preview_<name>.dart -d <device>`.
 
 ## 🎨 Customization Guide
 

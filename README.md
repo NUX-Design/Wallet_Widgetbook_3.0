@@ -76,8 +76,7 @@ lib/
 ├── l10n/                     # Localization source and generated ARB inputs
 ├── generated/intl/           # Generated localization Dart output
 ├── main.dart                 # Demo app entry
-├── widgetbook.dart           # Widgetbook entry
-└── widgetbook_use_cases.dart # Manual Widgetbook annotations
+└── preview_v3/                # Local Widget V3 web preview host entry, routing, and registry
 
 test/
 ├── config/themes/v3/         # Theme V3 parser, resolver, generation, and runtime tests
@@ -112,13 +111,14 @@ flutter pub get
 flutter run
 ```
 
-Run Widgetbook:
+Build and serve the Widget V3 local web preview host (one command, prints the exact URL once ready):
 
 ```bash
-flutter run -t lib/widgetbook.dart -d chrome
+./scripts/serve-v3-preview.sh
+# V3 preview ready: http://127.0.0.1:8090/#/button/V3MiniButton
 ```
 
-Run the V3 pilot preview directly:
+Run any standalone widget preview directly:
 
 ```bash
 flutter run \
@@ -395,15 +395,11 @@ Supported locales:
 
 Preview options:
 
-- Widgetbook: `flutter run -t lib/widgetbook.dart -d chrome`
-- Standalone Widget V3: `flutter run -t lib/widgets/v3/<category>/preview_v3_<widget>.dart -d <device>`
+- Widget V3 local web preview host: `./scripts/serve-v3-preview.sh` (builds/serves `lib/preview_v3/main.dart`, prints the exact `http://127.0.0.1:8090/#/<category>/<WidgetClass>` URL once ready)
+- Standalone Widget V3 (single widget, direct debug entrypoint): `flutter run -t lib/widgets/v3/<category>/preview_v3_<widget>.dart -d <device>`
 - Browser preview: add `-d web-server --web-hostname 127.0.0.1 --web-port <port>`
 
-`lib/widgetbook.directories.g.dart` is generated and must not be edited manually. Regenerate when annotation sources change:
-
-```bash
-dart run build_runner build --delete-conflicting-outputs
-```
+New Widget V3 previews are discovered from `lib/widgets/v3/**/preview_v3_*.dart`. Run `dart run tool/generate_v3_preview_registry.dart` after adding or renaming one; never hand-edit `lib/preview_v3/preview_registry.g.dart`.
 
 ## Verification commands
 
@@ -478,4 +474,4 @@ Key V3 documents:
 - Remote onboarding: `docs/v3/V3_REMOTE_MCP_GUIDE.md`
 - Review checklist: `docs/v3/V3_REVIEW_CHECKLIST.md`
 
-Generated files such as localization output, Theme V3 generated Dart, Widgetbook directories, and `docs/schema.json` must be regenerated from their source inputs rather than edited manually.
+Generated files such as localization output, Theme V3 generated Dart, and `docs/schema.json` must be regenerated from their source inputs rather than edited manually.

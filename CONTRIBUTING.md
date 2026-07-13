@@ -70,14 +70,13 @@ Thank you for your interest in contributing! 🎉
 
 ## 🛠️ Development Tools
 
-### Widgetbook
-We use Widgetbook for UI component development and testing.
-- **Run:** `flutter run -t lib/widgetbook.dart -d chrome`
-- **Update:** Run `dart run build_runner build` after adding new use cases.
+### Widget Previews
+We use standalone `preview_*.dart` entrypoints for UI component development and testing, plus a local Flutter Web preview host for Widget V3.
+- **Standalone preview:** `flutter run -t lib/widgets/<folder>/preview_<name>.dart -d <device>`
+- **Widget V3 web preview host:** `./scripts/serve-v3-preview.sh` regenerates the preview registry, builds/serves `lib/preview_v3/main.dart`, and prints the exact preview URL once ready. Preview files follow `lib/widgets/v3/**/preview_v3_*.dart`; never hand-edit `lib/preview_v3/preview_registry.g.dart`.
 
 ### Code Generation
 - **Localization:** `dart run tool/generate_arb.dart` then `flutter gen-l10n`
-- **Build Runner:** `dart run build_runner build --delete-conflicting-outputs`
 
 ## Testing
 

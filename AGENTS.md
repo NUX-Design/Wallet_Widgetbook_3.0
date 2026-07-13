@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Operational rules for agents working in this repository. This repo is a Flutter design-system/widget library with Widgetbook previews, localization generation, and supporting Node/MCP tooling.
+Operational rules for agents working in this repository. This repo is a Flutter design-system/widget library with standalone widget previews (a local Flutter Web preview host for Widget V3), localization generation, and supporting Node/MCP tooling.
 
 ## Required Read Order
 
@@ -22,7 +22,7 @@ Operational rules for agents working in this repository. This repo is a Flutter 
 - Do not bypass localization by introducing user-facing strings directly into reusable widgets when localized text is expected.
 - Do not remove or overwrite user changes outside the requested scope.
 - Keep Flutter widget behavior compatible with both light and dark themes unless the component is intentionally single-theme.
-- Preserve Widgetbook usability when adding or changing reusable widgets.
+- Preserve standalone preview usability (and, for Widget V3, that `dart run tool/generate_v3_preview_registry.dart` picks up the preview) when adding or changing reusable widgets.
 - When touching a widget, review whether tests and preview files also need updates.
 - If you learn a stable fact about architecture, workflows, constraints, or gotchas, append/update it in `MEMORY.md` in the same task.
 
@@ -31,12 +31,13 @@ Operational rules for agents working in this repository. This repo is a Flutter 
 ### Repo Shape
 
 - Main Flutter app entry: `lib/main.dart`
-- Widgetbook entry: `lib/widgetbook.dart`
-- Widgetbook registry: `lib/widgetbook_use_cases.dart`, `lib/widgetbook.directories.g.dart`
 - Standalone widget previews: `lib/widgets/**/preview_*.dart`
+- Widget V3 local web preview host entry: `lib/preview_v3/main.dart` (routing/testable classes in `lib/preview_v3/preview_app.dart`, registry in `lib/preview_v3/preview_registry.dart`)
 - Theme system: `lib/config/themes/`
 - Theme V3 architecture plan: `docs/V3_THEME_MCP_SKILLS_PLAN.md`
 - Theme V3 execution backlog: `task/V3_THEME_MCP_SKILLS_TASKS.md`
+- Widget V3 local web preview plan: `docs/V3_WEB_PREVIEW_PLAN.md`
+- Widget V3 local web preview backlog: `task/V3_WEB_PREVIEW_TASKS.md`
 - Localization source: `lib/l10n/localization.json`
 - Generated localization artifacts: `lib/l10n/*.arb`, `lib/generated/intl/`
 - Reusable widgets: `lib/widgets/`
@@ -52,6 +53,14 @@ Operational rules for agents working in this repository. This repo is a Flutter 
 - Until the V3 task checklist contains verified completed work, do not claim that Theme V3, V3 MCP tools, V3 skills, or Render V3 exposure are implemented.
 - The V3 initiative keeps the existing Render service and endpoint (`https://flutter-widget-wallet-mcp.onrender.com/mcp`); it does not create a second Render service.
 - Legacy theme files, widgets outside `lib/widgets/v3/`, published MCP tool behavior/contracts, and existing skills are frozen boundaries for V3 work. Existing MCP integration files may be changed only additively when required to register V3 tools, with legacy regression tests as a gate.
+
+### Widget V3 Local Web Preview Planning Boundary
+
+- `docs/V3_WEB_PREVIEW_PLAN.md` is the architecture source of truth for the local Flutter Web preview host that replaced Widgetbook.
+- `task/V3_WEB_PREVIEW_TASKS.md` is the execution checklist and progress source of truth for that migration.
+- VP-01 through VP-10 are verified complete: the local route works end-to-end, Widgetbook runtime/tooling was removed, MCP V3 returns additive preview route metadata, all three Skills V3 preview packs use the readiness-gated local web flow, and the generated registry supports scaling by convention. Use the checklist evidence rather than inferring completion from this summary.
+- The scope remains local-only; do not add online hosting or a second Render service.
+- `build/web/**` is generated output and must not be committed.
 
 ### Trust Order For Context
 
@@ -70,7 +79,7 @@ Reason: repo-level overview docs may lag behind the live Flutter structure.
 - For widget work, read the widget source, its preview file, related tests, and any local guide/spec markdown next to it.
 - For localization work, read `lib/l10n/localization.json`, `tool/generate_arb.dart`, and `l10n.yaml`.
 - For theme/token work, read `lib/config/themes/theme_color.dart` and related theme files first.
-- For Widgetbook issues, read `lib/widgetbook.dart` and `lib/widgetbook_use_cases.dart` before editing widget previews.
+- For Widget V3 local web preview issues, read `lib/preview_v3/main.dart`, `lib/preview_v3/preview_app.dart`, and `lib/preview_v3/preview_registry.dart` before editing preview routing.
 - For repo automation or schema tasks, inspect root `package.json`, `scripts/README.md`, `scripts/generate-schema.js`, `scripts/parser.js`, and `docs/schema.json`.
 
 ### Widget Documentation And Preview Conventions
@@ -81,8 +90,7 @@ Reason: repo-level overview docs may lag behind the live Flutter structure.
   - local documentation such as `*_GUIDE.md`, `*_CONTEXT.md`, or `*_spec.md`
 - Use the local widget markdown as the nearest documentation source-of-truth for that widget.
 - Standalone previews are valid debug entrypoints and can be run directly with `flutter run -t path/to/preview_file.dart`.
-- `lib/widgetbook_use_cases.dart` is the manual use-case source file for Widgetbook annotations.
-- `lib/widgetbook.directories.g.dart` is generated from Widgetbook/build_runner and must not be edited manually.
+- Widget V3 previews are auto-discovered by `dart run tool/generate_v3_preview_registry.dart`, which scans `lib/widgets/v3/**/preview_v3_*.dart` and regenerates `lib/preview_v3/preview_registry.g.dart` so they are reachable through the local web preview host at `http://127.0.0.1:8090/#/<category>/<WidgetClass>`. It derives the class name from the filename (`preview_v3_<widget>.dart` -> `class V3<Widget>Preview` must exist in the file) — no manual registration step. Run the generator after adding or renaming a preview file, and never hand-edit `preview_registry.g.dart`.
 
 ### Documentation Schema Pipeline
 
@@ -129,7 +137,7 @@ Use these default execution recipes unless the user explicitly asks for a differ
 2. Read `lib/config/themes/base_theme.dart`.
 3. Read the consuming widgets.
 4. Change tokens or theme primitives before changing many widgets individually.
-5. Validate in both light and dark themes through preview or Widgetbook.
+5. Validate in both light and dark themes through the widget's standalone preview.
 
 #### Theme V3 Change Playbook
 
@@ -141,14 +149,14 @@ Use these default execution recipes unless the user explicitly asks for a differ
 6. Validate Light/Dark parity, alias resolution, generated output, preview/tests, and legacy regression gates appropriate to the task.
 7. Update the V3 task timestamp and evidence only after verification succeeds.
 
-#### Widgetbook Change Playbook
+#### Widget V3 Local Web Preview Change Playbook
 
-1. Read `lib/widgetbook.dart`.
-2. Read `lib/widgetbook_use_cases.dart`.
-3. Confirm whether the task touches manual use cases, generated directories, or both.
-4. Edit manual sources only.
-5. Regenerate `lib/widgetbook.directories.g.dart` with `dart run build_runner build --delete-conflicting-outputs` when needed.
-6. Do not hand-edit `lib/widgetbook.directories.g.dart`.
+1. Read `docs/V3_WEB_PREVIEW_PLAN.md`.
+2. Read `task/V3_WEB_PREVIEW_TASKS.md` and select the smallest unchecked task whose dependencies are complete.
+3. Preview routing/testable classes live in `lib/preview_v3/preview_app.dart`; `lib/preview_v3/main.dart` stays a thin entrypoint (only `setUrlStrategy(null)` + `runApp`) because it imports `flutter_web_plugins`, which is incompatible with VM-based `flutter test`.
+4. New Widget V3 previews are picked up automatically by naming convention (`preview_v3_<widget>.dart` with `class V3<Widget>Preview`); after adding or renaming one, run `dart run tool/generate_v3_preview_registry.dart` to regenerate `lib/preview_v3/preview_registry.g.dart`. Never hand-edit that file or `lib/preview_v3/preview_registry.dart`'s consumption of it.
+5. Validate with `flutter analyze`, `dart run tool/generate_v3_preview_registry.dart --check`, targeted `flutter test test/preview_v3/ test/tool/`, `flutter build web --release -t lib/preview_v3/main.dart`, and a real run via `scripts/serve-v3-preview.sh` plus `curl -I` against the served bundle.
+6. Update the V3 web preview task timestamp and evidence only after verification succeeds.
 
 #### Documentation / Schema Change Playbook
 
@@ -171,6 +179,7 @@ Use these default execution recipes unless the user explicitly asks for a differ
 5. `mcp-server/RENDER_HOSTING_PLAN.md` is the design doc for hosting the MCP remote endpoint on Render for multi-client zero-clone access, backed by a checked-in `render.yaml` Blueprint at repo root; its execution checklist lives in `task/TASKS.md` under "Phase 8: Render Hosting Pilot". This is a pilot/proposal separate from the already-closed production-ready plan — do not treat it as done until `task/TASKS.md` Phase 8 checkboxes are checked. `mcp-server/KOYEB_HOSTING_PLAN.md` is a superseded historical reference only (Koyeb closed its free tier to new users in early 2026); do not propose it as an active plan.
 6. For Theme V3, Widget V3, MCP V3 tools, Skills V3, or their Render rollout, use `task/V3_THEME_MCP_SKILLS_TASKS.md` instead of appending work to `task/TASKS.md`.
 7. When asked for V3 progress, inspect the V3 checklist timestamp, checkboxes, dependencies, and attached evidence; do not infer progress from the architecture plan alone.
+8. For Widget V3 local HTML/browser preview or Widgetbook removal, use `task/V3_WEB_PREVIEW_TASKS.md`; do not append that work to the completed Theme V3 backlog.
 
 ### Change Workflow
 

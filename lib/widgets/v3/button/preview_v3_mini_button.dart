@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
 
 import '../../../config/themes/v3/v3_theme_scope.dart';
 import 'v3_mini_button.dart';
 
 void main() => runApp(const V3MiniButtonPreviewApp());
-
-@widgetbook.UseCase(name: 'All Figma states', type: V3MiniButton)
-Widget buildV3MiniButtonUseCase(BuildContext context) {
-  return const V3MiniButtonPreview();
-}
 
 class V3MiniButtonPreviewApp extends StatelessWidget {
   const V3MiniButtonPreviewApp({super.key});

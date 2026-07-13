@@ -56,7 +56,6 @@ Bottom-sheet drawer for showing a balance summary and warning state.
 
 - Widget: `/Users/Niwat.yah/flutter_widgetbook_3.0/lib/widgets/drawer/drawer_balance_detail.dart`
 - Preview: `/Users/Niwat.yah/flutter_widgetbook_3.0/lib/widgets/drawer/preview_drawer_balance_detail.dart`
-- Widgetbook: `/Users/Niwat.yah/flutter_widgetbook_3.0/lib/widgetbook_use_cases.dart`
 - Test: `/Users/Niwat.yah/flutter_widgetbook_3.0/test/drawer_balance_detail_test.dart`
 
 ## Preview

@@ -105,6 +105,9 @@ firebase-debug.log
 # Local configuration
 local.properties
 
+# Widgetbook Cloud is deprecated for this repository.
+.github/workflows/widgetbook.yml
+
 # Optional: ไม่ต้องเก็บ auto-generated file
 docs/schema.json
 
