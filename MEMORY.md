@@ -2,7 +2,7 @@
 
 ## Project Snapshot
 
-- Repository type: Flutter widget/design-system repository with a runnable demo app and Widgetbook catalog.
+- Repository type: Flutter widget/design-system repository with a runnable demo app and a local Flutter Web preview host (`lib/preview_v3/`) for Widget V3 (Widgetbook was fully removed in VP-07).
 - Primary domain: reusable UI components for a financial app.
 - Main package name: `mcp_test_app`
 - MCP package/server name for cross-repo widget access: `flutter-widget-wallet-mcp`
@@ -11,9 +11,7 @@
 ## Core Entry Points
 
 - App entry: `lib/main.dart`
-- Widgetbook entry: `lib/widgetbook.dart`
-- Widgetbook directories registry: `lib/widgetbook.directories.g.dart`
-- Widgetbook use cases file: `lib/widgetbook_use_cases.dart`
+- Widget V3 local web preview host entry: `lib/preview_v3/main.dart` (routing in `lib/preview_v3/preview_app.dart`, registry in `lib/preview_v3/preview_registry.dart`)
 
 ## Architecture Summary
 
@@ -28,6 +26,25 @@
 - `lib/generated/intl/` contains generated localization Dart output.
 
 ## Source Of Truth Rules
+
+### Widget V3 Local Web Preview
+
+- The local Flutter Web preview host that replaced Widgetbook is documented in `docs/V3_WEB_PREVIEW_PLAN.md`; execution and verified progress belong in `task/V3_WEB_PREVIEW_TASKS.md` (`VP-01` through `VP-10`, all verified complete as of `2026-07-14`).
+- The MVP route `http://127.0.0.1:8090/#/button/V3MiniButton` is live and verified in a real browser, served from the single Flutter Web host under `lib/preview_v3/` via `scripts/serve-v3-preview.sh`; `build/web/**` remains generated and untracked.
+- MCP preview route metadata (VP-08), all three Skills V3 preview flows (VP-09), and generated registry scaling (VP-10) are implemented with evidence in the checklist.
+- Widgetbook packages (`widgetbook`, `widgetbook_annotation`, `widgetbook_generator`), `build_runner` (no other builder depended on it), the three Widgetbook source files (`lib/widgetbook.dart`, `lib/widgetbook_use_cases.dart`, `lib/widgetbook.directories.g.dart`), and the deprecated Cloud workflow are fully removed (VP-07, `2026-07-14`). No `lib/**` file imports `package:widgetbook*` anymore.
+- VP-02 is verified complete (`2026-07-14`, commit `eaf997b050cf2885fc9322dd9992f22d2c3e755c`): `lib/widgets/v3/button/preview_v3_mini_button.dart` no longer imports `widgetbook_annotation` or declares `@UseCase`/`buildV3MiniButtonUseCase`, while keeping standalone `main()` and the Light/Dark `_FigmaMiniButtonMatrix` (3 variants × 4 states). Removing the annotation and rerunning `dart run build_runner build --delete-conflicting-outputs` automatically drops just the `V3MiniButton` folder/use-case entry from `lib/widgetbook.directories.g.dart` (23-line diff, generated file only) while leaving every other Widgetbook use case registered and working — this is the expected way to decouple one pilot preview from Widgetbook without touching the rest of the catalog ahead of full removal in VP-07.
+- VP-03 is verified complete (`2026-07-14`): `lib/preview_v3/preview_definition.dart` defines `V3PreviewDefinition` (category/widgetName/lazy `WidgetBuilder`, computed `slug`) plus standalone `normalizeV3PreviewSlug` and `ensureUniqueV3PreviewSlugs` helpers so slug normalization/duplicate detection are unit-testable outside the singleton registry. `lib/preview_v3/preview_registry.dart` holds the MVP explicit `V3PreviewRegistry` with one entry (`button/V3MiniButton` → builds `V3MiniButtonPreview` lazily); `resolve(slug)` normalizes and returns `null` for unknown/empty slugs, `all()` returns an unmodifiable list. Tests live under `test/preview_v3/`. Phase 7 (VP-10) is expected to replace this hand-maintained list with a generator scanning `lib/widgets/v3/**/preview_v3_*.dart`; do not treat the explicit registry as final.
+- VP-04 is verified complete (`2026-07-14`, revised by the VP-06 fix below): the preview host routing — `V3PreviewApp` (wraps `MaterialApp`) and `V3PreviewRoute` (normalizes the fragment; empty → first `V3PreviewRegistry.all()` entry as root "redirect to pilot widget", resolvable slug → that definition's lazy `builder` via `Builder`, unresolvable slug → `lib/preview_v3/preview_not_found.dart`'s `V3PreviewNotFound` which lists every registered slug and never throws) — now live in `lib/preview_v3/preview_app.dart`. `lib/preview_v3/main.dart` is a thin entrypoint that only calls `setUrlStrategy(null)` then `runApp(V3PreviewApp(rawSlug: Uri.base.fragment))`.
+- **Critical Flutter-web gotcha found during VP-06 browser verification**: a plain `MaterialApp(home: ...)` with no explicit `Router`/`Navigator 2.0` config still syncs the browser address bar to its own internal route ("/") on first frame, which silently overwrites/strips any URL fragment set manually before `runApp` (confirmed live: `http://host:port/#/button/V3MiniButton` collapsed to `http://host:port/` within ~1s of boot). Any Flutter Web app that wants to own the URL fragment itself (like this preview host) MUST add `flutter_web_plugins: sdk: flutter` to `pubspec.yaml` and call `setUrlStrategy(null)` from `package:flutter_web_plugins/flutter_web_plugins.dart` before `runApp`, disabling Flutter's own history sync entirely. Because `flutter_web_plugins` transitively imports `dart:ui_web`, which does not resolve under the VM platform `flutter test` uses, that import must live only in a thin `main()`-only entrypoint file (`lib/preview_v3/main.dart`) — never in a file that widget tests also import — or `flutter test` fails to compile with "Dart library 'dart:ui_web' is not available on this platform." This is why the testable `V3PreviewApp`/`V3PreviewRoute` classes were moved out of `main.dart` into `lib/preview_v3/preview_app.dart` (no `flutter_web_plugins` import), tested by `test/preview_v3/preview_app_test.dart`.
+- VP-05 is verified complete (`2026-07-14`): `scripts/serve-v3-preview.sh` regenerates the V3 preview registry, rebuilds when any `lib/**`, `web/**`, `pubspec.yaml`, or `pubspec.lock` input is newer than `build/web/main.dart.js`, serves `build/web` via `python3 -m http.server`, rejects port collisions, polls HTTP readiness before printing the exact URL, and cleans up its subprocess via traps. Defaults remain `127.0.0.1:8090` with slug `button/V3MiniButton`, overridable through flags or `V3_PREVIEW_*` env vars.
+- VP-06 is verified complete (`2026-07-14`): after the `setUrlStrategy(null)` fix above, `http://127.0.0.1:8090/#/button/V3MiniButton` genuinely works end-to-end in a real browser (verified headlessly via the Puppeteer MCP tools, since `mcp__claude-in-chrome__*` was unavailable in this environment — extension not connected). Confirmed: correct 3×4 variant/state matrix, working Light/Dark toggle, route survives a full page reload (fragment-only same-document navigation does NOT re-trigger routing — there is no `hashchange` listener in MVP scope, so switching preview routes in-browser requires a real navigation/reload, matching the plan's refresh-based fragment contract), unknown routes render the Not Found screen without crashing, no overflow at a 320×480 viewport, and Tab keyboard input doesn't crash (Flutter web's default non-semantics renderer keeps focus on the single `flutter-view` canvas host rather than exposing per-widget DOM focus targets).
+- VP-07 is verified complete (`2026-07-14`): deleted `lib/widgetbook.dart`, `lib/widgetbook_use_cases.dart`, `lib/widgetbook.directories.g.dart`; removed `widgetbook`, `widgetbook_annotation`, `widgetbook_generator`, and `build_runner` from `pubspec.yaml` (no other builder used `build_runner`; there is no `build.yaml` and no other `dart run build_runner` usage in the repo); ran `flutter pub get` (35 transitive packages dropped). `.github/workflows/widgetbook.yml` was already removed in an earlier session and stays gitignored per the `.gitignore` comment explaining why. Confirmed `grep -rln "widgetbook" lib/ --include="*.dart"` returns nothing and no file imports `package:widgetbook*`. Updated the actively-instructive docs that told users/agents to run Widgetbook (`README.md`, `AGENTS.md`, `MEMORY.md`, `CODEBASE_CONTEXT.md`, `CONTRIBUTING.md`, `SETUP_GUIDE.md`) to point at `scripts/serve-v3-preview.sh` / standalone previews instead; left `RELEASE_NOTES.md` (historical changelog) and V3 planning/evidence docs (`docs/V3_WEB_PREVIEW_PLAN.md`, `docs/V3_THEME_MCP_SKILLS_PLAN.md`, `task/**`, `docs/v3/**`) untouched as intentional migration history, per the plan's own acceptance bar ("no runtime/dependency/workflow references remain, except historical migration references"). Full regression after removal: `flutter analyze` clean, `flutter test` full suite passed, `flutter build web --release -t lib/preview_v3/main.dart` succeeded, `npm run check:v3-boundaries` passed, `cd mcp-server && npm run check:mcp-syntax && npm test` passed (29/29), `npm run validate:v3-skills` passed.
+- Gotcha caught during VP-07: `.github/workflows/widget-sync-ci.yml` (a separate CI workflow from the removed `widgetbook.yml`) had a `flutter pub run build_runner build` step and a `flutter build web -t lib/widgetbook.dart` step that would have started failing on the next push once Widgetbook/`build_runner` were removed from `pubspec.yaml`. Fixed by dropping the code-gen step and replacing the Widgetbook build step with `flutter build web --release -t lib/preview_v3/main.dart`, plus adding `lib/preview_v3/**` to its path triggers. When removing a Flutter package/tool, always check `.github/workflows/**` for CI steps that reference it, not just app source and docs — CI-only references are easy to miss with a repo-wide doc sweep. Also fixed `lib/widgets/v3/V3_WIDGETS_CONTEXT.md` (the mandatory Widget V3 creation guide) which still instructed adding `@widgetbook.UseCase` and running `build_runner`; it now points at registering new previews in `lib/preview_v3/preview_registry.dart`.
+- VP-08 is verified complete (`2026-07-14`): `mcp-server/v3/handlers.js` adds `v3PreviewRouteMetadata(widget)` — a single helper computing `previewSlug` (`${category}/${name}`) and `localPreviewUrl` (`http://${V3_LOCAL_PREVIEW_HOST}:${V3_LOCAL_PREVIEW_PORT}/#/${previewSlug}`, defaults `127.0.0.1:8090` matching `scripts/serve-v3-preview.sh`, overridable via the same `V3_PREVIEW_HOST`/`V3_PREVIEW_PORT` env vars) — spread additively into `get_v3_widget_metadata`, `get_v3_widget_details` (via the shared `widgetMetadata()` builder), and `get_v3_widget_preview`. Verified live against the real repo: `V3MiniButton` → `previewSlug: "button/V3MiniButton"`, `localPreviewUrl: "http://127.0.0.1:8090/#/button/V3MiniButton"`. `outputSchema` for these tools is `{ type: "object", additionalProperties: true }`, so no schema changes were needed. `mcp-server/scripts/verify-remote-v3.js` gained two new checks (`get_v3_widget_metadata.previewRoute`, `get_v3_widget_preview.previewRoute`) but has not been run against the live Render endpoint yet.
+- Gotcha: `mcp-server/node_modules` does not exist in this sandbox and the hoisted `~/node_modules` cache lacks `@modelcontextprotocol/inspector-cli`, so `npm run verify:mcp` (Inspector-based) always fails here regardless of code changes. `npm test` and `npm run verify:mcp:http` don't need that package and already provide equivalent/stronger local regression coverage — use those instead of treating an Inspector failure as a real regression in this environment.
+- VP-09 is verified complete (`2026-07-14`): `flutter-widget-v3-preview` (all 3 native packs — `skills-v3/codex/`, `skills-v3/claude-code/`, `skills-v3/kiro/`) no longer has any Widgetbook use-case flow; `## MCP Tools` is now just `get_v3_widget_preview`/`get_v3_widget_metadata`. Its "Live Browser Preview" flow now resolves `previewSlug`/`localPreviewUrl` via those two tools (the VP-08 additive fields) instead of hand-building a `flutter run -d web-server --web-port <port>` invocation, checks HTTP readiness before ever handing back a URL, starts `./scripts/serve-v3-preview.sh` when the server isn't up, and has an explicit fallback for missing Flutter SDK / failed build / script errors instead of claiming success. `npm run validate:v3-skills` passes (3 packs × 8 skills, 18 known V3 tools). `flutter-widget-v3-beginner` and the pack `README.md` files still mention Widgetbook intentionally — that's portable guidance for other host repos that may still use it, and was out of VP-09's explicit scope (which names only the preview skill), same scoping call as VP-07.
+- VP-10 is verified complete (`2026-07-14`) — **`task/V3_WEB_PREVIEW_TASKS.md` VP-01 through VP-10 are all done; the Widgetbook-to-local-web-preview migration is closed.** `tool/v3_preview_registry_generator.dart` is the pure discovery/render library (`discoverV3PreviewEntries`, `generateV3PreviewRegistrySource`, `v3ClassNameFromSnakeCase`); `tool/generate_v3_preview_registry.dart` is the CLI (`dart run tool/generate_v3_preview_registry.dart` writes, `--check` verifies without writing, both auto-run `dart format` on the output so CI's format check never breaks). It scans `lib/widgets/v3/**/preview_v3_*.dart`, derives `category` from the immediate parent directory name and the widget/preview class names from the filename (`preview_v3_<widget>.dart` -> `class V3<Widget>Preview` must exist in that file), throws an actionable `V3PreviewGeneratorException` on a missing preview class or a duplicate `category/widgetName` slug, and sorts entries by slug for deterministic output. `lib/preview_v3/preview_registry.g.dart` is the generated output (never hand-edit); `lib/preview_v3/preview_registry.dart` is now just the hand-maintained validation/lookup wrapper (`ensureUniqueV3PreviewSlugs(generatedV3PreviewEntries)`, `resolve`/`all`) — its public API and `preview_app.dart`/`main.dart` are unchanged. CI gate: `.github/workflows/widget-sync-ci.yml` has a "Check Widget V3 preview registry is up to date" step running `dart run tool/generate_v3_preview_registry.dart --check`; local equivalent is `npm run check:v3-preview-registry`. `test/tool/v3_preview_registry_generator_test.dart` (8 tests) proves the scale flow with a real multi-entry fixture (2 categories) plus duplicate-slug and missing-builder error paths — **the "second widget" scale proof was done via generator unit tests with synthetic fixtures, not a second production `lib/widgets/v3/` widget**, because every real Widget V3 component requires a genuine Figma source-of-truth per `V3_WIDGETS_CONTEXT.md` and no second widget spec was available in-session (explicit user decision, asked via AskUserQuestion). Full regression after wiring in: `flutter analyze` clean, `dart format --set-exit-if-changed .` clean, `flutter test` full suite 182/182 (174 prior + 8 new), `flutter build web --release -t lib/preview_v3/main.dart` succeeded, `npm run check:v3-boundaries`/`validate:v3-skills` passed, MCP `check:mcp-syntax`+`npm test` 30/30 passed, and a real `scripts/serve-v3-preview.sh` run served `http://127.0.0.1:8090/#/button/V3MiniButton` correctly off the generated registry. Docs updated to describe the generator instead of manual registry edits: `docs/V3_WEB_PREVIEW_PLAN.md` (Phase 7 marked implemented, target-architecture diagram updated), `AGENTS.md` (Widget V3 Local Web Preview Change Playbook + Repo Shape + Widget Documentation sections), `lib/widgets/v3/V3_WIDGETS_CONTEXT.md` (workflow step 5 and verification commands).
 
 ### Localization
 
@@ -73,13 +90,10 @@
 - `flutter-widget-v3-beginner` in all three native packs uses explanation-first discovery: before asking, explain every Goal, Workspace State, Target Widget, and Change Policy label in the user's language; show the V3-only existing-project paths and legacy exclusion; explain all `bootstrap-new` fields; recommend `scan-only, auto-detect, auto, additive-only` when the user wants the safest assessment. `scripts/validate-v3-skills.js` enforces these markers.
 - `scripts/check-v3-boundaries.js` flags any diff touching legacy `skills/**` whenever a diff also contains V3 work; Skills V3 additions must stay entirely under `skills-v3/**` to pass `npm run check:v3-boundaries` (run from repo root, not `mcp-server/`).
 
-### Widgetbook
+### Widget Previews (Widgetbook Removed)
 
-- Widgetbook is a first-class workflow for previewing reusable widgets.
-- Additions or changes to shared widgets should consider preview coverage.
-- The catalog depends on generated directories and registered use cases.
-- `lib/widgetbook_use_cases.dart` is the manual annotation/use-case file.
-- `lib/widgetbook.directories.g.dart` is generated output from Widgetbook/build_runner and should not be edited manually.
+- Widgetbook was fully removed in VP-07 (`2026-07-14`); see the Widget V3 Local Web Preview notes above for the removal evidence.
+- Additions or changes to shared widgets should consider preview coverage: standalone `preview_*.dart` entrypoints for all widgets. For Widget V3, following the naming convention (`preview_v3_<widget>.dart` with `class V3<Widget>Preview`) and running `dart run tool/generate_v3_preview_registry.dart` is enough to make it reachable through `scripts/serve-v3-preview.sh` — no manual registry edit (see VP-10 below).
 
 ### Widget Documentation And Schema
 
@@ -102,10 +116,9 @@
 
 - Install deps: `flutter pub get`
 - Run app: `flutter run`
-- Run Widgetbook: `flutter run -t lib/widgetbook.dart -d chrome`
 - Analyze: `flutter analyze`
 - Test: `flutter test`
-- Generate Widgetbook/build output: `dart run build_runner build --delete-conflicting-outputs`
+- Build/serve the Widget V3 local preview host: `./scripts/serve-v3-preview.sh` (builds `lib/preview_v3/main.dart` for web and serves it at `http://127.0.0.1:8090`)
 
 ### Localization
 
@@ -171,6 +184,8 @@
 
 ## Repo Boundaries
 
+- Widgetbook is fully removed from this repository (VP-07, `2026-07-14`): no packages, source files, generated registry, or Cloud workflow remain. `.github/workflows/widgetbook.yml` stays gitignored; do not restore or recommit it. Widget previews now use standalone `preview_*.dart` entrypoints plus the Widget V3 local web preview host under `lib/preview_v3/`.
+
 ### Primary Product Code
 
 - `lib/`
@@ -204,6 +219,7 @@
 - `skills/codex/.codex/skills/` now contains the Codex-native distribution of the same skill pack, using the standard Codex layout `.codex/skills/<skill-name>/SKILL.md` inside the distribution folder so the whole pack can be copied into a Codex workspace or user config as-is.
 - `skills/claude-code/.claude/skills/` and `skills/kiro/.kiro/skills/` hold the per-agent native skill-pack layouts for Claude Code and Kiro. The Claude Code pack is intentionally pure native format: each skill is `.claude/skills/<skill>/SKILL.md` with no `agents/openai.yaml`, plus a pack-level `README.md` for `/skill-name` usage and MCP setup expectations. The Kiro pack follows the same native principle based on the local Kiro install at `~/.kiro/skills/`: each skill is `.kiro/skills/<skill>/SKILL.md` with no `agents/openai.yaml`, plus a pack-level `README.md` for Kiro setup expectations. The former `agent-packs/` Cursor and Antigravity fallback distributions were removed because they were unverified, duplicated MCP examples maintained elsewhere, and were not used by runtime/build/test workflows.
 - `mcp-server/scripts/verify-mcp.js` is the repeatable Inspector workflow wrapper for local stdio verification.
+- Gotcha: `cd mcp-server && npm test` regenerates `mcp-server/mcp.json.example` as a side effect (the "installer generates per-client example files" test writes it with the current absolute repo path baked in). This is expected test behavior, not a real change — `git checkout -- mcp-server/mcp.json.example` after running mcp-server tests if it shows as modified and you didn't intend to touch it.
 - `mcp-server/scripts/run-evaluations.js` executes the structured XML evaluation suite directly against the tool dispatcher.
 - `mcp-server/scripts/check-syntax.js` runs repo-local JavaScript syntax validation across the MCP server tree.
 - `mcp-server/scripts/validate-onboarding.js` smoke-tests the documented install flow against temp config files for supported local clients.
@@ -229,7 +245,7 @@
 
 - `lib/generated/intl/`
 - `lib/l10n/app_*.arb`
-- `lib/widgetbook.directories.g.dart`
+- `lib/config/themes/v3/generated/`
 - platform build outputs and dependency folders such as `build/`, `.dart_tool/`, `macos/Pods/`, and nested `node_modules/`
 
 ## Coding Patterns Observed
@@ -250,7 +266,7 @@ Read in this order:
 2. target preview file
 3. target local guide/spec markdown
 4. relevant tests
-5. `lib/widgetbook.dart` or `lib/widgetbook_use_cases.dart` if preview registration is involved
+5. for Widget V3, `lib/preview_v3/preview_registry.dart` if preview registration is involved
 
 ### For Localization Changes
 
@@ -279,7 +295,7 @@ Read in this order:
 
 - The repo may contain unrelated local changes; avoid overwriting them.
 - Generated files exist alongside hand-written sources, so confirm whether a target file is authoritative before editing.
-- Some docs still describe the project as a broader app foundation, but the current repo also serves as a design-system/widget catalog with Widgetbook and MCP-related tooling.
+- Some docs still describe the project as a broader app foundation, but the current repo also serves as a design-system/widget catalog with standalone/Widget V3 previews and MCP-related tooling.
 - Root overview docs can drift from the live Flutter tree; verify paths against the filesystem before acting on them.
 - V3 plan/task documents describe approved future architecture and execution, not completed implementation. Check the V3 task checkboxes and evidence before reporting availability.
 - Widget-local markdown is not just human documentation; it can also feed the schema generation pipeline.

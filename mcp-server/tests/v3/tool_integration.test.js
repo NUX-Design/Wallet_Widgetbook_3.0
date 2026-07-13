@@ -57,6 +57,34 @@ test("V3 parity tools enforce V3 paths, names, and theme APIs", async () => {
   assert.equal(legacyImport.error.error.code, "INVALID_ARGUMENT");
 });
 
+test("V3 widget preview route metadata is additive on metadata, details, and preview tools", async () => {
+  const harness = createToolHarness(fixtureRoot);
+  const expectedSlug = "button/V3TestButton";
+  const expectedUrl = "http://127.0.0.1:8090/#/button/V3TestButton";
+
+  const metadata = await harness.callSuccess("get_v3_widget_metadata", { widgetName: "V3TestButton" });
+  assert.equal(metadata.data.previewSlug, expectedSlug);
+  assert.equal(metadata.data.localPreviewUrl, expectedUrl);
+  // Additive: every field the pre-VP-08 contract returned must still be present.
+  assert.equal(metadata.data.name, "V3TestButton");
+  assert.equal(metadata.data.category, "button");
+  assert.equal(metadata.data.themeVersion, "v3");
+  assert.equal(metadata.data.widgetFile, "lib/widgets/v3/button/v3_test_button.dart");
+
+  const details = await harness.callSuccess("get_v3_widget_details", { widgetName: "V3TestButton" });
+  assert.equal(details.data.previewSlug, expectedSlug);
+  assert.equal(details.data.localPreviewUrl, expectedUrl);
+
+  const preview = await harness.callSuccess("get_v3_widget_preview", { widgetName: "V3TestButton" });
+  assert.equal(preview.data.previewSlug, expectedSlug);
+  assert.equal(preview.data.localPreviewUrl, expectedUrl);
+  assert.equal(preview.data.category, "button");
+  assert.match(preview.data.previews[0].file, /preview_v3_test_button/);
+
+  const missing = await harness.callError("get_v3_widget_preview", { widgetName: "V3DoesNotExist" });
+  assert.equal(missing.error.error.code, "NOT_FOUND");
+});
+
 test("V3 runtime foundation is remotely installable from an allowlisted manifest", async () => {
   const harness = createToolHarness(repoRoot);
   const manifest = await harness.callSuccess("get_v3_theme_foundation");

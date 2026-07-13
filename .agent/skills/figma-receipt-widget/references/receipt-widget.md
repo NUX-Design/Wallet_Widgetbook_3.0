@@ -16,7 +16,6 @@
 - `flutter_widgetbook_3.0/lib/widgets/receipt/receipt_image_component.dart`
 - `flutter_widgetbook_3.0/lib/widgets/receipt/preview_receipt_component.dart`
 - `flutter_widgetbook_3.0/lib/widgets/receipt/preview_receipt_image_component.dart`
-- `flutter_widgetbook_3.0/lib/widgetbook_use_cases.dart`
 
 ## Key Rules
 

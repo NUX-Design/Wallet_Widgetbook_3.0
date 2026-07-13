@@ -1,8 +1,22 @@
 import { ToolError, buildPaginatedWidgetsPayload, ensureEnum, ensureNonEmptyString, ok, parsePagination } from "../tool_runtime.js";
 
+// Matches scripts/serve-v3-preview.sh's default host/port and env var names so the
+// URL this metadata advertises lines up with the local preview host contributors
+// actually run. Override with the same V3_PREVIEW_HOST/V3_PREVIEW_PORT env vars.
+const V3_LOCAL_PREVIEW_HOST = process.env.V3_PREVIEW_HOST || "127.0.0.1";
+const V3_LOCAL_PREVIEW_PORT = process.env.V3_PREVIEW_PORT || "8090";
+
+// Single source of truth for the `<category>/<WidgetClass>` slug and the local
+// preview URL derived from it; every handler that surfaces preview routing spreads
+// this in rather than recomputing the slug/URL itself.
+function v3PreviewRouteMetadata(widget) {
+  const previewSlug = `${widget.category}/${widget.name}`;
+  return { previewSlug, localPreviewUrl: `http://${V3_LOCAL_PREVIEW_HOST}:${V3_LOCAL_PREVIEW_PORT}/#/${previewSlug}` };
+}
+
 const tokenSummary = ({ tokenName, dartProperty, lightValue, darkValue, lightPrimitiveAlias, darkPrimitiveAlias }) => ({ tokenName, dartProperty, lightValue, darkValue, lightPrimitiveAlias, darkPrimitiveAlias });
 const widgetSummary = ({ name, category, widgetFile, previewFiles, semanticTokens }) => ({ name, category, themeVersion: "v3", widgetFile, previewFiles, semanticTokens });
-const widgetMetadata = (widget) => ({ name: widget.name, category: widget.category, themeVersion: "v3", widgetFile: widget.widgetFile, previewFiles: widget.previewFiles, docFiles: widget.docFiles, props: widget.props, dependencies: widget.dependencies, internalImports: widget.internalImports, semanticTokens: widget.semanticTokens, tokenProperties: widget.tokenProperties, figmaNodes: widget.figmaNodes });
+const widgetMetadata = (widget) => ({ name: widget.name, category: widget.category, themeVersion: "v3", widgetFile: widget.widgetFile, previewFiles: widget.previewFiles, docFiles: widget.docFiles, props: widget.props, dependencies: widget.dependencies, internalImports: widget.internalImports, semanticTokens: widget.semanticTokens, tokenProperties: widget.tokenProperties, figmaNodes: widget.figmaNodes, ...v3PreviewRouteMetadata(widget) });
 
 function toSnakeCase(value) {
   return value.replace(/([a-z0-9])([A-Z])/g, "$1_$2").replace(/[\s-]+/g, "_").toLowerCase();
@@ -141,7 +155,7 @@ export function createV3Handlers({ tokenCatalog, widgetCatalog, foundationCatalo
     async get_v3_widget_preview(args) {
       const widget = widgetCatalog.get(ensureNonEmptyString(args.widgetName, "widgetName"));
       if (!widget.previewFiles.length) throw new ToolError("EMPTY_RESULT", `V3 widget "${widget.name}" has no preview files.`, { hint: "Add preview_v3_<widget>.dart beside the widget." });
-      return ok({ themeVersion: "v3", widgetName: widget.name, previews: widget.previewFiles.map((file) => ({ file, code: widgetCatalog.read(file) })) });
+      return ok({ themeVersion: "v3", widgetName: widget.name, category: widget.category, ...v3PreviewRouteMetadata(widget), previews: widget.previewFiles.map((file) => ({ file, code: widgetCatalog.read(file) })) });
     },
     async audit_v3_widget(args) { return ok(widgetCatalog.audit(widgetCatalog.get(ensureNonEmptyString(args.widgetName, "widgetName")))); },
     async get_v3_flutter_widget_template(args) {

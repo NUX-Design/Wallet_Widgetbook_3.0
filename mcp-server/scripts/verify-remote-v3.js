@@ -244,10 +244,21 @@ async function main() {
       client.callTool({ name: "get_v3_widget_metadata", arguments: { widgetName } }),
     );
     const metadataData = parseToolResult(metadata);
+    const expectedPreviewSlug = `${metadataData.category}/${metadataData.name}`;
     record(
       "get_v3_widget_metadata",
       metadataData.name === widgetName ? "PASS" : "FAIL",
       `name=${metadataData.name} themeVersion=${metadataData.themeVersion}`,
+    );
+    // Additive VP-08 preview route metadata: previewSlug/localPreviewUrl.
+    record(
+      "get_v3_widget_metadata.previewRoute",
+      metadataData.previewSlug === expectedPreviewSlug &&
+        typeof metadataData.localPreviewUrl === "string" &&
+        metadataData.localPreviewUrl.endsWith(`/#/${expectedPreviewSlug}`)
+        ? "PASS"
+        : "FAIL",
+      `previewSlug=${metadataData.previewSlug} localPreviewUrl=${metadataData.localPreviewUrl}`,
     );
 
     // get_v3_widget_code
@@ -272,6 +283,17 @@ async function main() {
       "get_v3_widget_preview",
       Array.isArray(previewFiles) && previewFiles.length > 0 ? "PASS" : "FAIL",
       `previewFiles=${Array.isArray(previewFiles) ? previewFiles.length : 0}`,
+    );
+    // Additive VP-08 preview route metadata: previewSlug/localPreviewUrl.
+    const expectedPreviewPreviewSlug = `${previewData.category}/${widgetName}`;
+    record(
+      "get_v3_widget_preview.previewRoute",
+      previewData.previewSlug === expectedPreviewPreviewSlug &&
+        typeof previewData.localPreviewUrl === "string" &&
+        previewData.localPreviewUrl.endsWith(`/#/${expectedPreviewPreviewSlug}`)
+        ? "PASS"
+        : "FAIL",
+      `previewSlug=${previewData.previewSlug} localPreviewUrl=${previewData.localPreviewUrl}`,
     );
 
     // audit_v3_widget

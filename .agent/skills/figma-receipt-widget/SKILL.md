@@ -29,8 +29,6 @@ Update the receipt widget files in the target Flutter project:
 - `flutter_widgetbook_3.0/lib/widgets/receipt/preview_receipt_component.dart`
 - `flutter_widgetbook_3.0/lib/widgets/receipt/preview_receipt_image_component.dart`
 
-Also update `flutter_widgetbook_3.0/lib/widgetbook_use_cases.dart` if the preview data or defaults must stay aligned.
-
 ## Workflow
 
 1. Read the source-of-truth markdown in order.

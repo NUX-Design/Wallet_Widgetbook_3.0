@@ -6,6 +6,7 @@ on:
     paths:
       - "lib/widgets/**"
       - "lib/config/themes/**"
+      - "lib/preview_v3/**"
       - "test/**"
       - "pubspec.yaml"
       - ".github/workflows/widget-sync-ci.yml"
@@ -14,6 +15,7 @@ on:
     paths:
       - "lib/widgets/**"
       - "lib/config/themes/**"
+      - "lib/preview_v3/**"
       - "test/**"
       - "pubspec.yaml"
   workflow_dispatch:
@@ -41,8 +43,8 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Run code generation
-        run: flutter pub run build_runner build --delete-conflicting-outputs
+      - name: Check Widget V3 preview registry is up to date
+        run: dart run tool/generate_v3_preview_registry.dart --check
 
       - name: Check formatting
         run: dart format --output=none --set-exit-if-changed .
@@ -53,5 +55,5 @@ jobs:
       - name: Run tests
         run: flutter test
 
-      - name: Build Widgetbook
-        run: flutter build web -t lib/widgetbook.dart
+      - name: Build Widget V3 local web preview host
+        run: flutter build web --release -t lib/preview_v3/main.dart

@@ -5,6 +5,7 @@
     "type": "module",
     "scripts": {
         "check:v3-boundaries": "node scripts/check-v3-boundaries.js",
+        "check:v3-preview-registry": "dart run tool/generate_v3_preview_registry.dart --check",
         "validate:v3-skills": "node scripts/validate-v3-skills.js",
         "generate-schema": "node scripts/generate-schema.js",
         "generate-schema:watch": "nodemon --exec 'npm run generate-schema' --watch CODEBASE_CONTEXT.md --watch WIDGETS_GUIDE.md",

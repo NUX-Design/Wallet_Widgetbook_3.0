@@ -18,12 +18,12 @@
 - `preview_receipt_component.dart` should import `receipt_component.dart`.
 - `preview_receipt_image_component.dart` should import `receipt_image_component.dart`.
 - Keep the preview sample data aligned with the widget API.
-- If the transaction detail count changes, update preview data and `widgetbook_use_cases.dart` together.
+- If the transaction detail count changes, update the preview file's sample data.
 - For running or refreshing previews, see [preview-workflow.md](preview-workflow.md).
 
 ## Sample Data Conventions
 
-- Use the same sample transaction values across previews and Widgetbook use cases unless a state needs different sample content.
+- Use the same sample transaction values across previews unless a state needs different sample content.
 - Include `ref2` and `ref3` when the transaction detail list is expected to show seven rows.
 - Keep asset paths literal and aligned with the current pubspec asset bundle.
 

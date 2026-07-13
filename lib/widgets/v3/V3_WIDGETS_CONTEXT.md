@@ -10,7 +10,7 @@
 - source of truth ของรูปลักษณ์และ state คือ Figma node/spec ที่ระบุใน local guide ของ widget
 - source of truth ของสีคือ Theme V3 semantic tokens ไม่ใช่ HEX, primitive color หรือ legacy theme
 - reusable widget รับ content และ callback ผ่าน constructor แบบ explicit; user-facing copy ต้องมาจาก caller เพื่อรองรับ localization
-- ทุก widget ต้องรองรับ Light/Dark, accessibility, text scaling และ Widgetbook/standalone preview ตามลักษณะของ component
+- ทุก widget ต้องรองรับ Light/Dark, accessibility, text scaling และ standalone preview (auto-discovered โดย `dart run tool/generate_v3_preview_registry.dart` ให้เปิดผ่าน local web preview host ได้)
 
 ## ลำดับการอ่านก่อนเริ่มงาน
 
@@ -41,7 +41,7 @@ test/widgets/v3/<category>/
 - แยก public enums/models ออกจาก implementation เมื่อขนาดหรือการ reuse เหมาะสม
 - private helper widgets ควรมีหน้าที่เดียวและอยู่ในไฟล์หลักได้เมื่อใช้เฉพาะ component นั้น
 - ห้าม import Theme V3 หรือ Widget V3 เข้า legacy widgets ใต้ `lib/widgets/` นอกโฟลเดอร์ `v3/`
-- `lib/widgetbook.directories.g.dart` เป็น generated output ห้ามแก้ด้วยมือ
+- ห้ามแก้ `lib/preview_v3/preview_registry.g.dart` ด้วยมือ (generated output) — regenerate ด้วย `dart run tool/generate_v3_preview_registry.dart` แทน
 
 ## การเชื่อมกับ Theme V3
 
@@ -82,7 +82,7 @@ flowchart LR
     R --> S["V3ThemeScope semantic palette"]
     G --> W["Widget V3 implementation"]
     S --> W
-    W --> P["Preview / Widgetbook"]
+    W --> P["Preview / Local Web Preview Host"]
     W --> X["Targeted tests"]
 ```
 
@@ -122,7 +122,7 @@ flowchart LR
 - standalone preview ต้องรันได้ด้วย `flutter run -t lib/widgets/v3/<category>/preview_v3_<widget>.dart`
 - ต้องมี Light/Dark toggle ที่ทำให้ widget ทั้งหมดอ่าน palette ของ mode ที่เลือกจริง
 - แสดง matrix ของ variants/states สำคัญ รวมถึง disabled, loading และ error เมื่อเกี่ยวข้อง
-- ใส่ `@widgetbook.UseCase` ใน manual source แล้ว regenerate directories เมื่อ registration เปลี่ยน
+- ตั้งชื่อไฟล์และ class ตาม convention (`preview_v3_<widget>.dart` มี `class V3<Widget>Preview`) แล้วรัน `dart run tool/generate_v3_preview_registry.dart` เพื่อ regenerate `lib/preview_v3/preview_registry.g.dart` โดยอัตโนมัติ (ไม่ต้องแก้ registry ด้วยมือ) เพื่อให้เปิดผ่าน `./scripts/serve-v3-preview.sh` ได้
 
 ### 6. เขียน targeted tests
 
@@ -187,10 +187,12 @@ flutter test test/config/themes/v3
 flutter test test/widgets/v3
 ```
 
-เมื่อเพิ่มหรือแก้ Widgetbook annotation:
+เมื่อเพิ่มหรือแก้ preview file ใหม่ใต้ `lib/widgets/v3/`:
 
 ```bash
-dart run build_runner build --delete-conflicting-outputs
+dart run tool/generate_v3_preview_registry.dart
+flutter test test/preview_v3/ test/tool/
+flutter build web --release -t lib/preview_v3/main.dart
 ```
 
 เมื่อ local widget guide ส่งผลต่อ schema downstream:

@@ -10,7 +10,7 @@
 
 ## 🎯 จุดประสงค์
 
-Flutter design-system/widget-library repository พร้อม Widgetbook previews, standalone preview entrypoints, localization generation, design tokens, และ reusable UI components สำหรับแอปพลิเคชันทางการเงิน
+Flutter design-system/widget-library repository พร้อม standalone preview entrypoints, local Widget V3 web preview host, localization generation, design tokens, และ reusable UI components สำหรับแอปพลิเคชันทางการเงิน
 
 https://docs.flutter.dev/ui/internationalization
 https://docs.flutter.dev/cookbook/design/themes
@@ -59,9 +59,7 @@ lib/
 │   ├── snack_bar/
 │   ├── tab/
 │   └── visa/
-├── widgetbook.dart
-├── widgetbook_use_cases.dart
-├── widgetbook.directories.g.dart
+├── preview_v3/              # Local Widget V3 web preview host entry, routing, registry
 └── main.dart
 ```
 
@@ -209,14 +207,13 @@ widgets/{feature}/
 - **Responsive** - MediaQuery สำหรับ responsive design
 - **Localized** - รองรับ multi-language
 - **Reusable** - Self-contained components
-- **Previewable** - ตรวจสอบได้ผ่าน Widgetbook หรือ standalone preview
+- **Previewable** - ตรวจสอบได้ผ่าน standalone preview หรือ Widget V3 local web preview host
 
 ## 🧪 Development Workflows
 
-### Widgetbook
-- Entry point: `lib/widgetbook.dart`
-- Manual use cases: `lib/widgetbook_use_cases.dart`
-- Generated directories: `lib/widgetbook.directories.g.dart`
+### Widget V3 Local Web Preview Host
+- Entry point: `lib/preview_v3/main.dart` (routing ใน `lib/preview_v3/preview_app.dart`, registry ใน `lib/preview_v3/preview_registry.dart`)
+- Build/serve คำสั่งเดียว: `./scripts/serve-v3-preview.sh` → พิมพ์ URL เช่น `http://127.0.0.1:8090/#/button/V3MiniButton`
 
 ### Standalone Preview
 - Widgets จำนวนมากมี `preview_*.dart` สำหรับรันตรงด้วย `flutter run -t ...`
@@ -303,10 +300,10 @@ widgets/{feature}/
 - **CardReviewTransaction** - Added API data handling, number formatting, and improved localization support
 - **AnnouncementStack** - Refactored to separate base widget from preview, added skeleton loading support
 
-### Widgetbook Integration
-- **Centralized Preview** - All widgets cataloged in Widgetbook
-- **Interactive Controls** - Knobs and controls for testing widget states
-- **Use Case Driven** - Organized by use cases for easy discovery
+### Widget V3 Local Web Preview
+- **Standalone Preview Source** - Widget V3 previews live beside their widgets as `preview_v3_*.dart`
+- **Generated Registry** - `dart run tool/generate_v3_preview_registry.dart` discovers previews by convention
+- **Browser Route** - `./scripts/serve-v3-preview.sh` serves `http://127.0.0.1:8090/#/<category>/<WidgetClass>` after HTTP readiness succeeds
 
 ## ⚠️ Known Issues & Solutions
 
