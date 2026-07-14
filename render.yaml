@@ -34,6 +34,8 @@ services:
       # local dist/ dir (self-host only).
       - key: MCP_PREVIEW_BUNDLE_REPO
         value: NUX-Design/Wallet_Widgetbook_3.0
+      - key: MCP_PREVIEW_BUNDLE_PUBLIC_REPO
+        value: true
       - key: V3_PREVIEW_BUNDLE_BASE_URL
         value: https://flutter-widget-wallet-mcp.onrender.com/v3/preview-bundle
       # Secrets below are intentionally not committed with real values.
