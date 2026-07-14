@@ -73,22 +73,28 @@ export class GitHubReleaseBundleStore {
   #token;
   #fetch;
   #apiBase;
-  constructor({ repo, token = "", fetchImpl = globalThis.fetch, apiBase = "https://api.github.com" }) {
+  #publicRepo;
+  constructor({ repo, token = "", publicRepo = false, fetchImpl = globalThis.fetch, apiBase = "https://api.github.com" }) {
     if (!repo) throw new Error("GitHubReleaseBundleStore requires a repo (owner/name).");
     this.#repo = repo;
     this.#token = token;
     this.#fetch = fetchImpl;
     this.#apiBase = apiBase;
+    this.#publicRepo = publicRepo;
   }
 
   #headers(accept) {
     const headers = { accept, "user-agent": "flutter-widget-wallet-mcp" };
-    if (this.#token) headers.authorization = `Bearer ${this.#token}`;
+    if (this.#token && !this.#publicRepo) headers.authorization = `Bearer ${this.#token}`;
     return headers;
   }
 
   #tagFor(commit) {
     return commit === "latest" ? "v3-preview-latest" : `v3-preview-${commit}`;
+  }
+
+  #publicAssetUrl(commit, name) {
+    return `https://github.com/${this.#repo}/releases/download/${this.#tagFor(commit)}/${name}`;
   }
 
   async #release(commit) {
@@ -109,6 +115,14 @@ export class GitHubReleaseBundleStore {
   }
 
   async readManifest({ commit = "latest" } = {}) {
+    if (this.#publicRepo) {
+      const res = await this.#fetch(this.#publicAssetUrl(commit, V3_PREVIEW_MANIFEST_NAME), {
+        headers: this.#headers("application/json"),
+      });
+      if (res.status === 404) throw new BundleStoreError("NOT_BUILT", `No published bundle release "${this.#tagFor(commit)}".`);
+      if (!res.ok) throw new BundleStoreError("DOWNLOAD_FAILED", `Failed to fetch public manifest asset (${res.status}).`);
+      return res.json();
+    }
     const release = await this.#release(commit);
     const asset = this.#asset(release, V3_PREVIEW_MANIFEST_NAME);
     const res = await this.#fetch(asset.url, { headers: this.#headers("application/octet-stream") });
@@ -117,6 +131,20 @@ export class GitHubReleaseBundleStore {
   }
 
   async openArchive({ commit = "latest" } = {}) {
+    if (this.#publicRepo) {
+      const manifest = await this.readManifest({ commit });
+      const archiveUrl = this.#publicAssetUrl(commit, manifest.archiveName || V3_PREVIEW_ARCHIVE_NAME);
+      return {
+        bytes: manifest.bytes,
+        sha256: manifest.sha256,
+        sourceCommit: manifest.sourceCommit,
+        stream: async () => {
+          const res = await this.#fetch(archiveUrl, { headers: this.#headers("application/gzip") });
+          if (!res.ok || !res.body) throw new BundleStoreError("DOWNLOAD_FAILED", `Failed to stream public archive (${res.status}).`);
+          return Readable.fromWeb(res.body);
+        },
+      };
+    }
     const release = await this.#release(commit);
     const manifest = await (async () => {
       const asset = this.#asset(release, V3_PREVIEW_MANIFEST_NAME);

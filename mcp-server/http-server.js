@@ -463,6 +463,7 @@ export async function startRemoteHttpServer(rawOptions = {}) {
     ? new GitHubReleaseBundleStore({
         repo: options.previewBundleRepo,
         token: resolvePreviewBundleAccessToken(options),
+        publicRepo: options.previewBundlePublicRepo,
       })
     : new LocalDirBundleStore(options.previewBundleDir);
   const bundleCatalog = new V3BundleCatalog({

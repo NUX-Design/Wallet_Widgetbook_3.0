@@ -118,3 +118,42 @@ test("GitHubReleaseBundleStore maps status codes and streams via injected fetch"
   const missingStore = new GitHubReleaseBundleStore({ repo: "owner/repo", fetchImpl: async () => new Response("", { status: 404 }) });
   await assert.rejects(() => missingStore.readManifest({ commit: COMMIT }), /NOT_BUILT|no published/i);
 });
+
+test("GitHubReleaseBundleStore bypasses the API for public release assets", async () => {
+  const manifest = {
+    schemaVersion: 1,
+    sourceCommit: COMMIT,
+    createdAt: "2026-07-14T00:00:00.000Z",
+    entryPath: "index.html",
+    archiveName: "v3-preview-bundle.tar.gz",
+    bytes: 6,
+    sha256: SHA256,
+    slugs: ["button/V3MiniButton"],
+  };
+  const requested = [];
+  const fetchImpl = async (url, init = {}) => {
+    requested.push({ url, headers: init.headers });
+    if (url.endsWith(`/v3-preview-${COMMIT}/manifest.json`)) {
+      return new Response(JSON.stringify(manifest), { status: 200 });
+    }
+    if (url.endsWith(`/v3-preview-${COMMIT}/v3-preview-bundle.tar.gz`)) {
+      return new Response(Readable.toWeb(Readable.from([Buffer.from("ABCDEF")])), { status: 200 });
+    }
+    return new Response("nope", { status: 404 });
+  };
+  const store = new GitHubReleaseBundleStore({
+    repo: "owner/public-repo",
+    token: "stale-token",
+    publicRepo: true,
+    fetchImpl,
+  });
+
+  const archive = await store.openArchive({ commit: COMMIT });
+  const chunks = [];
+  for await (const chunk of await archive.stream()) chunks.push(chunk);
+
+  assert.equal(Buffer.concat(chunks).toString(), "ABCDEF");
+  assert.equal(requested.length, 2);
+  assert.ok(requested.every(({ url }) => url.startsWith("https://github.com/owner/public-repo/releases/download/")));
+  assert.ok(requested.every(({ headers }) => !("authorization" in headers)));
+});
