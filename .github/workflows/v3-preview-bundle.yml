@@ -1,0 +1,127 @@
+name: V3 Preview Bundle
+
+# ZP-04 — Build an immutable, commit-addressed Widget V3 preview bundle in source
+# CI and publish it as a GitHub Release asset so zero-Flutter consumer repos can
+# download/verify/serve it without any Flutter/Dart toolchain. The latest pointer
+# is only updated after all gates and the commit-addressed release succeed.
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "lib/widgets/v3/**"
+      - "lib/config/themes/v3/**"
+      - "lib/preview_v3/**"
+      - "scripts/v3-preview-bundle/**"
+      - "mcp-server/v3/bundle_contract.js"
+      - "pubspec.yaml"
+      - ".github/workflows/v3-preview-bundle.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v3-preview-bundle-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          flutter-version: '3.32.4'
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      # --- Gates: the bundle is only publishable if source is green ---
+      - name: Check Widget V3 preview registry is up to date
+        run: dart run tool/generate_v3_preview_registry.dart --check
+
+      - name: Check formatting
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Analyze project
+        run: flutter analyze --no-fatal-infos
+
+      - name: Run preview + tool tests
+        run: flutter test test/preview_v3/ test/tool/
+
+      - name: Build Widget V3 preview host
+        run: flutter build web --release -t lib/preview_v3/main.dart
+
+      # --- Pack the immutable, commit-addressed bundle (clean CI worktree) ---
+      - name: Pack preview bundle
+        run: node scripts/v3-preview-bundle/pack-v3-preview-bundle.mjs --commit "${{ github.sha }}"
+
+      - name: Verify packed manifest source commit parity
+        run: |
+          node -e '
+            const fs = require("fs");
+            const m = JSON.parse(fs.readFileSync("dist/v3-preview-bundle/manifest.json", "utf8"));
+            if (m.sourceCommit !== process.env.GITHUB_SHA) {
+              console.error(`manifest sourceCommit ${m.sourceCommit} != GITHUB_SHA ${process.env.GITHUB_SHA}`);
+              process.exit(1);
+            }
+            console.log("manifest sourceCommit parity OK", m.sourceCommit);
+          '
+
+      # Retain CI evidence regardless of release outcome (never committed to git).
+      - name: Upload bundle as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: v3-preview-bundle-${{ github.sha }}
+          path: dist/v3-preview-bundle/
+          retention-days: 14
+
+      # --- Commit-addressed release (immutable) ---
+      - name: Publish commit-addressed release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          TAG="v3-preview-${GITHUB_SHA}"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG already exists (immutable); skipping re-upload."
+          else
+            gh release create "$TAG" \
+              dist/v3-preview-bundle/v3-preview-bundle.tar.gz \
+              dist/v3-preview-bundle/manifest.json \
+              --title "Widget V3 preview bundle ${GITHUB_SHA}" \
+              --notes "Immutable Widget V3 preview bundle for commit ${GITHUB_SHA}. Zero-Flutter consumers download/verify/serve this via the flutter-widget-v3-preview skill." \
+              --target "${GITHUB_SHA}"
+          fi
+
+      # --- Atomic latest pointer (only after the immutable release succeeds) ---
+      - name: Update latest pointer
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          TAG="v3-preview-latest"
+          # Recreate the pointer release so its assets are always the newest bundle.
+          gh release delete "$TAG" --yes --cleanup-tag >/dev/null 2>&1 || true
+          gh release create "$TAG" \
+            dist/v3-preview-bundle/v3-preview-bundle.tar.gz \
+            dist/v3-preview-bundle/manifest.json \
+            --title "Widget V3 preview bundle (latest)" \
+            --notes "Points at the newest published Widget V3 preview bundle. Source commit is recorded in manifest.json (sourceCommit=${GITHUB_SHA})." \
+            --target "${GITHUB_SHA}"

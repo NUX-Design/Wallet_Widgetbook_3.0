@@ -2,6 +2,10 @@
 
 เอกสารนี้อธิบายโครงสร้างระบบ Theme, Design Tokens และขั้นตอนการอัปเดตค่าสีในโปรเจกต์นี้อย่างละเอียด
 
+> **ขอบเขตของเอกสาร:** เนื้อหาด้านล่างอธิบาย legacy theme เท่านั้น สำหรับงาน Theme V3 หรือ Widget V3 ต้องอ่านและยึด [`../../../DESIGN.md`](../../../DESIGN.md) เป็น design-system reference ก่อนเสมอ แล้วใช้ [`v3/V3_THEME_GUIDELINE.mdx`](v3/V3_THEME_GUIDELINE.mdx) เป็น source of truth ด้าน Flutter token architecture/generation ห้ามนำ `theme.json`, `ThemeColors.get()` หรือแนวทาง legacy ในเอกสารนี้ไปใช้กับ V3
+
+สำหรับ V3 ให้ตีความ `DESIGN.md` เป็น source of truth ด้าน design intent, visual rules, semantic usage, typography, spacing, radius, effects และ component variants ส่วน `v3/tokens/**` คือ editable implementation source ที่ runtime generator อ่านจริง หากข้อมูลไม่ตรงกันต้อง reconcile ที่ source ห้าม hardcode หรือ fallback กลับ legacy theme
+
 ## 1. โครงสร้างไฟล์ (File Structure)
 
 ระบบ Theme ประกอบด้วย 4 ไฟล์หลักที่ทำงานร่วมกัน:

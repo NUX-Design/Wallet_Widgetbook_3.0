@@ -6,6 +6,9 @@
     "scripts": {
         "check:v3-boundaries": "node scripts/check-v3-boundaries.js",
         "check:v3-preview-registry": "dart run tool/generate_v3_preview_registry.dart --check",
+        "pack:v3-preview": "node scripts/v3-preview-bundle/pack-v3-preview-bundle.mjs",
+        "test:v3-preview-bundle": "node --test scripts/v3-preview-bundle/pack-v3-preview-bundle.test.js scripts/v3-preview-bundle/launcher-sync.test.js",
+        "accept:v3-preview": "node scripts/v3-preview-bundle/zero-flutter-acceptance.mjs",
         "validate:v3-skills": "node scripts/validate-v3-skills.js",
         "generate-schema": "node scripts/generate-schema.js",
         "generate-schema:watch": "nodemon --exec 'npm run generate-schema' --watch CODEBASE_CONTEXT.md --watch WIDGETS_GUIDE.md",

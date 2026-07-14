@@ -34,6 +34,9 @@ migrate_working_dir/
 .pub/
 /build/
 
+# Widget V3 zero-Flutter preview bundle output (generated, never committed)
+/dist/
+
 # Symbolication related
 app.*.symbols
 

@@ -26,6 +26,16 @@ services:
         value: 10000
       - key: MCP_REMOTE_CHANNEL
         value: production
+      # Zero-Flutter preview bundle delivery (ZP-13). The service streams the
+      # commit-addressed Flutter Web bundle published by the v3-preview-bundle
+      # CI workflow. MCP_PREVIEW_BUNDLE_REPO points at the GitHub repo holding
+      # the releases; V3_PREVIEW_BUNDLE_BASE_URL is the secret-free URL advertised
+      # in previewDelivery. Leave MCP_PREVIEW_BUNDLE_REPO empty to fall back to a
+      # local dist/ dir (self-host only).
+      - key: MCP_PREVIEW_BUNDLE_REPO
+        value: NUX-Design/Wallet_Widgetbook_3.0
+      - key: V3_PREVIEW_BUNDLE_BASE_URL
+        value: https://flutter-widget-wallet-mcp.onrender.com/v3/preview-bundle
       # Secrets below are intentionally not committed with real values.
       # Set them in the Render Dashboard (Environment tab) after the first
       # Blueprint sync. sync: false keeps Render from expecting/overwriting
@@ -37,4 +47,8 @@ services:
       - key: MCP_REMOTE_REFRESH_TOKEN
         sync: false
       - key: MCP_REMOTE_COMMIT_SHA
+        sync: false
+      # Only needed if the bundle release repo is PRIVATE (server-side GitHub
+      # token for streaming release assets). Public repo => leave unset.
+      - key: MCP_PREVIEW_BUNDLE_GH_TOKEN
         sync: false

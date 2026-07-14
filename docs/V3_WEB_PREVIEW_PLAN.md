@@ -14,6 +14,8 @@ http://127.0.0.1:8090/#/button/V3MiniButton
 
 Execution checklist ของแผนนี้อยู่ที่ [`task/V3_WEB_PREVIEW_TASKS.md`](../task/V3_WEB_PREVIEW_TASKS.md)
 
+> Status: migration นี้เสร็จและปิดที่ VP-10 แล้ว โดย architecture รุ่นนี้ยังต้อง build/serve จาก Flutter source workspace หากต้องการให้ repo ปลายทางที่ไม่มี Flutter เปิด local preview ได้ ให้ใช้ successor plan: [`V3_ZERO_FLUTTER_PREVIEW_PLAN.md`](./V3_ZERO_FLUTTER_PREVIEW_PLAN.md)
+
 ## Assumptions And Decisions
 
 - รอบแรกเป็น local-only; ยังไม่ deploy domain หรือ static hosting

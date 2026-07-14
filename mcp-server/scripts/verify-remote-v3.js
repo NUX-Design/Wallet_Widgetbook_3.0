@@ -306,6 +306,66 @@ async function main() {
       auditData.passed === true ? "PASS" : "FAIL",
       `passed=${auditData.passed} findings=${Array.isArray(auditData.findings) ? auditData.findings.length : "n/a"}`,
     );
+
+    // --- ZP-13: zero-Flutter preview bundle delivery (additive) ---
+    const origin = new URL(baseUrl).origin;
+    const deliveryHeaders =
+      authMode === "proxy"
+        ? { [authUserHeader]: authUser, [proxySecretHeader]: proxySharedSecret }
+        : { [bearerTokenHeader]: `${bearerTokenPrefix} ${bearerToken}` };
+
+    // Health commit for source-SHA parity.
+    let healthCommit = "";
+    try {
+      const health = await (await fetch(`${origin}/health`)).json();
+      healthCommit = health.commitSha ?? "";
+    } catch { /* ignore */ }
+
+    // Delivery manifest endpoint (bearer-authenticated, streamed — not base64 in JSON).
+    let deliveryManifest = null;
+    try {
+      const manifestRes = await fetch(`${origin}/v3/preview-bundle/manifest.json`, { headers: deliveryHeaders });
+      if (manifestRes.status === 200) {
+        deliveryManifest = await manifestRes.json();
+        record(
+          "preview-bundle manifest endpoint",
+          /^[0-9a-f]{40}$/.test(deliveryManifest.sourceCommit ?? "") && /^[0-9a-f]{64}$/.test(deliveryManifest.sha256 ?? ""),
+          `sourceCommit=${deliveryManifest.sourceCommit} slugs=${(deliveryManifest.slugs ?? []).length}`,
+        );
+        record(
+          "preview-bundle source SHA parity",
+          !healthCommit || healthCommit === deliveryManifest.sourceCommit ? "PASS" : "FAIL",
+          `bundle=${deliveryManifest.sourceCommit} health=${healthCommit}`,
+        );
+      } else if (manifestRes.status === 404) {
+        record("preview-bundle manifest endpoint", "SKIP", "no bundle published yet (NOT_BUILT) — publish via CI before consumer rollout");
+      } else if (manifestRes.status === 401) {
+        record("preview-bundle manifest endpoint", "FAIL", "401 — bearer token not accepted on the delivery route");
+      } else {
+        record("preview-bundle manifest endpoint", "FAIL", `unexpected status ${manifestRes.status}`);
+      }
+    } catch (error) {
+      record("preview-bundle manifest endpoint", "FAIL", error instanceof Error ? error.message : String(error));
+    }
+
+    // previewDelivery on the preview tool (additive; NOT_BUILT until CI publishes).
+    const delivery = previewData.previewDelivery;
+    if (delivery) {
+      const secretFree = !/[?&](token|access_token|bearer|authorization|secret|api[_-]?key)=/i.test(delivery.bundleUrl ?? "");
+      const shaOk = /^[0-9a-f]{64}$/.test(delivery.sha256 ?? "");
+      const parityOk = !healthCommit || delivery.sourceCommit === healthCommit;
+      record(
+        "get_v3_widget_preview.previewDelivery",
+        delivery.mode === "bundle" && secretFree && shaOk && parityOk ? "PASS" : "FAIL",
+        `mode=${delivery.mode} sourceCommit=${delivery.sourceCommit} secretFreeUrl=${secretFree}`,
+      );
+    } else {
+      record(
+        "get_v3_widget_preview.previewDelivery",
+        "SKIP",
+        `not published yet: ${previewData.previewDeliveryStatus?.code ?? "absent"} (${previewData.previewDeliveryStatus?.message ?? "no bundle catalog wired"})`,
+      );
+    }
   } catch (error) {
     record("MCP V3 protocol calls", "FAIL", error instanceof Error ? error.message : String(error));
   } finally {

@@ -337,6 +337,7 @@ export function createToolDispatcher({
   v3TokenCatalog = new V3TokenCatalog(projectRoot),
   v3WidgetCatalog = new V3WidgetCatalog(projectRoot),
   v3FoundationCatalog = new V3FoundationCatalog(projectRoot),
+  v3BundleCatalog = null,
 }) {
   const schemaPath = path.join(projectRoot, "docs", "schema.json");
   const themeJsonPath = path.join(projectRoot, "lib", "config", "themes", "theme.json");
@@ -927,6 +928,7 @@ ${props}
       tokenCatalog: v3TokenCatalog,
       widgetCatalog: v3WidgetCatalog,
       foundationCatalog: v3FoundationCatalog,
+      bundleCatalog: v3BundleCatalog,
     }),
   };
 

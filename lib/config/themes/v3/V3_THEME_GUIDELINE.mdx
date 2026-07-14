@@ -2,6 +2,15 @@
 
 เอกสารนี้อธิบายโครงสร้าง หน้าที่ และการทำงานร่วมกันของทุกส่วนภายใน `lib/config/themes/v3/` สำหรับผู้พัฒนา ผู้ดูแล design system และ agent ที่ต้องเพิ่มหรือแก้ไข Theme V3
 
+> **Mandatory V3 design reference:** ก่อนออกแบบ แก้ token หรือเลือก semantic role ต้องอ่าน [`../../../DESIGN.md`](../../../DESIGN.md) และยึดเอกสารนั้นเป็น source of truth ด้าน design language, visual rules, token intent, typography, spacing, radius, effects และ component variants ของ Wi Design System V3 เอกสารนี้ยังคงเป็น source of truth ด้าน Flutter architecture, token generation และ runtime API
+
+ลำดับการตีความสำหรับงาน Theme V3:
+
+1. `DESIGN.md` กำหนด design intent และกฎการใช้งาน
+2. `tokens/**` เป็น editable implementation source ที่ generator อ่านจริง
+3. `generated/**` เป็น derived output ห้ามแก้ด้วยมือ
+4. หาก `DESIGN.md` ไม่ตรงกับ token JSON หรือ runtime API ให้หยุด ระบุความต่าง และแก้ source ให้สอดคล้องผ่าน token workflow ห้าม hardcode ค่าใน widget หรือเลือกค่าใกล้เคียงเอง
+
 ## ภาพรวม
 
 Theme V3 เป็นระบบสีแบบ additive ซึ่งทำงานแยกจาก legacy theme จุดประสงค์หลักคือทำให้ Figma/DTCG token เป็น source of truth และให้ Flutter widget ใช้ semantic color API ที่รองรับ Light/Dark โดยอัตโนมัติ
@@ -21,6 +30,7 @@ flowchart LR
 
 กฎสำคัญ:
 
+- อ่านและตรวจ mapping กับ `DESIGN.md` ก่อนแก้ Theme V3
 - แก้ไข token ที่ `tokens/**` เท่านั้น
 - ห้ามแก้ไฟล์ `generated/**` ด้วยมือ
 - Widget V3 ต้องใช้ semantic token ผ่าน `V3ThemeScope.colorsOf(context)`

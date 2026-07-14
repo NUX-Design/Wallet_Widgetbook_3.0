@@ -6,6 +6,11 @@ import { fileURLToPath } from "node:url";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { createMcpServer, createToolDispatcher, DEFAULT_SERVER_NAME, DEFAULT_SERVER_VERSION } from "./app.js";
 import { createStructuredLogger } from "./observability.js";
+import { V3BundleCatalog } from "./v3/bundle_catalog.js";
+import { GitHubReleaseBundleStore, LocalDirBundleStore, BundleStoreError } from "./v3/bundle_store.js";
+import {
+  V3_PREVIEW_COMMIT_SHA_PATTERN,
+} from "./v3/bundle_contract.js";
 import {
   createRestrictedDispatchToolCall,
   REMOTE_READ_ONLY_TOOL_DEFINITIONS,
@@ -167,6 +172,13 @@ export function resolveRemoteHttpOptions(rawOptions = {}, env = process.env) {
   const refreshTokenHeader =
     rawOptions.refreshTokenHeader ?? env.MCP_REMOTE_REFRESH_TOKEN_HEADER ?? "x-mcp-refresh-token";
   const refreshToken = rawOptions.refreshToken ?? env.MCP_REMOTE_REFRESH_TOKEN ?? "";
+  // ZP-05 — zero-Flutter preview bundle delivery.
+  const previewBundlePath = rawOptions.previewBundlePath ?? env.V3_PREVIEW_BUNDLE_PATH ?? "/v3/preview-bundle";
+  const previewBundleBaseUrl =
+    rawOptions.previewBundleBaseUrl ?? env.V3_PREVIEW_BUNDLE_BASE_URL ?? "https://flutter-widget-wallet-mcp.onrender.com/v3/preview-bundle";
+  const previewBundleRepo = rawOptions.previewBundleRepo ?? env.MCP_PREVIEW_BUNDLE_REPO ?? "";
+  const previewBundleToken = rawOptions.previewBundleToken ?? env.MCP_PREVIEW_BUNDLE_GH_TOKEN ?? "";
+  const previewBundleDir = rawOptions.previewBundleDir ?? env.V3_PREVIEW_BUNDLE_DIR ?? path.join(projectRoot, "dist", "v3-preview-bundle");
   const allowAnonymousHealth =
     rawOptions.allowAnonymousHealth ?? parseBoolean(env.MCP_REMOTE_ALLOW_ANON_HEALTH, true);
   const rateLimitWindowMs =
@@ -211,6 +223,11 @@ export function resolveRemoteHttpOptions(rawOptions = {}, env = process.env) {
     bearerPrincipal,
     refreshTokenHeader,
     refreshToken,
+    previewBundlePath,
+    previewBundleBaseUrl,
+    previewBundleRepo,
+    previewBundleToken,
+    previewBundleDir,
     allowAnonymousHealth,
     rateLimitWindowMs,
     rateLimitMaxRequests,
@@ -318,6 +335,7 @@ async function handleMcpRequest(req, res, requestUrl, remoteState) {
     projectRoot: snapshot.repoRoot,
     logger: remoteState.logger,
     widgetCatalog: snapshot.widgetCatalog,
+    v3BundleCatalog: remoteState.bundleCatalog,
   });
   const dispatchToolCall = createRestrictedDispatchToolCall(baseDispatchToolCall);
   const { server } = createMcpServer({
@@ -354,6 +372,68 @@ async function handleMcpRequest(req, res, requestUrl, remoteState) {
   await transport.handleRequest(req, res, parsedBody);
 }
 
+const BUNDLE_STORE_ERROR_STATUS = { NOT_BUILT: 404, STALE_BUNDLE: 409, UNAUTHORIZED: 401, MALFORMED_MANIFEST: 502, DOWNLOAD_FAILED: 502 };
+
+// ZP-05 — Authenticated, streaming preview-bundle delivery. Serves the manifest
+// and the commit-addressed archive over the same bearer boundary as the MCP
+// endpoint. Archive bytes are streamed, never buffered as base64.
+async function handlePreviewBundleRequest(req, res, requestUrl, remoteState) {
+  const { options } = remoteState;
+  if (req.method !== "GET") {
+    json(res, 405, { ok: false, error: "Preview bundle delivery only accepts GET." });
+    return;
+  }
+
+  const auth = authenticateRequest(req, options);
+  if (!auth.ok) {
+    remoteState.logger.warn("remote.bundle.auth_rejected", { path: requestUrl.pathname, statusCode: auth.statusCode });
+    json(res, auth.statusCode, { ok: false, error: auth.message });
+    return;
+  }
+
+  const remainder = requestUrl.pathname.slice(options.previewBundlePath.length).replace(/^\/+/, "");
+  try {
+    if (remainder === "manifest.json") {
+      const manifest = await remoteState.bundleCatalog.manifest({ commit: "latest" });
+      res.writeHead(200, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
+      res.end(`${JSON.stringify(manifest, null, 2)}\n`);
+      return;
+    }
+
+    const archiveMatch = /^([0-9a-f]{40}|latest)\.tar\.gz$/.exec(remainder);
+    if (!archiveMatch) {
+      json(res, 404, { ok: false, error: "Unknown preview bundle path.", expected: `${options.previewBundlePath}/manifest.json or ${options.previewBundlePath}/<commit>.tar.gz` });
+      return;
+    }
+    const commit = archiveMatch[1];
+    if (commit !== "latest" && !V3_PREVIEW_COMMIT_SHA_PATTERN.test(commit)) {
+      json(res, 400, { ok: false, error: "commit must be a full 40-char hex SHA or 'latest'." });
+      return;
+    }
+
+    const archive = await remoteState.bundleCatalog.openArchive({ commit });
+    res.writeHead(200, {
+      "content-type": "application/gzip",
+      "content-length": String(archive.bytes),
+      "etag": `"${archive.sha256}"`,
+      "x-bundle-source-commit": archive.sourceCommit,
+      "cache-control": commit === "latest" ? "no-store" : "public, max-age=31536000, immutable",
+    });
+    const stream = await archive.stream();
+    stream.on("error", (error) => {
+      remoteState.logger.error("remote.bundle.stream_error", { path: requestUrl.pathname, errorMessage: error.message });
+      res.destroy(error);
+    });
+    stream.pipe(res);
+    remoteState.logger.info("remote.bundle.download", { path: requestUrl.pathname, principal: auth.principal, commit, bytes: archive.bytes });
+  } catch (error) {
+    const code = error instanceof BundleStoreError ? error.code : error.code;
+    const status = BUNDLE_STORE_ERROR_STATUS[code] ?? 500;
+    remoteState.logger.warn("remote.bundle.error", { path: requestUrl.pathname, code: code ?? "INTERNAL_ERROR", statusCode: status });
+    json(res, status, { ok: false, error: error.message, code: code ?? "INTERNAL_ERROR" });
+  }
+}
+
 export async function startRemoteHttpServer(rawOptions = {}) {
   const options = resolveRemoteHttpOptions(rawOptions);
   const registry = new RemoteCatalogRegistry({
@@ -372,10 +452,19 @@ export async function startRemoteHttpServer(rawOptions = {}) {
     windowMs: options.rateLimitWindowMs,
     maxRequests: options.rateLimitMaxRequests,
   });
+  const previewBundleStore = options.previewBundleRepo
+    ? new GitHubReleaseBundleStore({ repo: options.previewBundleRepo, token: options.previewBundleToken })
+    : new LocalDirBundleStore(options.previewBundleDir);
+  const bundleCatalog = new V3BundleCatalog({
+    store: previewBundleStore,
+    bundleBaseUrl: options.previewBundleBaseUrl,
+    resolveFreshnessCommit: () => options.commitSha,
+  });
   const remoteState = {
     options,
     registry,
     rateLimiter,
+    bundleCatalog,
     logger: options.logger,
   };
   const sockets = new Set();
@@ -408,11 +497,18 @@ export async function startRemoteHttpServer(rawOptions = {}) {
 
       if (req.method === "GET" && requestUrl.pathname === options.infoPath) {
         const snapshot = await registry.describeActiveSnapshot();
+        const bundleHealth = await remoteState.bundleCatalog.health();
         json(res, 200, {
           ok: true,
           transport: "streamable-http",
           toolCount: REMOTE_READ_ONLY_TOOL_DEFINITIONS.length,
           toolNames: REMOTE_READ_ONLY_TOOL_DEFINITIONS.map((tool) => tool.name),
+          previewBundle: {
+            deliveryPath: options.previewBundlePath,
+            baseUrl: options.previewBundleBaseUrl,
+            source: options.previewBundleRepo ? `github-release:${options.previewBundleRepo}` : "local-dir",
+            ...bundleHealth,
+          },
           authBoundary: {
             supportsBearerToken: options.bearerTokens.size > 0,
             bearerTokenHeader: options.bearerTokenHeader,
@@ -482,6 +578,14 @@ export async function startRemoteHttpServer(rawOptions = {}) {
 
       if (requestUrl.pathname === options.endpointPath) {
         await handleMcpRequest(req, res, requestUrl, remoteState);
+        return;
+      }
+
+      if (
+        requestUrl.pathname === options.previewBundlePath ||
+        requestUrl.pathname.startsWith(`${options.previewBundlePath}/`)
+      ) {
+        await handlePreviewBundleRequest(req, res, requestUrl, remoteState);
         return;
       }
 

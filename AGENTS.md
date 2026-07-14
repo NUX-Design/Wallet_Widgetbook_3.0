@@ -34,10 +34,15 @@ Operational rules for agents working in this repository. This repo is a Flutter 
 - Standalone widget previews: `lib/widgets/**/preview_*.dart`
 - Widget V3 local web preview host entry: `lib/preview_v3/main.dart` (routing/testable classes in `lib/preview_v3/preview_app.dart`, registry in `lib/preview_v3/preview_registry.dart`)
 - Theme system: `lib/config/themes/`
+- V3 design-system reference: `DESIGN.md`
 - Theme V3 architecture plan: `docs/V3_THEME_MCP_SKILLS_PLAN.md`
 - Theme V3 execution backlog: `task/V3_THEME_MCP_SKILLS_TASKS.md`
 - Widget V3 local web preview plan: `docs/V3_WEB_PREVIEW_PLAN.md`
 - Widget V3 local web preview backlog: `task/V3_WEB_PREVIEW_TASKS.md`
+- Widget V3 zero-Flutter consumer preview successor plan: `docs/V3_ZERO_FLUTTER_PREVIEW_PLAN.md`
+- Widget V3 zero-Flutter consumer preview backlog: `task/V3_ZERO_FLUTTER_PREVIEW_TASKS.md`
+- Widget V3 zero-Flutter preview frozen contract: `mcp-server/v3/bundle_contract.js` (machine) + `docs/v3/V3_ZERO_FLUTTER_PREVIEW_CONTRACT.md` (human); rollout/rollback: `docs/v3/V3_ZERO_FLUTTER_PREVIEW_ROLLOUT.md`
+- Widget V3 zero-Flutter preview tooling: `scripts/v3-preview-bundle/` (`pack-v3-preview-bundle.mjs` packer, `launch-v3-preview.mjs` repo-independent launcher, `zero-flutter-acceptance.mjs` + `browser-verify.mjs` verifiers); CI `.github/workflows/v3-preview-bundle.yml`; MCP delivery in `mcp-server/v3/bundle_store.js` + `bundle_catalog.js` + `http-server.js` route `/v3/preview-bundle/*`. Generated bundle output `dist/` is gitignored.
 - Localization source: `lib/l10n/localization.json`
 - Generated localization artifacts: `lib/l10n/*.arb`, `lib/generated/intl/`
 - Reusable widgets: `lib/widgets/`
@@ -45,6 +50,19 @@ Operational rules for agents working in this repository. This repo is a Flutter 
 - Task backlogs: `task/`
 - Root documentation/schema tooling: `CODEBASE_CONTEXT.md`, `WIDGETS_GUIDE.md`, `scripts/`, `package.json`, `docs/schema.json`
 - MCP helper server: `mcp-server/`
+
+### V3 Design System Context
+
+- Root `DESIGN.md` is the mandatory visual specification for **Wi Design System — DesignBridge** and must be loaded before every Theme V3, Widget V3, V3 preview, or V3-facing UI task.
+- It defines V3 design language and intent across Light/Dark colors, typography, spacing/sizing, radius, letter spacing, shadows/effects, component structures, variants, states, responsive behavior, and accessibility-oriented design rules.
+- Treat its `Design Rules — Mandatory for AI Agents` section as binding for visual decisions: do not invent colors, typography metrics, arbitrary spacing/radius/shadows, component variants, or undefined states.
+- In Flutter code, translate the design intent through the existing Theme V3 APIs. Do not copy CSS custom properties or raw hex values from `DESIGN.md` into widgets when a semantic V3 token/API exists.
+- Source ownership is split deliberately:
+  1. `DESIGN.md` — normative V3 visual intent and design rules.
+  2. Figma node/spec and the widget-local guide — component-specific scope and verified node details.
+  3. `lib/config/themes/v3/tokens/**` — editable Flutter implementation inputs.
+  4. `lib/config/themes/v3/generated/**` — derived output; never edit manually.
+- If these sources disagree, do not silently choose one, approximate a value, or fall back to legacy theme. Record the mismatch, reconcile the editable source with the verified design, regenerate, and validate Light/Dark plus affected previews/tests.
 
 ### Theme V3 Planning Boundary
 
@@ -61,6 +79,7 @@ Operational rules for agents working in this repository. This repo is a Flutter 
 - VP-01 through VP-10 are verified complete: the local route works end-to-end, Widgetbook runtime/tooling was removed, MCP V3 returns additive preview route metadata, all three Skills V3 preview packs use the readiness-gated local web flow, and the generated registry supports scaling by convention. Use the checklist evidence rather than inferring completion from this summary.
 - The scope remains local-only; do not add online hosting or a second Render service.
 - `build/web/**` is generated output and must not be committed.
+- `docs/V3_ZERO_FLUTTER_PREVIEW_PLAN.md` and `task/V3_ZERO_FLUTTER_PREVIEW_TASKS.md` own the successor work for opening a source-repo Widget V3 preview from a consumer repo that has no Flutter SDK/project/files. Do not reopen or rewrite the completed VP-01 through VP-10 evidence for that work.
 
 ### Trust Order For Context
 
@@ -79,6 +98,7 @@ Reason: repo-level overview docs may lag behind the live Flutter structure.
 - For widget work, read the widget source, its preview file, related tests, and any local guide/spec markdown next to it.
 - For localization work, read `lib/l10n/localization.json`, `tool/generate_arb.dart`, and `l10n.yaml`.
 - For theme/token work, read `lib/config/themes/theme_color.dart` and related theme files first.
+- For Theme V3 or Widget V3 work, read root `DESIGN.md` before selecting visual rules, component variants, typography, spacing, effects, or semantic token intent; use V3 token JSON/generator/runtime files as the implementation source of truth and reconcile any drift instead of hardcoding around it.
 - For Widget V3 local web preview issues, read `lib/preview_v3/main.dart`, `lib/preview_v3/preview_app.dart`, and `lib/preview_v3/preview_registry.dart` before editing preview routing.
 - For repo automation or schema tasks, inspect root `package.json`, `scripts/README.md`, `scripts/generate-schema.js`, `scripts/parser.js`, and `docs/schema.json`.
 

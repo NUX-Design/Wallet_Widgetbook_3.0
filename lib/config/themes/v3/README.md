@@ -4,6 +4,15 @@ Theme V3 เป็นระบบ token แบบ additive ที่แยกอ
 
 เอกสารอธิบาย architecture, หน้าที่ของทุกไฟล์ และ maintenance workflow แบบละเอียดอยู่ที่ [`V3_THEME_GUIDELINE.mdx`](V3_THEME_GUIDELINE.mdx)
 
+## Mandatory design reference
+
+ก่อนสร้างหรือแก้ Theme V3/Widget V3 ต้องอ่าน [`../../../DESIGN.md`](../../../DESIGN.md) และยึดเป็น source of truth ด้าน design language, visual rules, token intent, typography, spacing, radius, shadows/effects และ component variants
+
+- `DESIGN.md` ตอบว่า design ต้องมีหน้าตาและความหมายอย่างไร
+- `tokens/**` ตอบว่าค่าใดถูกป้อนเข้า Theme V3 generator
+- `generated/**` และ public Dart APIs เป็นผลลัพธ์สำหรับ runtime
+- หาก reference กับ token/runtime ไม่ตรงกัน ให้หยุดและ reconcile ผ่าน token workflow ห้ามแก้ generated file, hardcode ค่า หรือ fallback ไป legacy theme
+
 ## Source of truth
 
 ไฟล์ที่แก้ไขได้คือ:
