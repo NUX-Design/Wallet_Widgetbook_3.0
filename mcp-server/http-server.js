@@ -178,6 +178,8 @@ export function resolveRemoteHttpOptions(rawOptions = {}, env = process.env) {
     rawOptions.previewBundleBaseUrl ?? env.V3_PREVIEW_BUNDLE_BASE_URL ?? "https://flutter-widget-wallet-mcp.onrender.com/v3/preview-bundle";
   const previewBundleRepo = rawOptions.previewBundleRepo ?? env.MCP_PREVIEW_BUNDLE_REPO ?? "";
   const previewBundleToken = rawOptions.previewBundleToken ?? env.MCP_PREVIEW_BUNDLE_GH_TOKEN ?? "";
+  const previewBundlePublicRepo =
+    rawOptions.previewBundlePublicRepo ?? parseBoolean(env.MCP_PREVIEW_BUNDLE_PUBLIC_REPO, false);
   const previewBundleDir = rawOptions.previewBundleDir ?? env.V3_PREVIEW_BUNDLE_DIR ?? path.join(projectRoot, "dist", "v3-preview-bundle");
   const allowAnonymousHealth =
     rawOptions.allowAnonymousHealth ?? parseBoolean(env.MCP_REMOTE_ALLOW_ANON_HEALTH, true);
@@ -227,6 +229,7 @@ export function resolveRemoteHttpOptions(rawOptions = {}, env = process.env) {
     previewBundleBaseUrl,
     previewBundleRepo,
     previewBundleToken,
+    previewBundlePublicRepo,
     previewBundleDir,
     allowAnonymousHealth,
     rateLimitWindowMs,
@@ -290,6 +293,10 @@ function authenticateRequest(req, options) {
     principal,
     authMode: "trusted-proxy",
   };
+}
+
+export function resolvePreviewBundleAccessToken(options) {
+  return options.previewBundlePublicRepo ? "" : options.previewBundleToken;
 }
 
 async function handleMcpRequest(req, res, requestUrl, remoteState) {
@@ -453,7 +460,10 @@ export async function startRemoteHttpServer(rawOptions = {}) {
     maxRequests: options.rateLimitMaxRequests,
   });
   const previewBundleStore = options.previewBundleRepo
-    ? new GitHubReleaseBundleStore({ repo: options.previewBundleRepo, token: options.previewBundleToken })
+    ? new GitHubReleaseBundleStore({
+        repo: options.previewBundleRepo,
+        token: resolvePreviewBundleAccessToken(options),
+      })
     : new LocalDirBundleStore(options.previewBundleDir);
   const bundleCatalog = new V3BundleCatalog({
     store: previewBundleStore,

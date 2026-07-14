@@ -3,7 +3,11 @@ import test from "node:test";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { createStructuredLogger } from "../observability.js";
-import { startRemoteHttpServer } from "../http-server.js";
+import {
+  resolvePreviewBundleAccessToken,
+  resolveRemoteHttpOptions,
+  startRemoteHttpServer,
+} from "../http-server.js";
 import { REMOTE_READ_ONLY_TOOL_DEFINITIONS } from "../remote_support.js";
 import { createToolHarness } from "./helpers/tool_harness.js";
 import { fixtureProjectRoot } from "./helpers/fixture_repo.js";
@@ -12,6 +16,22 @@ const authHeaders = {
   "x-mcp-authenticated-user": "remote-test-user",
   "x-mcp-proxy-secret": "proxy-secret",
 };
+
+test("public preview bundle repos explicitly disable server-side GitHub credentials", () => {
+  const options = resolveRemoteHttpOptions(
+    { projectRoot: fixtureProjectRoot },
+    {
+      MCP_PREVIEW_BUNDLE_REPO: "owner/public-repo",
+      MCP_PREVIEW_BUNDLE_GH_TOKEN: "stale-token",
+      MCP_PREVIEW_BUNDLE_PUBLIC_REPO: "true",
+    },
+  );
+
+  assert.equal(options.previewBundleRepo, "owner/public-repo");
+  assert.equal(options.previewBundleToken, "stale-token");
+  assert.equal(options.previewBundlePublicRepo, true);
+  assert.equal(resolvePreviewBundleAccessToken(options), "");
+});
 
 async function createRemoteClient(serverUrl, headers = authHeaders) {
   const client = new Client({
