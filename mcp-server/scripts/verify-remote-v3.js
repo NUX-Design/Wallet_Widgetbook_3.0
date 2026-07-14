@@ -329,7 +329,9 @@ async function main() {
         deliveryManifest = await manifestRes.json();
         record(
           "preview-bundle manifest endpoint",
-          /^[0-9a-f]{40}$/.test(deliveryManifest.sourceCommit ?? "") && /^[0-9a-f]{64}$/.test(deliveryManifest.sha256 ?? ""),
+          /^[0-9a-f]{40}$/.test(deliveryManifest.sourceCommit ?? "") && /^[0-9a-f]{64}$/.test(deliveryManifest.sha256 ?? "")
+            ? "PASS"
+            : "FAIL",
           `sourceCommit=${deliveryManifest.sourceCommit} slugs=${(deliveryManifest.slugs ?? []).length}`,
         );
         record(
