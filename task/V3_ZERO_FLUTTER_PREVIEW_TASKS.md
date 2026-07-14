@@ -1,13 +1,13 @@
 # Widget V3 Zero-Flutter Consumer Preview Tasks
 
 สร้างเมื่อ: `2026-07-14 15:11:16 +0700`
-อัปเดตล่าสุดเมื่อ: `2026-07-14 17:40:00 +0700`
+อัปเดตล่าสุดเมื่อ: `2026-07-15 00:14:45 +0700`
 
 Execution checklist นี้แตกจาก [`docs/V3_ZERO_FLUTTER_PREVIEW_PLAN.md`](../docs/V3_ZERO_FLUTTER_PREVIEW_PLAN.md) และต่อยอดจาก VP-01–VP-10 ที่ปิดแล้ว โดยไม่แก้ evidence ย้อนหลังใน `V3_WEB_PREVIEW_TASKS.md`
 
 Frozen contract: [`docs/v3/V3_ZERO_FLUTTER_PREVIEW_CONTRACT.md`](../docs/v3/V3_ZERO_FLUTTER_PREVIEW_CONTRACT.md) · Rollout/rollback: [`docs/v3/V3_ZERO_FLUTTER_PREVIEW_ROLLOUT.md`](../docs/v3/V3_ZERO_FLUTTER_PREVIEW_ROLLOUT.md)
 
-> Verification note: all code, unit/integration tests, the zero-Flutter acceptance harness, and the real headless-browser matrix pass locally. Items that require a real push to GitHub Actions, GitHub Releases, or a live Render deploy with the hosted bearer secret are explicitly marked **LIVE-PENDING** — they are code/config-complete and locally exercised, but not yet run against live infrastructure from this sandbox.
+> Verification note: migration นี้ปิดครบแล้วทั้ง local และ live infrastructure โดย final hosted evidence อยู่ที่ main/deployed commit `8a44373e6be8535d49b44f8b14bae6f63865f877`.
 
 ## Global Guardrails
 
@@ -24,11 +24,11 @@ Frozen contract: [`docs/v3/V3_ZERO_FLUTTER_PREVIEW_CONTRACT.md`](../docs/v3/V3_Z
 
 - [x] empty/non-Flutter repo เปิด interactive Widget V3 local preview ได้โดย `PATH` ไม่มี Flutter/Dart — acceptance 17/17 (GET / 200 + health commit/sha match)
 - [x] consumer worktree ก่อน/หลังไม่เปลี่ยน
-- [x] preview source commit ตรงกับ MCP freshness และ bundle manifest — catalog parity + delivery-route parity checks (live endpoint parity is **LIVE-PENDING** via `verify:mcp:remote:v3`)
+- [x] preview source commit ตรงกับ MCP freshness และ bundle manifest — live `/health`, `/info`, manifest และ `previewDelivery` ตรงกันที่ `8a44373e6be8535d49b44f8b14bae6f63865f877`
 - [x] cold/warm/concurrent/error-path tests ผ่าน — acceptance harness covers all
 - [x] Skills V3 ทั้ง 3 packs ใช้ published consumer mode เป็น default
 - [x] source-development mode ยังผ่าน regression
-- [ ] remote Render verification ผ่าน — **LIVE-PENDING** (needs deploy + hosted bearer secret); browser E2E ผ่านแล้ว (7/7)
+- [x] remote Render verification ผ่าน — corrected verifier **19/19**, final archive checksum verified, browser E2E **7/7**
 
 ## Phase 1 — Contract And Portability Proof
 
@@ -75,7 +75,7 @@ Evidence: `scripts/v3-preview-bundle/pack-v3-preview-bundle.mjs` (`packBundle()`
 
 Depends on: ZP-03
 
-Evidence: `.github/workflows/v3-preview-bundle.yml` — gates (registry `--check`, format, analyze, `flutter test test/preview_v3/ test/tool/`, build web) → pack `--commit ${{ github.sha }}` → sourceCommit parity check → upload artifact → `gh release create v3-preview-<sha>` (immutable) → recreate `v3-preview-latest` pointer. YAML validated (15 steps). Rollback documented in `docs/v3/V3_ZERO_FLUTTER_PREVIEW_ROLLOUT.md`. **LIVE-PENDING**: the actual Actions run + published releases require a real push to `main`.
+Evidence: `.github/workflows/v3-preview-bundle.yml` — gates (registry `--check`, format, analyze, `flutter test test/preview_v3/ test/tool/`, build web) → pack `--commit ${{ github.sha }}` → sourceCommit parity check → upload artifact → `gh release create v3-preview-<sha>` (immutable) → recreate `v3-preview-latest` pointer. Live run `29352517196` passed and published immutable + latest releases for `8a44373e6be8535d49b44f8b14bae6f63865f877`.
 
 ### ZP-05: Implement stable bundle delivery endpoint
 
@@ -179,15 +179,15 @@ Evidence: `scripts/v3-preview-bundle/browser-verify.mjs --full` **7/7** (real he
 - [x] deploy bundle metadata/delivery support — code + `render.yaml` env vars additive (`MCP_PREVIEW_BUNDLE_REPO`, `V3_PREVIEW_BUNDLE_BASE_URL`, secret `MCP_PREVIEW_BUNDLE_GH_TOKEN`)
 - [x] verify bearer auth and no secret leakage — delivery route reuses `authenticateRequest`; `previewDelivery.bundleUrl` secret-free; token never cached (harness-proven)
 - [x] verify source SHA parity against live `/health`/`/info` — checks added to `mcp-server/scripts/verify-remote-v3.js` (`preview-bundle source SHA parity`, `previewDelivery`); `/info` exposes `previewBundle` health
-- [ ] run remote MCP V3 verifier and rollback drill — **LIVE-PENDING** (needs deploy + hosted bearer secret; run `npm run verify:mcp:remote:v3` per rollout doc)
+- [x] run remote MCP V3 verifier and rollback drill — final verifier **19/19**; rollback disable produced `NOT_BUILT` while MCP stayed **18/18**, then restore returned `available:true`, `fresh:true`
 
 Depends on: ZP-12
 
-Evidence: `render.yaml` (10 envVars, valid), `mcp-server/http-server.js` `/info.previewBundle` health, `mcp-server/scripts/verify-remote-v3.js` extended (syntax OK, SKIPs cleanly until a bundle is published), rollout+rollback documented in `docs/v3/V3_ZERO_FLUTTER_PREVIEW_ROLLOUT.md`.
+Evidence: Render deploy `dep-d9b6s8pkh4rs73cjljag` is live at commit `8a44373e6be8535d49b44f8b14bae6f63865f877`; `/info.previewBundle` reports `available:true` and `fresh:true`; corrected `verify:mcp:remote:v3` passes 19/19; authenticated final archive download is 12,018,716 bytes with SHA-256 `54a2b15c9da97c4137343273e07a3bd8507134cafb2adbd79300707071867e1f`.
 
 ### ZP-14: Switch default and close migration
 
-- [x] published consumer mode becomes default (in the skills) — gated live-evidence switch is documented; **LIVE-PENDING** confirmation after Render deploy
+- [x] published consumer mode becomes default (in the skills) — live confirmation passed after Render deploy
 - [x] docs/onboarding explain zero-Flutter contract and freshness — contract + rollout docs; AGENTS.md / MEMORY.md updated
 - [x] old `localPreviewUrl` consumer guidance is deprecated — skills + contract doc mark it source-dev-only
 - [x] full Flutter/MCP/skill/browser regression passes — see Current Status
@@ -195,7 +195,7 @@ Evidence: `render.yaml` (10 envVars, valid), `mcp-server/http-server.js` `/info.
 
 Depends on: ZP-13
 
-## Current Status (`2026-07-14 17:40:00 +0700`)
+## Current Status (`2026-07-15 00:14:45 +0700`)
 
 Local regression, all green:
 
@@ -207,15 +207,17 @@ Local regression, all green:
 - `npm run validate:v3-skills` → PASS (3 packs × 8 skills × 18 tools)
 - `npm run test:v3-preview-bundle` → **6/6** (packer + launcher-sync)
 - `cd mcp-server && npm run check:mcp-syntax` → PASS (53 files)
-- `cd mcp-server && npm test` → **49/49** (was 30; +19 zero-Flutter tests, legacy snapshots stable)
+- `cd mcp-server && npm test` → **51/51** (legacy snapshots stable; includes public-release access regressions)
 - `node scripts/v3-preview-bundle/browser-verify.mjs --full` → **7/7** (real headless Chrome)
 - `node scripts/v3-preview-bundle/zero-flutter-acceptance.mjs` → **17/17**
 
-Outstanding **LIVE-PENDING** (require infra outside this sandbox):
+Live rollout, all green:
 
-1. Push to `main` so `.github/workflows/v3-preview-bundle.yml` runs and publishes the first `v3-preview-latest` GitHub Release.
-2. Configure `MCP_PREVIEW_BUNDLE_REPO` (+ base URL) on the Render service and deploy.
-3. Run `cd mcp-server && MCP_REMOTE_BASE_URL=... MCP_REMOTE_BEARER_TOKEN=... npm run verify:mcp:remote:v3` against the live endpoint and record the result; then flip the skill default confirmation and the rollback drill.
+- GitHub bundle workflow run `29352517196` passed and published `v3-preview-8a44373e6be8535d49b44f8b14bae6f63865f877` + `v3-preview-latest`.
+- Render service `flutter-widget-wallet-mcp` is live on deploy `dep-d9b6s8pkh4rs73cjljag`; `/health`, `/info`, manifest and `previewDelivery` share commit `8a44373e6be8535d49b44f8b14bae6f63865f877`.
+- `verify:mcp:remote:v3` passed **19/19** after correcting its boolean-status false-positive; generation tools remain excluded.
+- Rollback drill passed: disabled bundle source returned `NOT_BUILT` without breaking the 28-tool MCP surface, then restore returned `available:true`, `fresh:true` and 19/19 again.
+- Authenticated archive stream checksum matched manifest: 12,018,716 bytes, SHA-256 `54a2b15c9da97c4137343273e07a3bd8507134cafb2adbd79300707071867e1f`.
 
 ## Recommended Execution Order
 

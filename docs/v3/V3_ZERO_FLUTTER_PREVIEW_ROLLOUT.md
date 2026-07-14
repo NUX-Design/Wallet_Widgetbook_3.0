@@ -69,8 +69,12 @@ The rollout is additive, so rollback is low-risk:
 
 ## Status
 
-- Code, config, verifier, and local tests are complete and green.
-- **Live deploy + `verify:mcp:remote:v3` against the hosted endpoint are PENDING**
-  a real push, Render env-var configuration, and the hosted bearer secret — they
-  cannot be exercised from the build sandbox. Run steps 1–5 during the next
-  Render deploy window to close ZP-13.
+- **COMPLETE (`2026-07-15`)** — code, config, local tests, GitHub Releases, Render deploy,
+  authenticated archive streaming, live verifier, and rollback drill are green.
+- Final runtime/bundle commit: `8a44373e6be8535d49b44f8b14bae6f63865f877`.
+- GitHub Actions run `29352517196` published immutable + latest assets.
+- Render deploy `dep-d9b6s8pkh4rs73cjljag` is live; `/info.previewBundle` reports
+  `available:true`, `fresh:true`; corrected `verify:mcp:remote:v3` passes 19/19.
+- Rollback drill temporarily selected a disabled bundle source: `/info` returned
+  `NOT_BUILT`, all MCP/V3 checks stayed operational (18/18 with delivery SKIPs),
+  and restoring the real repo returned the final 19/19 result.
