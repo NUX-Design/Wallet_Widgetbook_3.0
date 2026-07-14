@@ -1,7 +1,7 @@
 interface:
   display_name: "Flutter Widget V3 Preview"
-  short_description: "Create, refresh, and live-preview Widget V3 components"
-  default_prompt: "Use $flutter-widget-v3-preview to create or refresh a standalone preview for a Widget V3 component and, on request, open it live through the local Widget V3 web preview host."
+  short_description: "Live-preview a Widget V3 component from any repo (no Flutter needed)"
+  default_prompt: "Use $flutter-widget-v3-preview to open an interactive live browser preview of a Widget V3 component. From any repo, resolve previewDelivery via MCP and run the bundled launcher to download/verify/serve the published bundle locally; inside the source repo, refresh the standalone preview instead."
 
 policy:
   allow_implicit_invocation: true

@@ -4,10 +4,12 @@
 
 > Theme dependency: ต้องอ่าน [`../../config/themes/v3/V3_THEME_GUIDELINE.mdx`](../../config/themes/v3/V3_THEME_GUIDELINE.mdx) ก่อนเลือกหรือเพิ่ม color token เอกสาร Theme V3 เป็น source of truth ด้าน token architecture, generation และ runtime color API ส่วนเอกสารนี้เป็น source of truth ด้านการประกอบ token เหล่านั้นเป็น Widget V3
 
+> Design-system dependency: ต้องอ่าน [`../../../DESIGN.md`](../../../DESIGN.md) ก่อนกำหนด UI, API, state หรือ token mapping และยึดเป็น source of truth ด้าน design language, visual rules, component intent/variants, typography, spacing, radius และ effects ของ V3 ห้ามใช้ความเคยชินจาก legacy widget หรือเดาจากชื่อ token แทน reference นี้
+
 ## ขอบเขตและหลักการ
 
 - Widget V3 เป็นระบบ additive และต้องไม่แก้หรือ migrate legacy widget โดยอัตโนมัติ
-- source of truth ของรูปลักษณ์และ state คือ Figma node/spec ที่ระบุใน local guide ของ widget
+- source of truth ของ design-system rules คือ `DESIGN.md`; source of truth ของรายละเอียดเฉพาะ widget และ state คือ Figma node/spec ที่ระบุใน local guide
 - source of truth ของสีคือ Theme V3 semantic tokens ไม่ใช่ HEX, primitive color หรือ legacy theme
 - reusable widget รับ content และ callback ผ่าน constructor แบบ explicit; user-facing copy ต้องมาจาก caller เพื่อรองรับ localization
 - ทุก widget ต้องรองรับ Light/Dark, accessibility, text scaling และ standalone preview (auto-discovered โดย `dart run tool/generate_v3_preview_registry.dart` ให้เปิดผ่าน local web preview host ได้)
@@ -15,13 +17,14 @@
 ## ลำดับการอ่านก่อนเริ่มงาน
 
 1. อ่าน `AGENTS.md` และ `MEMORY.md` ที่ repo root
-2. อ่าน [Theme V3 Architecture Guideline](../../config/themes/v3/V3_THEME_GUIDELINE.mdx)
-3. อ่าน [`docs/v3/V3_WIDGET_CONVENTIONS.md`](../../../docs/v3/V3_WIDGET_CONVENTIONS.md)
-4. อ่าน source, preview, guide และ tests ของ widget/category ที่ใกล้เคียง
-5. ตรวจ semantic token ที่มีอยู่ใน `lib/config/themes/v3/tokens/semantic/` และ generated Dart properties
-6. ตรวจ Figma node/spec ของทุก variant, size และ state ที่อยู่ใน scope
+2. อ่าน [`DESIGN.md`](../../../DESIGN.md) โดยเฉพาะ Design Rules, tokens, typography, spacing, effects และ component variants ที่เกี่ยวข้อง
+3. อ่าน [Theme V3 Architecture Guideline](../../config/themes/v3/V3_THEME_GUIDELINE.mdx)
+4. อ่าน [`docs/v3/V3_WIDGET_CONVENTIONS.md`](../../../docs/v3/V3_WIDGET_CONVENTIONS.md)
+5. อ่าน source, preview, guide และ tests ของ widget/category ที่ใกล้เคียง
+6. ตรวจ semantic token ที่มีอยู่ใน `lib/config/themes/v3/tokens/semantic/` และ generated Dart properties
+7. ตรวจ Figma node/spec ของทุก variant, size และ state ที่อยู่ใน scope
 
-ห้ามเดา token จากชื่อสีหรือคัดลอก mapping จาก widget อื่นโดยไม่ตรวจ design source และ Light/Dark semantics
+ห้ามเดา token จากชื่อสีหรือคัดลอก mapping จาก widget อื่นโดยไม่ตรวจ `DESIGN.md`, design source และ Light/Dark semantics หากทั้งสามแหล่งไม่ตรงกันให้บันทึก conflict และ reconcile ก่อน implement ห้าม hardcode ค่าเพื่อข้ามปัญหา
 
 ## โครงสร้างมาตรฐาน
 
@@ -90,6 +93,7 @@ flowchart LR
 
 ### 1. กำหนด scope จาก Design
 
+- ระบุกฎและ component reference ที่เกี่ยวข้องจาก `DESIGN.md`
 - ระบุ Figma file, file key และ node IDs ที่ตรวจสอบได้
 - สรุป variants, sizes, states, responsive behavior และ interaction ที่อยู่ใน scope
 - บันทึกสิ่งที่ไม่อยู่ใน scope เพื่อป้องกัน API ขยายจากการคาดเดา
@@ -206,6 +210,7 @@ npm run generate-schema
 ## Definition of Done
 
 - implementation อยู่ใน `lib/widgets/v3/<category>/` และไม่มี legacy theme dependency
+- behavior, visual rules และ component semantics สอดคล้องกับ `DESIGN.md` หรือมี conflict resolution ที่บันทึกไว้
 - Figma scope/node IDs และ semantic token mapping ถูกบันทึกใน local guide
 - สีทั้งหมดมาจาก `V3ThemeScope.colorsOf(context)` หรือมีข้อยกเว้นที่อธิบายและตรวจสอบแล้ว
 - preview ครอบคลุม Light/Dark และ states สำคัญ

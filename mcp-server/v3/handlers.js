@@ -18,6 +18,24 @@ const tokenSummary = ({ tokenName, dartProperty, lightValue, darkValue, lightPri
 const widgetSummary = ({ name, category, widgetFile, previewFiles, semanticTokens }) => ({ name, category, themeVersion: "v3", widgetFile, previewFiles, semanticTokens });
 const widgetMetadata = (widget) => ({ name: widget.name, category: widget.category, themeVersion: "v3", widgetFile: widget.widgetFile, previewFiles: widget.previewFiles, docFiles: widget.docFiles, props: widget.props, dependencies: widget.dependencies, internalImports: widget.internalImports, semanticTokens: widget.semanticTokens, tokenProperties: widget.tokenProperties, figmaNodes: widget.figmaNodes, ...v3PreviewRouteMetadata(widget) });
 
+// ZP-07 — Additive zero-Flutter delivery metadata. When a bundle catalog is
+// wired (hosted MCP), preview/metadata tools gain `previewDelivery` for the
+// published, commit-addressed bundle a zero-Flutter consumer can download. When
+// no bundle is published yet, an actionable `previewDeliveryStatus` is returned
+// instead. The legacy `localPreviewUrl` is retained but is source-development
+// mode only and deprecated for remote consumers (see V3_ZERO_FLUTTER_PREVIEW_CONTRACT.md).
+async function previewDeliveryFields(bundleCatalog, widget) {
+  if (!bundleCatalog) return {};
+  const slug = `${widget.category}/${widget.name}`;
+  try {
+    const result = await bundleCatalog.describeDelivery({ slug });
+    if (result.available) return { previewDelivery: result.previewDelivery };
+    return { previewDeliveryStatus: { available: false, code: result.code, message: result.message } };
+  } catch (error) {
+    return { previewDeliveryStatus: { available: false, code: "INTERNAL_ERROR", message: error.message } };
+  }
+}
+
 function toSnakeCase(value) {
   return value.replace(/([a-z0-9])([A-Z])/g, "$1_$2").replace(/[\s-]+/g, "_").toLowerCase();
 }
@@ -81,7 +99,7 @@ ${classBody}
   };
 }
 
-export function createV3Handlers({ tokenCatalog, widgetCatalog, foundationCatalog }) {
+export function createV3Handlers({ tokenCatalog, widgetCatalog, foundationCatalog, bundleCatalog = null }) {
   return {
     async get_v3_design_system_info(args) {
       const section = ensureEnum(args.section, "section", ["project", "designTokens", "widgets", "implementation"]);
@@ -146,8 +164,8 @@ export function createV3Handlers({ tokenCatalog, widgetCatalog, foundationCatalo
       const all = widgetCatalog.search(query);
       return ok(buildPaginatedWidgetsPayload({ themeVersion: "v3", query }, all.slice(offset, offset + limit).map(widgetSummary), all.length, limit, offset));
     },
-    async get_v3_widget_metadata(args) { return ok(widgetMetadata(widgetCatalog.get(ensureNonEmptyString(args.widgetName, "widgetName")))); },
-    async get_v3_widget_details(args) { return ok(widgetMetadata(widgetCatalog.get(ensureNonEmptyString(args.widgetName, "widgetName")))); },
+    async get_v3_widget_metadata(args) { const widget = widgetCatalog.get(ensureNonEmptyString(args.widgetName, "widgetName")); return ok({ ...widgetMetadata(widget), ...(await previewDeliveryFields(bundleCatalog, widget)) }); },
+    async get_v3_widget_details(args) { const widget = widgetCatalog.get(ensureNonEmptyString(args.widgetName, "widgetName")); return ok({ ...widgetMetadata(widget), ...(await previewDeliveryFields(bundleCatalog, widget)) }); },
     async get_v3_widget_code(args) {
       const widget = widgetCatalog.get(ensureNonEmptyString(args.widgetName, "widgetName"));
       return ok({ themeVersion: "v3", widgetName: widget.name, widgetFile: widget.widgetFile, code: widgetCatalog.read(widget.widgetFile) });
@@ -155,7 +173,7 @@ export function createV3Handlers({ tokenCatalog, widgetCatalog, foundationCatalo
     async get_v3_widget_preview(args) {
       const widget = widgetCatalog.get(ensureNonEmptyString(args.widgetName, "widgetName"));
       if (!widget.previewFiles.length) throw new ToolError("EMPTY_RESULT", `V3 widget "${widget.name}" has no preview files.`, { hint: "Add preview_v3_<widget>.dart beside the widget." });
-      return ok({ themeVersion: "v3", widgetName: widget.name, category: widget.category, ...v3PreviewRouteMetadata(widget), previews: widget.previewFiles.map((file) => ({ file, code: widgetCatalog.read(file) })) });
+      return ok({ themeVersion: "v3", widgetName: widget.name, category: widget.category, ...v3PreviewRouteMetadata(widget), ...(await previewDeliveryFields(bundleCatalog, widget)), previews: widget.previewFiles.map((file) => ({ file, code: widgetCatalog.read(file) })) });
     },
     async audit_v3_widget(args) { return ok(widgetCatalog.audit(widgetCatalog.get(ensureNonEmptyString(args.widgetName, "widgetName")))); },
     async get_v3_flutter_widget_template(args) {
