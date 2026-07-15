@@ -14,6 +14,7 @@
 
 import {
   V3_PREVIEW_ERROR_CODES,
+  buildSignedBundleUrl,
   buildPreviewDelivery,
   urlContainsSecret,
   validateBundleManifest,
@@ -26,6 +27,8 @@ export class V3BundleCatalog {
   #store;
   #baseUrl;
   #resolveFreshnessCommit;
+  #signingSecret;
+  #signedUrlTtlSeconds;
 
   /**
    * @param {object} opts
@@ -33,14 +36,21 @@ export class V3BundleCatalog {
    * @param {string} [opts.bundleBaseUrl]  public, secret-free base URL for the delivery route
    * @param {() => string} [opts.resolveFreshnessCommit]  MCP catalog freshness commit ("" to skip parity)
    */
-  constructor({ store, bundleBaseUrl = DEFAULT_BUNDLE_BASE_URL, resolveFreshnessCommit = () => "" }) {
+  constructor({ store, bundleBaseUrl = DEFAULT_BUNDLE_BASE_URL, resolveFreshnessCommit = () => "", signingSecret = "", signedUrlTtlSeconds = 300 }) {
     this.#store = store;
     this.#baseUrl = bundleBaseUrl.replace(/\/+$/, "");
     this.#resolveFreshnessCommit = resolveFreshnessCommit;
+    this.#signingSecret = signingSecret;
+    this.#signedUrlTtlSeconds = signedUrlTtlSeconds;
   }
 
   #bundleUrl(commit) {
-    const url = `${this.#baseUrl}/${commit}.tar.gz`;
+    const url = buildSignedBundleUrl({
+      baseUrl: this.#baseUrl,
+      commit,
+      signingSecret: this.#signingSecret,
+      ttlSeconds: this.#signedUrlTtlSeconds,
+    });
     if (urlContainsSecret(url)) {
       throw new Error("computed bundleUrl unexpectedly contains a secret; refusing to expose it");
     }

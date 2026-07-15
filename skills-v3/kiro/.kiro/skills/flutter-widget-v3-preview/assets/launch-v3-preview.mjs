@@ -11,8 +11,8 @@
 //   4. reuses a matching warm server, else starts one, waits for HTTP + health
 //      readiness, then prints the exact deep-link URL
 //
-// The bearer token is read from --token/env and used ONLY as an Authorization
-// header at download time. It is never written to disk, the URL, or logs.
+// Signed delivery URLs need no separate consumer token. Legacy bearer-protected
+// delivery remains supported through --token/env during rollout.
 //
 // Zero third-party dependencies (Node builtins + system `tar` only).
 
@@ -26,7 +26,7 @@ import path from "node:path";
 const VENDOR_DIR = "flutter-widget-wallet";
 const CACHE_SUBDIR = "v3-preview";
 const HEALTH_FILE = "__preview_health__.json";
-const SUPPORTED_SCHEMA_VERSION = 1;
+const SUPPORTED_SCHEMA_VERSION = 2;
 
 // ---------------------------------------------------------------- args ----
 function parseArgs(argv) {

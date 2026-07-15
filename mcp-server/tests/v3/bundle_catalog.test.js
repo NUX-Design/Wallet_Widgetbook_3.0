@@ -34,6 +34,7 @@ test("catalog resolves an available, fresh, secret-free delivery", async () => {
   const catalog = new V3BundleCatalog({
     store: new LocalDirBundleStore(makeDist()),
     bundleBaseUrl: "https://flutter-widget-wallet-mcp.onrender.com/v3/preview-bundle",
+    signingSecret: "test-signing-secret",
     resolveFreshnessCommit: () => COMMIT,
   });
   const result = await catalog.describeDelivery({ slug: "button/V3MiniButton" });
@@ -41,7 +42,10 @@ test("catalog resolves an available, fresh, secret-free delivery", async () => {
   assert.equal(result.previewDelivery.mode, "bundle");
   assert.equal(result.previewDelivery.sourceCommit, COMMIT);
   assert.equal(result.previewDelivery.sha256, SHA256);
-  assert.equal(result.previewDelivery.bundleUrl, `https://flutter-widget-wallet-mcp.onrender.com/v3/preview-bundle/${COMMIT}.tar.gz`);
+  const deliveryUrl = new URL(result.previewDelivery.bundleUrl);
+  assert.equal(deliveryUrl.origin + deliveryUrl.pathname, `https://flutter-widget-wallet-mcp.onrender.com/v3/preview-bundle/${COMMIT}.tar.gz`);
+  assert.match(deliveryUrl.searchParams.get("expires"), /^\d+$/);
+  assert.match(deliveryUrl.searchParams.get("sig"), /^[0-9a-f]{64}$/);
 });
 
 test("catalog requests the immutable freshness commit instead of mutable latest", async () => {

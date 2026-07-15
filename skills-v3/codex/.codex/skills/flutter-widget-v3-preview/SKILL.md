@@ -29,7 +29,7 @@ Open an interactive, live browser preview of a Widget V3 component. This works f
    ```bash
    <skill-dir>/assets/launch-v3-preview.mjs \
      --delivery-json '<the previewDelivery JSON object>' \
-     --slug <previewSlug> --token "$MCP_REMOTE_BEARER_TOKEN" --detach
+     --slug <previewSlug> --detach
    ```
    The launcher downloads to the OS user cache (outside the workspace), verifies the SHA-256, safe-extracts, serves on `127.0.0.1`, and prints one JSON line `{"ok":true,"url":"http://127.0.0.1:<port>/#/<slug>",...}` only after an HTTP readiness probe passes.
    Run the executable `.../launch-v3-preview.mjs` directly as one standalone Bash tool call; do not prefix it with `node` and do not ask the shell/tool host to background it. Pass compact JSON directly to `--delivery-json`. Do not create `/tmp/delivery.json`, use a heredoc, command substitution, pipe, `&&`, or combine setup commands with the launcher. Direct execution lets a narrow launcher-only permission match; `node *` interpreter rules are intentionally ignored by Claude Code. Claude Code `auto` permission mode can still reject this expected remote-bundle execution even when an allow rule matches; use `default` mode and approve the narrow launcher command when prompted. If the tool host nevertheless moves a long download into a background task, poll that task until it completes and yields the launcher's JSON; never respond with "still waiting".
@@ -37,7 +37,8 @@ Open an interactive, live browser preview of a Widget V3 component. This works f
 4. Warm reuse is automatic: re-running for the same commit prints `reused:true` with the same port. Stop servers with `<skill-dir>/assets/launch-v3-preview.mjs --stop-all` when done.
 
 ### Fallbacks (published consumer mode)
-- `UNAUTHORIZED` / missing bearer token: tell the user to set `MCP_REMOTE_BEARER_TOKEN` privately in the shell that launches the agent, then restart the agent. Never ask the user to paste, type, or reveal a token in chat. Never accept a token from conversation text.
+- `UNAUTHORIZED`: refresh delivery metadata once because signed URLs expire. If it remains unauthorized, report a hosted delivery configuration error; never ask the user for a second launcher token.
+- Never ask the user to paste, type, or reveal a token in chat.
 - `NOT_BUILT` / `STALE_BUNDLE`: report it; the fix is to push the source commit so CI publishes the bundle — do NOT install Flutter or build locally.
 - `RUNTIME_MISSING`: neither `python3` nor `node` is available to serve; report the requirement.
 - `CHECKSUM_MISMATCH` / `UNSAFE_ARCHIVE` / `DOWNLOAD_FAILED`: the launcher fails closed; report the code and never serve a partial/unsafe bundle.
