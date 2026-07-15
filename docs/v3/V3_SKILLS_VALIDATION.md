@@ -43,6 +43,8 @@ Regression validator แบบถาวรอยู่ที่ `scripts/validat
 - ตัวอย่าง prompt: "เปิด local preview ของ V3MiniButton"
 - Expected source-repo sequence: ตรวจ `lib/preview_v3/` + `scripts/serve-v3-preview.sh` → ใช้/เขียน `preview_v3_<widget>.dart` → `dart run tool/generate_v3_preview_registry.dart` → `./scripts/serve-v3-preview.sh` → readiness → คืน route; ห้ามเรียก MCP delivery/launcher หรือขอ token
 - Expected consumer-repo sequence: เมื่อ source markers ไม่ครบเท่านั้น จึงเรียก `get_v3_widget_preview`/`get_v3_widget_metadata` → verified bundle launcher → readiness → คืน route; missing token ต้องให้ผู้ใช้ตั้ง `MCP_REMOTE_BEARER_TOKEN` privately ใน shell และห้ามวาง token ใน chat
+- Claude Code permission regression: launcher asset ต้อง executable และถูกเรียกโดยตรงเป็น standalone Bash tool call พร้อม inline compact `--delivery-json`; ห้าม prefix `node`, temp file, heredoc หรือ compound command เพื่อให้ narrow `Bash(*/flutter-widget-v3-preview/assets/launch-v3-preview.mjs *)` rule match; ใช้ `default` permission mode เพราะ `auto` mode ยังบล็อก remote-bundle execution ได้แม้ rule ตรง
+- First-use cold download regression: launcher tool call ต้อง foreground พร้อม `--detach`; launcher รอจน HTTP ready แล้ว detach server/exit หาก host background งานให้ poll task จนได้ `ok:true` ห้ามคืนข้อความ "still waiting"
 - Validator บังคับ mode-selection markers, source-first routing, generated-registry guardrail และ secret-handling rule เหมือนกันครบทั้ง Codex, Claude Code และ Kiro packs
 
 ### `flutter-widget-v3-figma-to-code`

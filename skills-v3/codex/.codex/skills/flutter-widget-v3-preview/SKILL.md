@@ -25,15 +25,16 @@ Open an interactive, live browser preview of a Widget V3 component. This works f
    - Call `get_v3_widget_preview` (or `get_v3_widget_metadata`) for the named widget. Read `previewDelivery` (`bundleUrl`, `sha256`, `sourceCommit`, `entryPath`, `schemaVersion`) and `previewSlug`.
    - If the response instead has `previewDeliveryStatus` with `available: false`, the bundle is not published (`NOT_BUILT`) or stale (`STALE_BUNDLE`): report the exact code/message and stop. Do NOT build it locally.
    - Never invent a `bundleUrl`/slug; if no widget matches, say so and suggest `flutter-widget-v3-search`.
-2. Launch the preview with the bundled launcher (Node, zero dependencies), as a background process so it keeps serving:
+2. Launch the preview with the bundled launcher (Node, zero dependencies). Run the launcher tool call in the foreground with `--detach`; the launcher itself waits for download, checksum, extraction, server startup, and HTTP readiness, then detaches only the static server and exits:
    ```bash
-   node <skill-dir>/assets/launch-v3-preview.mjs \
+   <skill-dir>/assets/launch-v3-preview.mjs \
      --delivery-json '<the previewDelivery JSON object>' \
-     --slug <previewSlug> --token "$MCP_REMOTE_BEARER_TOKEN"
+     --slug <previewSlug> --token "$MCP_REMOTE_BEARER_TOKEN" --detach
    ```
    The launcher downloads to the OS user cache (outside the workspace), verifies the SHA-256, safe-extracts, serves on `127.0.0.1`, and prints one JSON line `{"ok":true,"url":"http://127.0.0.1:<port>/#/<slug>",...}` only after an HTTP readiness probe passes.
+   Run the executable `.../launch-v3-preview.mjs` directly as one standalone Bash tool call; do not prefix it with `node` and do not ask the shell/tool host to background it. Pass compact JSON directly to `--delivery-json`. Do not create `/tmp/delivery.json`, use a heredoc, command substitution, pipe, `&&`, or combine setup commands with the launcher. Direct execution lets a narrow launcher-only permission match; `node *` interpreter rules are intentionally ignored by Claude Code. Claude Code `auto` permission mode can still reject this expected remote-bundle execution even when an allow rule matches; use `default` mode and approve the narrow launcher command when prompted. If the tool host nevertheless moves a long download into a background task, poll that task until it completes and yields the launcher's JSON; never respond with "still waiting".
 3. Hand the requester the exact `url` from that JSON — only after the launcher reports `ok:true`. Never send a URL that has not been confirmed reachable.
-4. Warm reuse is automatic: re-running for the same commit prints `reused:true` with the same port. Stop servers with `node <skill-dir>/assets/launch-v3-preview.mjs --stop-all` when done.
+4. Warm reuse is automatic: re-running for the same commit prints `reused:true` with the same port. Stop servers with `<skill-dir>/assets/launch-v3-preview.mjs --stop-all` when done.
 
 ### Fallbacks (published consumer mode)
 - `UNAUTHORIZED` / missing bearer token: tell the user to set `MCP_REMOTE_BEARER_TOKEN` privately in the shell that launches the agent, then restart the agent. Never ask the user to paste, type, or reveal a token in chat. Never accept a token from conversation text.
