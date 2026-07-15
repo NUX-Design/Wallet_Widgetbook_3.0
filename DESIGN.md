@@ -229,7 +229,7 @@ colors:
   border-extension-info: "#3b82f6"
   content-blue: "#afc4f0"
   focus-outer: "#2563eb"
-  focus-inner: "#ffffff"
+  focus-white: "#ffffff"
   focus-primary: "#2563eb"
   state-success: "#16a34a"
   state-error: "#dc2626"
@@ -547,7 +547,7 @@ themes:
       border-extension-info: "#3b82f6"
       content-blue: "#afc4f0"
       focus-outer: "#2563eb"
-      focus-inner: "#ffffff"
+      focus-white: "#ffffff"
       focus-primary: "#2563eb"
       state-success: "#16a34a"
       state-error: "#dc2626"
@@ -581,8 +581,8 @@ themes:
       content-extension-violet: "#a78bfa"
       content-extension-yellow: "#facc15"
       content-extension-orange: "#fb923c"
-      background-primary: "#020617"
-      background-white: "#0f172a"
+      background-primary: "#0f172a"
+      background-white: "#1e293b"
       background-neutral: "#a3a3a3"
       background-extension-neutral: "#0a0a0a"
       background-extension-slate: "#020617"
@@ -605,7 +605,7 @@ themes:
       border-extension-info: "#3b82f6"
       content-blue: "#94a3b8"
       focus-outer: "#93c5fd"
-      focus-inner: "#020617"
+      focus-white: "#020617"
       focus-primary: "#2563eb"
       state-success: "#86efac"
       state-error: "#fca5a5"
@@ -613,7 +613,7 @@ themes:
       state-warning: "#fef08a"
       border-tertiary: "#ccddfa"
       border-slate: "#ccddfa"
-      background-blue: "#1e293b"
+      background-blue: "#334155"
       content-white: "#ffffff"
 ---
 
@@ -945,7 +945,7 @@ Design system extracted from **Wi Design System**. This specification defines th
 | `Border/Extension/Info` | `#3b82f6` | ← `Navy/500` |
 | `Content/Blue` | `#afc4f0` | ← `Blue/400` |
 | `Focus/outer` | `#2563eb` | ← `Navy/600` |
-| `Focus/inner` | `#ffffff` | ← `White` |
+| `Focus/white` | `#ffffff` | ← `White` |
 | `Focus/primary` | `#2563eb` | ← `Navy/600` |
 | `State/success` | `#16a34a` | ← `Green/600` |
 | `State/error` | `#dc2626` | ← `Red/600` |
@@ -979,8 +979,8 @@ Design system extracted from **Wi Design System**. This specification defines th
 - `Content/Extension/Violet`: Light: `#6d28d9` | Dark: `#a78bfa`
 - `Content/Extension/Yellow`: Light: `#a16207` | Dark: `#facc15`
 - `Content/Extension/Orange`: Light: `#c2410c` | Dark: `#fb923c`
-- `Background/Primary`: Light: `#fbfcff` | Dark: `#020617`
-- `Background/White`: Light: `#ffffff` | Dark: `#0f172a`
+- `Background/Primary`: Light: `#fbfcff` | Dark: `#0f172a`
+- `Background/White`: Light: `#ffffff` | Dark: `#1e293b`
 - `Background/Neutral`: Light: `#e5e5e5` | Dark: `#a3a3a3`
 - `Background/Extension/Neutral`: Light: `#f5f5f5` | Dark: `#0a0a0a`
 - `Background/Extension/Slate`: Light: `#f1f5f9` | Dark: `#020617`
@@ -1003,7 +1003,7 @@ Design system extracted from **Wi Design System**. This specification defines th
 - `Border/Extension/Info`: Light: `#3b82f6` | Dark: `#3b82f6`
 - `Content/Blue`: Light: `#afc4f0` | Dark: `#94a3b8`
 - `Focus/outer`: Light: `#2563eb` | Dark: `#93c5fd`
-- `Focus/inner`: Light: `#ffffff` | Dark: `#020617`
+- `Focus/white`: Light: `#ffffff` | Dark: `#020617`
 - `Focus/primary`: Light: `#2563eb` | Dark: `#2563eb`
 - `State/success`: Light: `#16a34a` | Dark: `#86efac`
 - `State/error`: Light: `#dc2626` | Dark: `#fca5a5`
@@ -1011,7 +1011,7 @@ Design system extracted from **Wi Design System**. This specification defines th
 - `State/warning`: Light: `#ca8a04` | Dark: `#fef08a`
 - `Border/Tertiary`: Light: `#456cb9` | Dark: `#ccddfa`
 - `Border/Slate`: Light: `#94a3b8` | Dark: `#ccddfa`
-- `Background/Blue`: Light: `#f1f5ff` | Dark: `#1e293b`
+- `Background/Blue`: Light: `#f1f5ff` | Dark: `#334155`
 - `Content/White`: Light: `#ffffff` | Dark: `#ffffff`
 
 ### Design Tokens
@@ -1354,7 +1354,7 @@ Size — height scale
 
 State — interactive state
   • Default  → idle
-  • Focus    → keyboard/focus ring (Focus/outer + Focus/inner)
+  • Focus    → keyboard/focus ring (Focus/outer + Focus/white)
   • Active   → pressed / toggled
   • Disabled → non-interactive (disabled + aria-disabled)
   • Error    → invalid action (State/error)
@@ -1370,7 +1370,7 @@ Fill      → Button/Primary (#244EA2)
 Text      → Core/white (#FFFFFF)
 Border    → Border/Primary
 Error     → State/error
-Focus     → Focus/outer + Focus/inner
+Focus     → Focus/outer + Focus/white
 Radius    → radius-full (999px — pill shape)
 Gap       → space-6 (6px)
 Padding X → space-16 (16px)
@@ -1727,7 +1727,7 @@ Focus/outer: #2563EB (light) → #93C5FD (dark)
   --border-extension-info: #3b82f6;
   --content-blue: #afc4f0;
   --focus-outer: #2563eb;
-  --focus-inner: #ffffff;
+  --focus-white: #ffffff;
   --focus-primary: #2563eb;
   --state-success: #16a34a;
   --state-error: #dc2626;
@@ -2021,8 +2021,8 @@ Focus/outer: #2563EB (light) → #93C5FD (dark)
     --content-extension-violet: #a78bfa;
     --content-extension-yellow: #facc15;
     --content-extension-orange: #fb923c;
-    --background-primary: #020617;
-    --background-white: #0f172a;
+    --background-primary: #0f172a;
+    --background-white: #1e293b;
     --background-neutral: #a3a3a3;
     --background-extension-neutral: #0a0a0a;
     --background-extension-slate: #020617;
@@ -2045,7 +2045,7 @@ Focus/outer: #2563EB (light) → #93C5FD (dark)
     --border-extension-info: #3b82f6;
     --content-blue: #94a3b8;
     --focus-outer: #93c5fd;
-    --focus-inner: #020617;
+    --focus-white: #020617;
     --focus-primary: #2563eb;
     --state-success: #86efac;
     --state-error: #fca5a5;
@@ -2053,7 +2053,7 @@ Focus/outer: #2563EB (light) → #93C5FD (dark)
     --state-warning: #fef08a;
     --border-tertiary: #ccddfa;
     --border-slate: #ccddfa;
-    --background-blue: #1e293b;
+    --background-blue: #334155;
     --content-white: #ffffff;
   }
 }
@@ -2292,7 +2292,7 @@ module.exports = { theme: { extend: {
     'border-extension-info': '#3b82f6',
     'content-blue': '#afc4f0',
     'focus-outer': '#2563eb',
-    'focus-inner': '#ffffff',
+    'focus-white': '#ffffff',
     'focus-primary': '#2563eb',
     'state-success': '#16a34a',
     'state-error': '#dc2626',

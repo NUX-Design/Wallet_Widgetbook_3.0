@@ -56,9 +56,9 @@ final class V3ColorPalette {
     required this.contentWhite,
     required this.black,
     required this.white,
-    required this.focusInner,
     required this.focusOuter,
     required this.focusPrimary,
+    required this.focusWhite,
     required this.stateError,
     required this.stateSuccess,
     required this.stateWarning,
@@ -113,9 +113,9 @@ final class V3ColorPalette {
   final Color contentWhite;
   final Color black;
   final Color white;
-  final Color focusInner;
   final Color focusOuter;
   final Color focusPrimary;
+  final Color focusWhite;
   final Color stateError;
   final Color stateSuccess;
   final Color stateWarning;
@@ -170,16 +170,16 @@ final class V3ColorPalette {
     contentWhite: V3PrimitiveColors.white,
     black: V3PrimitiveColors.black,
     white: V3PrimitiveColors.white,
-    focusInner: V3PrimitiveColors.white,
     focusOuter: V3PrimitiveColors.navy600,
     focusPrimary: V3PrimitiveColors.navy600,
+    focusWhite: V3PrimitiveColors.white,
     stateError: V3PrimitiveColors.red600,
     stateSuccess: V3PrimitiveColors.green600,
     stateWarning: V3PrimitiveColors.yellow600,
   );
 
   static const dark = V3ColorPalette(
-    backgroundBlue: V3PrimitiveColors.slate800,
+    backgroundBlue: V3PrimitiveColors.slate700,
     backgroundExtensionBlue: V3PrimitiveColors.blue950,
     backgroundExtensionGold: V3PrimitiveColors.gold950,
     backgroundExtensionGreen: V3PrimitiveColors.green950,
@@ -194,8 +194,8 @@ final class V3ColorPalette {
     backgroundExtensionViolet: V3PrimitiveColors.violet950,
     backgroundExtensionYellow: V3PrimitiveColors.yellow950,
     backgroundNeutral: V3PrimitiveColors.neutral400,
-    backgroundPrimary: V3PrimitiveColors.slate950,
-    backgroundWhite: V3PrimitiveColors.slate900,
+    backgroundPrimary: V3PrimitiveColors.slate900,
+    backgroundWhite: V3PrimitiveColors.slate800,
     borderExtensionError: V3PrimitiveColors.red500,
     borderExtensionInfo: V3PrimitiveColors.navy500,
     borderExtensionSuccess: V3PrimitiveColors.green500,
@@ -228,9 +228,9 @@ final class V3ColorPalette {
     contentWhite: V3PrimitiveColors.white,
     black: V3PrimitiveColors.white,
     white: V3PrimitiveColors.white,
-    focusInner: V3PrimitiveColors.slate950,
     focusOuter: V3PrimitiveColors.navy300,
     focusPrimary: V3PrimitiveColors.navy600,
+    focusWhite: V3PrimitiveColors.slate950,
     stateError: V3PrimitiveColors.red300,
     stateSuccess: V3PrimitiveColors.green300,
     stateWarning: V3PrimitiveColors.yellow200,

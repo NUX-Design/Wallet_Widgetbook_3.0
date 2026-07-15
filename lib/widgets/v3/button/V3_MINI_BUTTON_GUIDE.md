@@ -14,13 +14,15 @@ Figma nodes ต่อไปนี้เป็น SOT โดยตรงของ
 | Outline | [`241:3851`](https://www.figma.com/design/mhUvPg9tOjlvQvEW6glQhJ/Wi-Design-System?node-id=241-3851&t=uOGxt9VwxKIGvSsU-4) | [`241:3855`](https://www.figma.com/design/mhUvPg9tOjlvQvEW6glQhJ/Wi-Design-System?node-id=241-3855&t=uOGxt9VwxKIGvSsU-4) | [`241:3859`](https://www.figma.com/design/mhUvPg9tOjlvQvEW6glQhJ/Wi-Design-System?node-id=241-3859&t=uOGxt9VwxKIGvSsU-4) | [`241:3847`](https://www.figma.com/design/mhUvPg9tOjlvQvEW6glQhJ/Wi-Design-System?node-id=241-3847&t=uOGxt9VwxKIGvSsU-4) |
 | Ghost | [`241:3991`](https://www.figma.com/design/mhUvPg9tOjlvQvEW6glQhJ/Wi-Design-System?node-id=241-3991&t=uOGxt9VwxKIGvSsU-4) | [`241:3995`](https://www.figma.com/design/mhUvPg9tOjlvQvEW6glQhJ/Wi-Design-System?node-id=241-3995&t=uOGxt9VwxKIGvSsU-4) | [`241:3999`](https://www.figma.com/design/mhUvPg9tOjlvQvEW6glQhJ/Wi-Design-System?node-id=241-3999&t=uOGxt9VwxKIGvSsU-4) | [`241:4003`](https://www.figma.com/design/mhUvPg9tOjlvQvEW6glQhJ/Wi-Design-System?node-id=241-4003&t=uOGxt9VwxKIGvSsU-4) |
 
+Icon slots accept any `Widget`. `preview_v3_mini_button.dart` uses `V3LucideIcon` (see `V3_LUCIDE_ICON_GUIDE.md`), which resolves its 12px size automatically from the button's own `IconTheme.merge` wrapper — no explicit `size` needed:
+
 ```dart
 V3MiniButton(
   label: AppLocalizations.of(context)!.continueLabel,
   semanticLabel: AppLocalizations.of(context)!.continueLabel,
   variant: V3MiniButtonVariant.outline,
-  leadingIcon: const Icon(Icons.arrow_forward),
-  trailingIcon: const Icon(Icons.chevron_right),
+  leadingIcon: const V3LucideIcon(LucideIcons.arrowRight),
+  trailingIcon: const V3LucideIcon(LucideIcons.chevronRight),
   onPressed: submit,
 )
 ```
@@ -55,12 +57,58 @@ V3MiniButton(
 - keyboard focus ใช้ visual เดียวกับ Active เพื่อให้ focus มองเห็นได้
 - component ใช้ `V3Typography`, `V3Spacing`, `V3Radii`, `V3PrimitiveColors` และ `V3PrimitiveShadows` โดยตรง จึงไม่มี visual metric, alpha หรือ effect ที่สร้างซ้ำด้วย magic number
 
+### Icon Adoption Guidance
+
+- `leadingIcon`/`trailingIcon` stay `Widget?` — `V3MiniButton`'s public API did not change to adopt Lucide; any icon widget still works.
+- Prefer `V3LucideIcon(LucideIcons.*)` for new call sites so icon size/stroke/color stay governed by Theme V3 tokens and `IconTheme` instead of ad hoc `Icon(Icons.*)` literals.
+- Do not pass an explicit `size` to `V3LucideIcon` inside `V3MiniButton` — the button's own `IconTheme.merge(data: IconThemeData(size: V3Spacing.space12))` wrapper already resolves the correct 12px (`V3IconSize.tiny`) size automatically.
+- `stroke` defaults to `V3IconStroke.regular`; only pass an explicit `stroke` if a specific variant/state needs a different weight (no Mini Button state currently requires one).
+
 ### Accessibility
 
 - Mini มี visual height 24px (Ghost 16px) ตาม SOT จึงควรวางใน parent hit-area อย่างน้อย 48×48px เมื่อใช้บน touch screen
 - รองรับ keyboard focus/activation, active semantics และ localized semantic label/hint
 - label เป็นหนึ่งบรรทัด; caller ควรส่งข้อความสั้นและ localized
 - ตรวจ preview ได้ด้วย `flutter run -t lib/widgets/v3/button/preview_v3_mini_button.dart`; preview เริ่มต้นด้วย Light theme และใช้ toggle ด้านบนเพื่อสลับทั้งหน้าระหว่าง Light/Dark โดย component ทุก state อ่าน semantic colors จาก theme ที่เลือก
+
+### Token Audit Values
+
+ตารางนี้บันทึก resolved values จาก Theme V3 token source เพื่อให้ trace `Semantic → Primitive → Value` ได้โดยตรง หาก Figma token export เปลี่ยน ต้อง regenerate Theme V3 และอัปเดตตารางนี้พร้อมกัน
+
+| Semantic token | Light primitive / value | Dark primitive / value |
+|---|---|---|
+| `button/primary` | `Blue/800` · `#244EA2` | `Blue/800` · `#244EA2` |
+| `button/secondary` | `White` · `#FFFFFF` | `Slate/800` · `#1E293B` |
+| `background/neutral` | `Neutral/200` · `#E5E5E5` | `Neutral/400` · `#A3A3A3` |
+| `border/tertiary` | `Blue/700` · `#456CB9` | `Blue/300` · `#CCDDFA` |
+| `border/slate` | `Slate/400` · `#94A3B8` | `Blue/300` · `#CCDDFA` |
+| `border/extension/info` | `Navy/500` · `#3B82F6` | `Navy/500` · `#3B82F6` |
+| `border/extension/error` | `Red/500` · `#EF4444` | `Red/500` · `#EF4444` |
+| `content/primary` | `Slate/900` · `#0F172A` | `White` · `#FFFFFF` |
+| `content/white` | `White` · `#FFFFFF` | `White` · `#FFFFFF` |
+| `content/neutral` | `Neutral/400` · `#A3A3A3` | `Neutral/400` · `#A3A3A3` |
+| `content/neutral2` | `Neutral/700` · `#404040` | `Neutral/50` · `#FAFAFA` |
+| `content/extension/navy` | `Navy/700` · `#1D4ED8` | `Navy/400` · `#60A5FA` |
+| `core/black` | `Black` · `#000000` | `White` · `#FFFFFF` |
+| `state/error` | `Red/600` · `#DC2626` | `Red/300` · `#FCA5A5` |
+
+| Dimension token | Primitive value |
+|---|---:|
+| `space-0` | `0px` |
+| `space-2` | `2px` |
+| `space-6` | `6px` |
+| `space-8` | `8px` |
+| `space-12` | `12px` |
+| `space-16` | `16px` |
+| `space-24` | `24px` |
+| `rounded-full` | `999px` |
+
+| Typography/effect token | Resolved primitive value |
+|---|---|
+| `label/tiny` | `Noto Sans`, `12px`, weight `500`, line-height `16px`, letter-spacing `0px` |
+| `shadow-sm` | `black/alpha-5`, offset `(0, 1)`, blur `2px`, spread `0px` |
+| `black/alpha-0` | `#00000000` · alpha `0%` |
+| `black/alpha-5` | `#0D000000` · alpha `5%` |
 
 ## V3 Metadata
 

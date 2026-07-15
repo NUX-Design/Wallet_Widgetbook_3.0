@@ -8,6 +8,7 @@ import 'package:mcp_test_app/config/themes/v3/v3_primitives.dart';
 import 'package:mcp_test_app/config/themes/v3/v3_typography.dart';
 import 'package:mcp_test_app/widgets/v3/button/preview_v3_mini_button.dart';
 import 'package:mcp_test_app/widgets/v3/button/v3_mini_button.dart';
+import 'package:mcp_test_app/widgets/v3/icon/v3_lucide_icon.dart';
 
 import '../../../support/widget_test_harness.dart';
 
@@ -282,6 +283,29 @@ void main() {
       V3ColorPalette.dark.buttonPrimary,
     );
   });
+
+  testWidgets(
+    'preview renders V3LucideIcon at 12px for every variant and state',
+    (tester) async {
+      await pumpTestApp(
+        tester,
+        const V3MiniButtonPreview(),
+        wrapWithScaffold: false,
+      );
+
+      final iconFinder = find.byType(V3LucideIcon);
+      // 3 variants × 4 states × 2 icon slots (leading + trailing).
+      final expectedCount =
+          V3MiniButtonVariant.values.length *
+          V3MiniButtonState.values.length *
+          2;
+      expect(iconFinder, findsNWidgets(expectedCount));
+
+      for (var i = 0; i < expectedCount; i++) {
+        expect(tester.getSize(iconFinder.at(i)), const Size.square(12));
+      }
+    },
+  );
 
   testWidgets('Mini label remains stable at large text scale', (tester) async {
     tester.platformDispatcher.textScaleFactorTestValue = 2;

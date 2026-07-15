@@ -1353,7 +1353,7 @@
         }
       }
     },
-    "inner": {
+    "white": {
       "$type": "color",
       "$value": {
         "colorSpace": "srgb",

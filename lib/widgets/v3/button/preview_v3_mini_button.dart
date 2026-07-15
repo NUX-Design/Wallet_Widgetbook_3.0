@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../config/themes/v3/v3_theme_scope.dart';
+import '../icon/v3_lucide_icon.dart';
 import 'v3_mini_button.dart';
 
 void main() => runApp(const V3MiniButtonPreviewApp());
@@ -186,8 +188,8 @@ class _StateRow extends StatelessWidget {
                 label: 'Label',
                 variant: variant,
                 state: state,
-                leadingIcon: const Icon(Icons.circle_outlined),
-                trailingIcon: const Icon(Icons.circle_outlined),
+                leadingIcon: const V3LucideIcon(LucideIcons.circle),
+                trailingIcon: const V3LucideIcon(LucideIcons.circle),
                 onPressed: state == V3MiniButtonState.disabled ? null : () {},
               ),
             ),
