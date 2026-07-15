@@ -181,26 +181,20 @@ Guardrail: ถ้าไม่พบ widget V3 ที่ตรง ให้แน
 
 ## Canonical Workflow — `flutter-widget-v3-preview`
 
-1. ตรวจว่า target repo ใช้ standalone preview (`preview_v3_*.dart`) หรือ Widgetbook
-2. `get_v3_widget_preview` ดึงตัวอย่าง preview จาก MCP
-3. ถ้าต้อง Widgetbook use case ใหม่ ให้ local/stdio ใช้ `generate_v3_widgetbook_use_case` ได้แบบ optional; Remote MCP ให้เขียน use case เองจาก preview/metadata และ conventions
-4. คง Light/Dark toggle coverage เหมือน pilot `V3MiniButton`
-5. ห้ามแก้ `lib/widgetbook.directories.g.dart` ด้วยมือ
-
-### Live Browser Preview (ตามคำขอ)
-
-เมื่อผู้ใช้ระบุชื่อ component และต้องการ "เห็นมันรันจริง" ไม่ใช่แค่อ่าน source:
-
-1. หา preview entrypoint: ถ้ามีอยู่แล้วใช้ `lib/widgets/v3/<category>/preview_v3_<widget>.dart` ที่มีอยู่; ถ้ายังไม่มีให้ทำ `flutter-widget-v3-install` ก่อนเพื่อให้มีไฟล์ preview จริงก่อนรัน — ห้ามเดา path เอง
-2. เลือก local port ที่ยังไม่ถูกใช้ (แนะนำ `8090` เป็นค่าเริ่มต้น เพิ่มทีละ 1 ถ้าชนกับ preview อื่นที่รันอยู่)
-3. รันเป็น background process โดยไม่พึ่ง Widgetbook เลย:
-   ```bash
-   flutter run -t lib/widgets/v3/<category>/preview_v3_<widget>.dart -d web-server --web-hostname 127.0.0.1 --web-port <port>
-   ```
-4. อ่าน process output จนเจอ URL ที่ serve จริง (เช่น `http://127.0.0.1:<port>`) แล้วส่ง URL นั้นให้ผู้ใช้เปิดในเบราว์เซอร์ของตัวเอง
-5. คง dev server ไว้ตลอด session; ปิดเมื่อผู้ใช้บอกว่าเสร็จแล้ว หรือก่อนจะรัน component อื่นบน port เดิม
-
-Guardrail เฉพาะ flow นี้: ห้ามแก้ `lib/widgetbook.dart`, `lib/widgetbook_use_cases.dart`, หรือ `lib/widgetbook.directories.g.dart` เพราะ flow นี้ใช้แค่ `preview_v3_*.dart` ของ widget เอง; ห้ามใช้ port ที่ถูกจองโดย dev server อื่นอยู่แล้ว; ห้ามรัน path ที่ยังไม่มีไฟล์จริง
+1. ตรวจ mode ก่อนทุกครั้ง:
+   - ถ้ามีทั้ง `lib/preview_v3/` และ `scripts/serve-v3-preview.sh` ให้เลือก source-development mode อัตโนมัติ
+   - ถ้าขาด marker อย่างใดอย่างหนึ่ง ให้เลือก published consumer mode
+2. Source-development mode:
+   - เขียนหรือปรับ `lib/widgets/v3/<category>/preview_v3_<widget>.dart` ให้มี Light/Dark coverage
+   - รัน `dart run tool/generate_v3_preview_registry.dart`; generator scan `lib/widgets/v3/**/preview_v3_*.dart` และสร้าง `lib/preview_v3/preview_registry.g.dart` ซึ่งห้ามแก้มือ
+   - คง ownership: `main.dart` เป็น thin entrypoint, `preview_app.dart` เป็น testable routing, `preview_registry.dart` เป็น validation wrapper และ `preview_registry.g.dart` เป็น generated output
+   - serve ด้วย `./scripts/serve-v3-preview.sh`, รอ HTTP readiness แล้วคืน `http://127.0.0.1:8090/#/<category>/<WidgetClass>` หรือ URL จริงที่ script พิมพ์
+   - ห้ามเรียก MCP bundle delivery, Node launcher หรือขอ bearer token; ถ้า local build fail ให้รายงาน error โดยไม่ fallback mode
+3. Published consumer mode:
+   - เรียก `get_v3_widget_preview`/`get_v3_widget_metadata`, ใช้ commit-addressed `previewDelivery` และ bundled Node launcher
+   - ห้ามติดตั้ง Flutter/Dart หรือเขียนไฟล์ลง consumer workspace
+   - หากไม่มี `MCP_REMOTE_BEARER_TOKEN` ให้บอกผู้ใช้ตั้งค่าแบบ private ใน shell แล้ว restart agent; ห้ามขอ รับ หรือให้ผู้ใช้วาง token ใน chat
+4. ทั้งสอง mode ห้ามคืน localhost URL ก่อน readiness สำเร็จ และห้ามสร้าง/อ้าง Widgetbook files
 
 ## Canonical Workflow — `flutter-widget-v3-figma-to-code`
 
