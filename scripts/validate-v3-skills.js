@@ -115,6 +115,12 @@ for (const pack of packs) {
         "source-development mode automatically",
         "do not request a bearer token",
         "Never ask the user to paste, type, or reveal a token in chat",
+        "one standalone Bash tool call",
+        "Do not create `/tmp/delivery.json`",
+        "do not prefix it with `node`",
+        "use `default` mode",
+        "--detach",
+        "never respond with \"still waiting\"",
       ]) {
         if (!source.includes(marker)) violations.push(`${relativeSkill}: missing source-first preview marker ${marker}`);
       }

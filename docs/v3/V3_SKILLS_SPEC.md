@@ -192,6 +192,8 @@ Guardrail: ถ้าไม่พบ widget V3 ที่ตรง ให้แน
    - ห้ามเรียก MCP bundle delivery, Node launcher หรือขอ bearer token; ถ้า local build fail ให้รายงาน error โดยไม่ fallback mode
 3. Published consumer mode:
    - เรียก `get_v3_widget_preview`/`get_v3_widget_metadata`, ใช้ commit-addressed `previewDelivery` และ bundled Node launcher
+   - เรียก executable `launch-v3-preview.mjs` โดยตรงเป็น foreground Bash tool call เดี่ยว (ห้าม prefix `node`/ห้าม shell background) พร้อม `--detach`; launcher จะรอ download/checksum/readiness ก่อน detach เฉพาะ static server และ exit หาก tool host ย้ายงานไป background ให้ poll จนได้ JSON `ok:true` ห้ามตอบเพียงว่ายังรออยู่
+   - ส่ง compact JSON ให้ `--delivery-json` โดยตรง ห้ามสร้าง temp JSON, heredoc, pipe, command substitution หรือ compound command เพราะจะทำให้ narrow permission rule ไม่ match; Claude Code ไม่รับ wildcarded interpreter rule เช่น `node *` และ `auto` mode ยังอาจบล็อก remote bundle แม้ allow rule ตรง จึงต้องใช้ `default` mode และอนุมัติ narrow launcher command เมื่อมี prompt
    - ห้ามติดตั้ง Flutter/Dart หรือเขียนไฟล์ลง consumer workspace
    - หากไม่มี `MCP_REMOTE_BEARER_TOKEN` ให้บอกผู้ใช้ตั้งค่าแบบ private ใน shell แล้ว restart agent; ห้ามขอ รับ หรือให้ผู้ใช้วาง token ใน chat
 4. ทั้งสอง mode ห้ามคืน localhost URL ก่อน readiness สำเร็จ และห้ามสร้าง/อ้าง Widgetbook files
