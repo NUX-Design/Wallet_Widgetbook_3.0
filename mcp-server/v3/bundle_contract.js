@@ -10,9 +10,11 @@
 //
 // See docs/v3/V3_ZERO_FLUTTER_PREVIEW_CONTRACT.md for the human-facing spec.
 
+import crypto from "node:crypto";
+
 // Bump only on an incompatible manifest/previewDelivery shape change. Consumers
 // must reject a manifest whose schemaVersion is greater than they understand.
-export const V3_PREVIEW_BUNDLE_SCHEMA_VERSION = 1;
+export const V3_PREVIEW_BUNDLE_SCHEMA_VERSION = 2;
 
 // The delivery mode advertised in previewDelivery.mode. Reserved for future
 // alternatives (e.g. "stream"); consumers must treat unknown modes as fatal.
@@ -150,4 +152,26 @@ export function urlContainsSecret(rawUrl) {
   // userinfo component like https://user:token@host/...
   const match = /^[a-z][a-z0-9+.-]*:\/\/([^/@]+)@/.exec(lowered);
   return Boolean(match && match[1].includes(":"));
+}
+
+export function buildSignedBundleUrl({ baseUrl, commit, signingSecret, now = Date.now(), ttlSeconds = 300 }) {
+  if (!signingSecret) return `${baseUrl.replace(/\/+$/, "")}/${commit}.tar.gz`;
+  const expires = Math.floor(now / 1000) + ttlSeconds;
+  const message = `v3-preview-bundle:${commit}:${expires}`;
+  const sig = crypto.createHmac("sha256", signingSecret).update(message).digest("hex");
+  const url = new URL(`${baseUrl.replace(/\/+$/, "")}/${commit}.tar.gz`);
+  url.searchParams.set("expires", String(expires));
+  url.searchParams.set("sig", sig);
+  return url.toString();
+}
+
+export function verifySignedBundleUrl({ commit, expires, sig, signingSecret, now = Date.now() }) {
+  if (!signingSecret || !/^[0-9]+$/.test(String(expires ?? "")) || !/^[0-9a-f]{64}$/.test(String(sig ?? ""))) {
+    return false;
+  }
+  if (Number(expires) < Math.floor(now / 1000)) return false;
+  const message = `v3-preview-bundle:${commit}:${expires}`;
+  const expected = crypto.createHmac("sha256", signingSecret).update(message).digest();
+  const actual = Buffer.from(String(sig), "hex");
+  return actual.length === expected.length && crypto.timingSafeEqual(actual, expected);
 }

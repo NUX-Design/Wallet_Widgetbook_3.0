@@ -6,8 +6,10 @@ import path from "node:path";
 import test from "node:test";
 import { createStructuredLogger } from "../../observability.js";
 import { startRemoteHttpServer } from "../../http-server.js";
+import { buildSignedBundleUrl } from "../../v3/bundle_contract.js";
 
 const COMMIT = "a".repeat(40);
+const SIGNING_SECRET = "preview-signing-secret";
 
 function makeDist() {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "v3httpdist-"));
@@ -30,6 +32,7 @@ async function startServer(t, previewBundleDir) {
     repoIdentity: "fixture/widget-repo", commitSha: COMMIT, resolveCommitSha: () => COMMIT,
     deployedAt: "2026-07-14T00:00:00.000Z",
     bearerTokens: new Set(["test-token"]),
+    previewBundleSigningSecret: SIGNING_SECRET,
     previewBundleDir,
     logger: createStructuredLogger({ level: "silent" }),
   });
@@ -64,6 +67,37 @@ test("preview bundle route streams the archive with checksum + length headers", 
   const bytes = Buffer.from(await res.arrayBuffer());
   assert.ok(bytes.equals(archive));
   assert.equal(crypto.createHash("sha256").update(bytes).digest("hex"), manifest.sha256);
+});
+
+test("signed immutable archive URL downloads without a second bearer token", async (t) => {
+  const { dir, manifest, archive } = makeDist();
+  const base = await startServer(t, dir);
+  const url = buildSignedBundleUrl({
+    baseUrl: `${base}/v3/preview-bundle`,
+    commit: COMMIT,
+    signingSecret: SIGNING_SECRET,
+  });
+  const res = await fetch(url);
+  assert.equal(res.status, 200);
+  assert.equal(res.headers.get("etag"), `"${manifest.sha256}"`);
+  assert.equal(res.headers.get("cache-control"), "no-store");
+  assert.ok(Buffer.from(await res.arrayBuffer()).equals(archive));
+});
+
+test("signed archive URL rejects expired or modified signatures", async (t) => {
+  const { dir } = makeDist();
+  const base = await startServer(t, dir);
+  const expired = buildSignedBundleUrl({
+    baseUrl: `${base}/v3/preview-bundle`,
+    commit: COMMIT,
+    signingSecret: SIGNING_SECRET,
+    now: 0,
+    ttlSeconds: 1,
+  });
+  assert.equal((await fetch(expired)).status, 401);
+  const valid = new URL(buildSignedBundleUrl({ baseUrl: `${base}/v3/preview-bundle`, commit: COMMIT, signingSecret: SIGNING_SECRET }));
+  valid.searchParams.set("sig", "0".repeat(64));
+  assert.equal((await fetch(valid)).status, 401);
 });
 
 test("preview bundle route rejects bad commit shapes and unknown commits", async (t) => {

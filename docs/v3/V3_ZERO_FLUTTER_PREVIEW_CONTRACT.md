@@ -20,7 +20,7 @@ Deterministic JSON emitted next to the archive by the source packer (ZP-03).
 
 | Field | Type | Rule |
 |---|---|---|
-| `schemaVersion` | integer | Currently `1`. Consumer rejects `> supported`. |
+| `schemaVersion` | integer | Currently `2`. Consumer rejects `> supported`. |
 | `sourceCommit` | string | Full 40-char lowercase hex git SHA. Commit-addressed. |
 | `createdAt` | string | ISO-8601 build timestamp. |
 | `entryPath` | string | Relative in-bundle HTML entry, `index.html`. No `..`/absolute. |
@@ -41,7 +41,7 @@ Returned additively by `get_v3_widget_preview` / `get_v3_widget_metadata`
 {
   "previewDelivery": {
     "mode": "bundle",
-    "schemaVersion": 1,
+    "schemaVersion": 2,
     "sourceCommit": "<full-sha>",
     "bundleUrl": "<secret-free download URL>",
     "sha256": "<hex>",
@@ -52,8 +52,9 @@ Returned additively by `get_v3_widget_preview` / `get_v3_widget_metadata`
 
 - `sourceCommit` MUST equal the MCP catalog freshness commit; otherwise the
   provider reports `STALE_BUNDLE` rather than serving a mismatched bundle.
-- `bundleUrl` MUST NOT embed a secret (checked by `urlContainsSecret()`); the
-  bearer token is sent as a request header at download time only.
+- `bundleUrl` is a commit-bound signed URL with short-lived `expires`/`sig`
+  parameters. It never contains the MCP bearer token and needs no second
+  consumer credential.
 - `mode` unknown to a consumer is fatal.
 
 ## Cache Path Policy
@@ -77,8 +78,9 @@ Returned additively by `get_v3_widget_preview` / `get_v3_widget_metadata`
 
 ## Auth Boundary
 
-- Bearer token is used **only** to resolve delivery metadata and download the
-  archive, sent as `Authorization: Bearer <token>` header.
+- Bearer token is used only by the MCP client to resolve delivery metadata.
+- The authenticated MCP response returns a short-lived signed archive URL;
+  the launcher downloads through it without reading or receiving the MCP token.
 - Token MUST NOT appear in: the bundle URL, the manifest, any log line, the
   cache directory/manifest, or browser history.
 - Uses the existing hosted Render service and its existing bearer mechanism. No

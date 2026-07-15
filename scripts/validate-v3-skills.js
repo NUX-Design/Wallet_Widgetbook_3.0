@@ -57,6 +57,23 @@ for (const pack of packs) {
     if (!readme.includes("Remote-safe fallback")) {
       violations.push(`${pack.root}/README.md: missing Remote-safe fallback guidance`);
     }
+    for (const marker of [
+      "## Setup local live preview",
+      "MCP_REMOTE_BEARER_TOKEN",
+      "reused: true",
+      "--stop-all",
+      "STALE_BUNDLE",
+    ]) {
+      if (!readme.includes(marker)) {
+        violations.push(`${pack.root}/README.md: missing preview setup marker ${marker}`);
+      }
+    }
+    if (pack.name === "claude-code" && !readme.includes("permission mode `default`")) {
+      violations.push(`${pack.root}/README.md: missing Claude Code default permission guidance`);
+    }
+    if (pack.name === "kiro" && !readme.includes(".kiro/settings/mcp.json")) {
+      violations.push(`${pack.root}/README.md: missing Kiro MCP configuration path`);
+    }
   }
   for (const skillName of skillNames) {
     const relativeSkill = `${pack.root}/${skillName}/SKILL.md`;

@@ -10,6 +10,7 @@ import { V3BundleCatalog } from "./v3/bundle_catalog.js";
 import { GitHubReleaseBundleStore, LocalDirBundleStore, BundleStoreError } from "./v3/bundle_store.js";
 import {
   V3_PREVIEW_COMMIT_SHA_PATTERN,
+  verifySignedBundleUrl,
 } from "./v3/bundle_contract.js";
 import {
   createRestrictedDispatchToolCall,
@@ -181,6 +182,13 @@ export function resolveRemoteHttpOptions(rawOptions = {}, env = process.env) {
   const previewBundlePublicRepo =
     rawOptions.previewBundlePublicRepo ?? parseBoolean(env.MCP_PREVIEW_BUNDLE_PUBLIC_REPO, false);
   const previewBundleDir = rawOptions.previewBundleDir ?? env.V3_PREVIEW_BUNDLE_DIR ?? path.join(projectRoot, "dist", "v3-preview-bundle");
+  const previewBundleSigningSecret =
+    rawOptions.previewBundleSigningSecret ??
+    env.V3_PREVIEW_BUNDLE_SIGNING_SECRET ??
+    [...bearerTokens][0] ??
+    proxySharedSecret;
+  const previewBundleSignedUrlTtlSeconds =
+    rawOptions.previewBundleSignedUrlTtlSeconds ?? parseInteger(env.V3_PREVIEW_BUNDLE_SIGNED_URL_TTL_SECONDS, 300);
   const allowAnonymousHealth =
     rawOptions.allowAnonymousHealth ?? parseBoolean(env.MCP_REMOTE_ALLOW_ANON_HEALTH, true);
   const rateLimitWindowMs =
@@ -231,6 +239,8 @@ export function resolveRemoteHttpOptions(rawOptions = {}, env = process.env) {
     previewBundleToken,
     previewBundlePublicRepo,
     previewBundleDir,
+    previewBundleSigningSecret,
+    previewBundleSignedUrlTtlSeconds,
     allowAnonymousHealth,
     rateLimitWindowMs,
     rateLimitMaxRequests,
@@ -391,14 +401,25 @@ async function handlePreviewBundleRequest(req, res, requestUrl, remoteState) {
     return;
   }
 
-  const auth = authenticateRequest(req, options);
+  const remainder = requestUrl.pathname.slice(options.previewBundlePath.length).replace(/^\/+/, "");
+  const archiveMatch = /^([0-9a-f]{40}|latest)\.tar\.gz$/.exec(remainder);
+  const signedArchiveAccess = Boolean(
+    archiveMatch &&
+    archiveMatch[1] !== "latest" &&
+    verifySignedBundleUrl({
+      commit: archiveMatch[1],
+      expires: requestUrl.searchParams.get("expires"),
+      sig: requestUrl.searchParams.get("sig"),
+      signingSecret: options.previewBundleSigningSecret,
+    }),
+  );
+  const auth = signedArchiveAccess ? { ok: true, principal: "signed-preview-url", authMode: "signed-url" } : authenticateRequest(req, options);
   if (!auth.ok) {
     remoteState.logger.warn("remote.bundle.auth_rejected", { path: requestUrl.pathname, statusCode: auth.statusCode });
     json(res, auth.statusCode, { ok: false, error: auth.message });
     return;
   }
 
-  const remainder = requestUrl.pathname.slice(options.previewBundlePath.length).replace(/^\/+/, "");
   try {
     if (remainder === "manifest.json") {
       const manifest = await remoteState.bundleCatalog.manifest({ commit: "latest" });
@@ -407,7 +428,6 @@ async function handlePreviewBundleRequest(req, res, requestUrl, remoteState) {
       return;
     }
 
-    const archiveMatch = /^([0-9a-f]{40}|latest)\.tar\.gz$/.exec(remainder);
     if (!archiveMatch) {
       json(res, 404, { ok: false, error: "Unknown preview bundle path.", expected: `${options.previewBundlePath}/manifest.json or ${options.previewBundlePath}/<commit>.tar.gz` });
       return;
@@ -424,7 +444,7 @@ async function handlePreviewBundleRequest(req, res, requestUrl, remoteState) {
       "content-length": String(archive.bytes),
       "etag": `"${archive.sha256}"`,
       "x-bundle-source-commit": archive.sourceCommit,
-      "cache-control": commit === "latest" ? "no-store" : "public, max-age=31536000, immutable",
+      "cache-control": commit === "latest" || signedArchiveAccess ? "no-store" : "public, max-age=31536000, immutable",
     });
     const stream = await archive.stream();
     stream.on("error", (error) => {
@@ -470,6 +490,8 @@ export async function startRemoteHttpServer(rawOptions = {}) {
     store: previewBundleStore,
     bundleBaseUrl: options.previewBundleBaseUrl,
     resolveFreshnessCommit: () => options.commitSha,
+    signingSecret: options.previewBundleSigningSecret,
+    signedUrlTtlSeconds: options.previewBundleSignedUrlTtlSeconds,
   });
   const remoteState = {
     options,
