@@ -40,9 +40,12 @@ Regression validator แบบถาวรอยู่ที่ `scripts/validat
 
 ### `flutter-widget-v3-preview`
 
-- ตัวอย่าง prompt: "ทำ preview ของ widget V3 ตัวนี้ให้มี Light/Dark toggle"
-- Expected sequence: `get_v3_widget_preview` → remote author preview/use case locally from read-only results; local/stdio may optionally call `generate_v3_widgetbook_use_case`
-- Real evidence: `get_v3_widget_preview("V3MiniButton")` คืน preview source จริงที่มี Light/Dark toggle (`V3MiniButtonPreview`); `generate_v3_widgetbook_use_case({ widgetName: "V3MiniButton", importPath: ..., category: "button" })` คืน `fileToCreate`, ready-to-paste `code`, `importsToAdd`, และ instruction ให้รัน `build_runner` — ไม่มีการเขียนไฟล์จริงจาก tool นี้ (เป็น text/instructions เท่านั้น)
+- ตัวอย่าง prompt: "เปิด local preview ของ V3MiniButton"
+- Expected source-repo sequence: ตรวจ `lib/preview_v3/` + `scripts/serve-v3-preview.sh` → ใช้/เขียน `preview_v3_<widget>.dart` → `dart run tool/generate_v3_preview_registry.dart` → `./scripts/serve-v3-preview.sh` → readiness → คืน route; ห้ามเรียก MCP delivery/launcher หรือขอ token
+- Expected consumer-repo sequence: เมื่อ source markers ไม่ครบเท่านั้น จึงเรียก `get_v3_widget_preview`/`get_v3_widget_metadata` → verified bundle launcher → readiness → คืน route; missing token ต้องให้ผู้ใช้ตั้ง `MCP_REMOTE_BEARER_TOKEN` privately ใน shell และห้ามวาง token ใน chat
+- Claude Code permission regression: launcher asset ต้อง executable และถูกเรียกโดยตรงเป็น standalone Bash tool call พร้อม inline compact `--delivery-json`; ห้าม prefix `node`, temp file, heredoc หรือ compound command เพื่อให้ narrow `Bash(*/flutter-widget-v3-preview/assets/launch-v3-preview.mjs *)` rule match; ใช้ `default` permission mode เพราะ `auto` mode ยังบล็อก remote-bundle execution ได้แม้ rule ตรง
+- First-use cold download regression: launcher tool call ต้อง foreground พร้อม `--detach`; launcher รอจน HTTP ready แล้ว detach server/exit หาก host background งานให้ poll task จนได้ `ok:true` ห้ามคืนข้อความ "still waiting"
+- Validator บังคับ mode-selection markers, source-first routing, generated-registry guardrail และ secret-handling rule เหมือนกันครบทั้ง Codex, Claude Code และ Kiro packs
 
 ### `flutter-widget-v3-figma-to-code`
 

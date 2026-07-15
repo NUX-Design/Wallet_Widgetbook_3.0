@@ -105,6 +105,32 @@ for (const pack of packs) {
         violations.push(`${relativeSkill}: bootstrap-new still stops instead of creating a Flutter app`);
       }
     }
+    if (skillName === "flutter-widget-v3-preview") {
+      for (const marker of [
+        "## Mode Selection — Run This First",
+        "lib/preview_v3/",
+        "scripts/serve-v3-preview.sh",
+        "dart run tool/generate_v3_preview_registry.dart",
+        "preview_registry.g.dart",
+        "source-development mode automatically",
+        "do not request a bearer token",
+        "Never ask the user to paste, type, or reveal a token in chat",
+        "one standalone Bash tool call",
+        "Do not create `/tmp/delivery.json`",
+        "do not prefix it with `node`",
+        "use `default` mode",
+        "--detach",
+        "never respond with \"still waiting\"",
+      ]) {
+        if (!source.includes(marker)) violations.push(`${relativeSkill}: missing source-first preview marker ${marker}`);
+      }
+      if (source.includes("Choose published consumer mode by default")) {
+        violations.push(`${relativeSkill}: still defaults to consumer mode inside the source repo`);
+      }
+      if (/ask the user for the hosted MCP bearer token/i.test(source)) {
+        violations.push(`${relativeSkill}: still asks users to disclose bearer tokens in chat`);
+      }
+    }
     if (pack.openAiMetadata) {
       const metadataPath = `${pack.root}/${skillName}/agents/openai.yaml`;
       const metadata = read(metadataPath);
