@@ -111,6 +111,15 @@ jobs:
           fi
 
       # --- Atomic latest pointer (only after the immutable release succeeds) ---
+      - name: Guard latest pointer against stale or non-main runs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          MAIN_HEAD_SHA="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/main" --jq '.object.sha')"
+          export MAIN_HEAD_SHA
+          node scripts/v3-preview-bundle/assert-latest-publishable.mjs
+
       - name: Update latest pointer
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
