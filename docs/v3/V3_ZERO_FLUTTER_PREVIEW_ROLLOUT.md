@@ -11,9 +11,16 @@ real push + Render dashboard access + the hosted bearer secret.
 
 - **CI publish**: `.github/workflows/v3-preview-bundle.yml` builds the preview host,
   packs the immutable commit-addressed bundle, and publishes GitHub Releases
-  `v3-preview-<sha>` (immutable) + `v3-preview-latest` (atomic pointer).
+  `v3-preview-<sha>` (immutable) + `v3-preview-latest` (atomic pointer). Before
+  moving `latest`, CI verifies that the run is on `refs/heads/main` and its SHA is
+  still the current remote `main` HEAD; stale reruns, tags, rewritten history,
+  and non-main dispatches fail closed without replacing the pointer.
 - **Delivery endpoint** (additive): `GET /v3/preview-bundle/manifest.json` and
   `/<commit>.tar.gz` on the hosted service, bearer-authenticated, streamed.
+- **Immutable production selection**: MCP resolves the manifest from the
+  commit-addressed `v3-preview-<MCP freshness SHA>` release. Production never
+  selects from mutable `v3-preview-latest`; if the exact release is absent it
+  fails closed with `NOT_BUILT`.
 - **MCP metadata** (additive): `previewDelivery` on `get_v3_widget_preview` /
   `get_v3_widget_metadata` / `get_v3_widget_details`; legacy fields unchanged.
 - **Launcher**: `scripts/v3-preview-bundle/launch-v3-preview.mjs` (also shipped in

@@ -44,8 +44,24 @@ test("catalog resolves an available, fresh, secret-free delivery", async () => {
   assert.equal(result.previewDelivery.bundleUrl, `https://flutter-widget-wallet-mcp.onrender.com/v3/preview-bundle/${COMMIT}.tar.gz`);
 });
 
-test("catalog reports STALE_BUNDLE when freshness commit differs", async () => {
-  const catalog = new V3BundleCatalog({ store: new LocalDirBundleStore(makeDist()), resolveFreshnessCommit: () => "d".repeat(40) });
+test("catalog requests the immutable freshness commit instead of mutable latest", async () => {
+  const requested = [];
+  const manifest = JSON.parse(fs.readFileSync(path.join(makeDist(), "manifest.json"), "utf8"));
+  const store = {
+    async readManifest({ commit }) {
+      requested.push(commit);
+      return manifest;
+    },
+  };
+  const catalog = new V3BundleCatalog({ store, resolveFreshnessCommit: () => COMMIT });
+  const result = await catalog.describeDelivery({ slug: "button/V3MiniButton" });
+  assert.equal(result.available, true);
+  assert.deepEqual(requested, [COMMIT]);
+});
+
+test("catalog reports STALE_BUNDLE if a store returns the wrong immutable commit", async () => {
+  const manifest = JSON.parse(fs.readFileSync(path.join(makeDist(), "manifest.json"), "utf8"));
+  const catalog = new V3BundleCatalog({ store: { readManifest: async () => manifest }, resolveFreshnessCommit: () => "d".repeat(40) });
   const result = await catalog.describeDelivery({ slug: "button/V3MiniButton" });
   assert.equal(result.available, false);
   assert.equal(result.code, V3_PREVIEW_ERROR_CODES.STALE_BUNDLE);

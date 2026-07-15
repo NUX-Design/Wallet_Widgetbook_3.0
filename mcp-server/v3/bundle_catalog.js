@@ -54,8 +54,11 @@ export class V3BundleCatalog {
    */
   async describeDelivery({ slug }) {
     let manifest;
+    const freshnessCommit = (this.#resolveFreshnessCommit() || "").trim();
     try {
-      manifest = await this.#store.readManifest({ commit: "latest" });
+      // Production selection is immutable: resolve the release matching the
+      // deployed MCP commit, never the mutable convenience pointer "latest".
+      manifest = await this.#store.readManifest({ commit: freshnessCommit || "latest" });
     } catch (error) {
       return { available: false, code: error.code || V3_PREVIEW_ERROR_CODES.NOT_BUILT, message: error.message };
     }
@@ -65,7 +68,6 @@ export class V3BundleCatalog {
       return { available: false, code: validation.code, message: `Published manifest is invalid: ${validation.errors.join("; ")}` };
     }
 
-    const freshnessCommit = (this.#resolveFreshnessCommit() || "").trim();
     if (freshnessCommit && freshnessCommit !== manifest.sourceCommit) {
       return {
         available: false,
@@ -91,12 +93,12 @@ export class V3BundleCatalog {
   /** Availability/freshness health for /info and diagnostics. */
   async health() {
     try {
-      const manifest = await this.#store.readManifest({ commit: "latest" });
+      const freshnessCommit = (this.#resolveFreshnessCommit() || "").trim();
+      const manifest = await this.#store.readManifest({ commit: freshnessCommit || "latest" });
       const validation = validateBundleManifest(manifest);
       if (!validation.valid) {
         return { available: false, code: validation.code, message: validation.errors.join("; ") };
       }
-      const freshnessCommit = (this.#resolveFreshnessCommit() || "").trim();
       const fresh = !freshnessCommit || freshnessCommit === manifest.sourceCommit;
       return {
         available: true,
