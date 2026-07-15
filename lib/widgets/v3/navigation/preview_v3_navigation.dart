@@ -61,8 +61,11 @@ class _V3NavigationPreviewState extends State<V3NavigationPreview> {
     ),
     V3NavigationDestination(
       label: 'Menu',
-      icon: V3LucideIcon(LucideIcons.menu),
-      selectedIcon: V3LucideIcon(LucideIcons.menu, stroke: V3IconStroke.bold),
+      icon: V3LucideIcon(LucideIcons.settings2, stroke: V3IconStroke.light),
+      selectedIcon: V3LucideIcon(
+        LucideIcons.settings2,
+        stroke: V3IconStroke.light,
+      ),
     ),
   ];
 

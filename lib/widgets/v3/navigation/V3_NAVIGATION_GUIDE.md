@@ -11,6 +11,21 @@ Bottom navigation สำหรับ mobile app ตาม Figma component `Navig
 - Surface ใช้ `background/white`, top border `border/primary` และ backdrop blur 15px
 - Top border ใช้ความหนา 1px ตาม Figma และวาดเป็น foreground เหนือ backdrop blur เพื่อไม่ให้เส้นถูก blur กลบ
 - Scan gradient ใช้ primitive `gold/400 → gold/800` ตาม Figma โดยตรง เพราะไม่มี semantic gradient token
+- Menu ใช้ Lucide `settings-2` ขนาด 24px และ stroke 1.5px ทั้ง inactive/selected ตาม SVG ใน Figma node `58:12711`; active state เปลี่ยนสีโดยไม่เพิ่มความหนาเส้น
+
+## Lucide Icon Audit
+
+ใช้ตารางนี้เป็น source สำหรับ recheck ชื่อ icon ระหว่าง Figma, Lucide และ Dart โดยตรง ชื่อในคอลัมน์ `Lucide name` ใช้รูปแบบ kebab-case ตาม upstream `lucide-icons/lucide`; ส่วน `Dart constant` คือชื่อที่เรียกผ่าน `lucide_icons_flutter`
+
+| Slot | Figma layer | Lucide name | Dart constant | Size | Stroke | Renderer | Verification |
+|---|---|---|---|---:|---|---|---|
+| Home | `Home Icon` · `58:12730` | `house` | `LucideIcons.house` | 24px | `regular` inactive / `bold` selected | package font | ชื่อ icon ระบุใน Figma component description; ยังไม่ได้เทียบ SVG path ราย state |
+| Card | `Card Icon` · `58:12752` | `credit-card` | `LucideIcons.creditCard` | 24px | `regular` inactive / `bold` selected | package font | ชื่อ icon ระบุใน Figma component description; ยังไม่ได้เทียบ SVG path ราย state |
+| Scan | `Icon` · `110:5050` | `scan-line` | `LucideIcons.scanLine` | 32px | ตาม checked-in SVG | `lib/assets/icons/v3/lucide/scan-line.svg` | ใช้ SVG override; ต้อง recheck path กับ live Figma ก่อนถอด override |
+| Services | `Services Icon` · `58:12708` | `layout-grid` | `LucideIcons.layoutGrid` | 24px | `regular` inactive / `bold` selected | package font | ชื่อ icon ระบุใน Figma component description; ยังไม่ได้เทียบ SVG path ราย state |
+| Menu | `Menu Icon` · `58:12711` | `settings-2` | `LucideIcons.settings2` | 24px | `light` (1.5px) inactive / selected | package font | Verified จาก live Figma SVG: path และ stroke ตรง; selected เปลี่ยนเฉพาะ semantic color |
+
+ข้อควรระวัง: label `Menu` เป็นชื่อ destination ไม่ใช่ชื่อ icon; ห้าม map กลับไปใช้ Lucide `menu` ซึ่งเป็นรูปเส้นแนวนอนสามเส้น
 
 ## Usage
 
@@ -36,8 +51,14 @@ V3Navigation(
     ),
     V3NavigationDestination(
       label: menuLabel,
-      icon: const V3LucideIcon(LucideIcons.menu),
-      selectedIcon: const V3LucideIcon(LucideIcons.menu, stroke: V3IconStroke.bold),
+      icon: const V3LucideIcon(
+        LucideIcons.settings2,
+        stroke: V3IconStroke.light,
+      ),
+      selectedIcon: const V3LucideIcon(
+        LucideIcons.settings2,
+        stroke: V3IconStroke.light,
+      ),
     ),
   ],
   selectedIndex: currentIndex,
@@ -142,4 +163,10 @@ Primitive tokens:
   - gold/400
   - gold/800
   - gold/alpha-30
+Lucide icons:
+  - house: LucideIcons.house
+  - credit-card: LucideIcons.creditCard
+  - scan-line: LucideIcons.scanLine
+  - layout-grid: LucideIcons.layoutGrid
+  - settings-2: LucideIcons.settings2
 ```

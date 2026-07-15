@@ -2,9 +2,11 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mcp_test_app/config/themes/v3/v3_color_palette.dart';
 import 'package:mcp_test_app/config/themes/v3/v3_dimensions.dart';
 import 'package:mcp_test_app/config/themes/v3/v3_primitives.dart';
+import 'package:mcp_test_app/widgets/v3/icon/v3_icon_stroke.dart';
 import 'package:mcp_test_app/widgets/v3/icon/v3_lucide_icon.dart';
 import 'package:mcp_test_app/widgets/v3/navigation/preview_v3_navigation.dart';
 import 'package:mcp_test_app/widgets/v3/navigation/v3_navigation.dart';
@@ -247,6 +249,15 @@ void main() {
         'packages/lucide_icons_flutter/Lucide600',
       );
       expect(inactiveStyle.fontFamily, 'packages/lucide_icons_flutter/Lucide');
+
+      final menuIcon = tester.widget<V3LucideIcon>(
+        find.descendant(
+          of: find.byKey(const ValueKey('v3-navigation-icon-theme-3')),
+          matching: find.byType(V3LucideIcon),
+        ),
+      );
+      expect(menuIcon.icon, LucideIcons.settings2);
+      expect(menuIcon.stroke, V3IconStroke.light);
     },
   );
 }
