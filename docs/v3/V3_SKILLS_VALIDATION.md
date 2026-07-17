@@ -2,13 +2,15 @@
 
 Execution task: `V3-21` ใน [`task/V3_THEME_MCP_SKILLS_TASKS.md`](../../task/V3_THEME_MCP_SKILLS_TASKS.md)
 
-เอกสารนี้บันทึก prompts, expected tool sequence, และหลักฐานการทดสอบ skill-to-tool workflow ของ Skills V3 ทั้ง 8 ตัว เทียบกับ MCP V3 tools จริงบน dispatcher เดิม (`mcp-server/app.js`) โดยใช้ pilot widget `V3MiniButton` เป็น fixture
+เอกสารนี้บันทึก prompts, expected tool sequence, และหลักฐานการทดสอบ skill-to-tool workflow ของ Skills V3 เดิมทั้ง 8 ตัว เทียบกับ MCP V3 tools จริงบน dispatcher เดิม (`mcp-server/app.js`) โดยใช้ pilot widget `V3MiniButton` เป็น fixture ปัจจุบัน native packs มี skill ที่ 9 คือ `flutter-widget-v3-onboard` ซึ่งเป็น read-only knowledge/router addition และตรวจด้วย validator markers แยกจาก implementation workflows เดิม
 
 ## Method
 
 รัน `createToolDispatcher({ projectRoot: <repo root> })` จาก `mcp-server/app.js` ตรงกับ dispatcher เดียวกันที่ `index.js` (stdio) และ `http-server.js` (remote) ใช้จริง แล้วเรียก tool ตามลำดับที่แต่ละ skill's `SKILL.md` ระบุไว้ ต่อ real repo data (ไม่ใช่ fixture) เพื่อยืนยันว่า `SKILL.md` ที่ package ไปแล้วอ้างอิง tool name/argument ถูกต้องและได้ผลลัพธ์ตามที่ canonical spec (`docs/v3/V3_SKILLS_SPEC.md`) อธิบายไว้จริง
 
-Regression validator แบบถาวรอยู่ที่ `scripts/validate-v3-skills.js` และรันด้วย `npm run validate:v3-skills` ทั้ง local และ Flutter CI ตัวตรวจยืนยัน 3 packs × 8 skills, frontmatter/metadata, V3-only tool names เทียบ contract จริง, legacy isolation, beginner flow markers, remote-safe fallback และการ exclude generation tools จาก remote registry
+Regression validator แบบถาวรอยู่ที่ `scripts/validate-v3-skills.js` และรันด้วย `npm run validate:v3-skills` ทั้ง local และ Flutter CI ตัวตรวจยืนยัน 3 packs × 9 skills, frontmatter/metadata, V3-only tool names เทียบ contract จริง, onboarding read-only/router markers, legacy isolation, beginner flow markers, remote-safe fallback และการ exclude generation tools จาก remote registry
+
+การตรวจเพิ่มสำหรับ onboarding skill (`2026-07-17`): `quick_validate.py` ผ่านครบทั้ง Codex, Claude Code และ Kiro packs หลังติดตั้ง `PyYAML` ใน temporary venv (system Python ไม่มี module นี้) และ `npm run validate:v3-skills` ผ่านที่ 3 packs × 9 skills × 18 known V3 tools
 
 ## Per-Skill Prompts And Expected Tool Sequence
 

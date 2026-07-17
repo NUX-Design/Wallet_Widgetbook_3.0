@@ -18,6 +18,7 @@ V3 is additive. The legacy theme, widgets, MCP contracts, and skills remain avai
 - [Quick start for repository contributors](#quick-start-for-repository-contributors)
 - [Theme V3](#theme-v3)
 - [Widget V3](#widget-v3)
+- [V3 Lucide Icon](#v3-lucide-icon)
 - [Remote MCP V3](#remote-mcp-v3)
 - [Configure Remote MCP](#configure-remote-mcp)
 - [Install Skills V3](#install-skills-v3)
@@ -34,7 +35,7 @@ The V3 stack is designed to move from Figma tokens to reusable Flutter component
 - **Theme V3** — Figma/DTCG primitive and semantic tokens, deterministic Dart generation, Light/Dark parity, typography, spacing, radius, and shadows.
 - **Widget V3** — isolated reusable widgets under `lib/widgets/v3/**` using `V3ThemeScope` and semantic tokens only.
 - **MCP V3** — V3-prefixed tools for discovering the foundation, tokens, widgets, source, previews, metadata, patterns, and audit results.
-- **Skills V3** — eight workflow skills for Codex, Claude Code, and Kiro covering bootstrap, search, install, adapt, preview, Figma-to-code, audit, and upgrade.
+- **Skills V3** — nine workflow skills for Codex, Claude Code, and Kiro covering onboarding, bootstrap, search, install, adapt, preview, Figma-to-code, audit, and upgrade.
 - **Remote distribution** — one existing Render endpoint with Bearer authentication; no second V3 service or token set.
 
 Current V3 pilot widget:
@@ -261,6 +262,67 @@ Read these before creating or changing a Widget V3:
 - `docs/v3/V3_WIDGET_CONVENTIONS.md`
 - `lib/config/themes/v3/V3_THEME_GUIDELINE.mdx`
 
+## V3 Lucide Icon
+
+`V3LucideIcon` is the Theme V3 adapter for using [Lucide](https://lucide.dev) icons without coupling every reusable component directly to the icon package. Components such as `V3Navigation` and `V3MiniButton` keep their icon properties typed as `Widget`/`Widget?`; callers provide a `V3LucideIcon` or any other suitable widget.
+
+### The simple mental model
+
+```mermaid
+flowchart TD
+    A["Choose a Lucide name<br/>house, search, credit-card"] --> B["Use the base Dart constant<br/>LucideIcons.house"]
+    B --> C["Wrap with V3LucideIcon"]
+    C --> D{"svgAsset provided?"}
+    D -->|"No — default"| E["Render from lucide_icons_flutter"]
+    D -->|"Yes — verified exception"| F["Render the checked-in SVG with flutter_svg"]
+    E --> G["Inherit size and semantic color from IconTheme"]
+    F --> G
+    G --> H["Pass into a Widget-typed component slot"]
+```
+
+The two rendering paths mean:
+
+- **Package renderer (default)** — call an icon from `lucide_icons_flutter`; no SVG file needs to be stored in the project.
+- **SVG override (exception)** — render a specific SVG file checked into the project when the package output has a verified mismatch with Figma, such as an exact path or stroke requirement.
+
+```dart
+// Default: render the icon from lucide_icons_flutter.
+const V3LucideIcon(
+  LucideIcons.house,
+  size: V3IconSize.medium,
+  stroke: V3IconStroke.regular,
+)
+
+// Exception: use a checked-in SVG instead of the package glyph.
+const V3LucideIcon(
+  LucideIcons.scanLine,
+  size: V3IconSize.large,
+  svgAsset: 'lib/assets/icons/v3/lucide/scan-line.svg',
+)
+```
+
+### Size and stroke roles
+
+| Size role | Value | Typical use |
+|---|---:|---|
+| `V3IconSize.tiny` | 12px | Mini Button |
+| `V3IconSize.small` | 16px | Compact controls |
+| `V3IconSize.medium` | 24px | Standard and Navigation icons |
+| `V3IconSize.large` | 32px | Primary actions such as Scan |
+
+| Stroke role | Intent | Package family |
+|---|---:|---|
+| `V3IconStroke.thin` | ~1px | `Lucide100` |
+| `V3IconStroke.light` | ~1.5px | `Lucide300` |
+| `V3IconStroke.regular` | 2px | `Lucide` |
+| `V3IconStroke.bold` | ~2.5px | `Lucide600` |
+
+Color is intentionally not a `V3LucideIcon` constructor property. It flows from the nearest `IconTheme`, allowing a parent Widget V3 to apply semantic Light/Dark, selected, disabled, or error colors without hardcoding them in the icon.
+
+Use an SVG override only after comparing the package renderer with the verified Figma source. Do not copy the complete Lucide SVG library into the repository. Each override must have a pinned upstream source/version, license record, and documented reason.
+
+Detailed guide: `lib/widgets/v3/icon/V3_LUCIDE_ICON_GUIDE.md`
+
 ## Remote MCP V3
 
 Hosted endpoint:
@@ -345,6 +407,7 @@ Skills V3 turn the Design System V3 catalog into guided, repeatable delivery wor
 
 Use Skills V3 for both ends of the adoption journey:
 
+- **Learn the system before changing code** — use the read-only onboarding skill to understand Theme V3, design tokens, Widget V3, Lucide icons, previews, Remote MCP, and which implementation skill should run next.
 - **Start a new Flutter project** — bootstrap a new app, install the Theme V3 runtime foundation, add a starter Widget V3, wire Light/Dark themes, create a standalone preview and tests, then run `flutter analyze` and `flutter test`.
 - **Adopt V3 in an existing Flutter project** — scan the existing architecture, preserve the current app and legacy widgets, install selected components under `lib/widgets/v3/**`, adapt them to the project's own `V3ThemeScope`, and integrate them into the UI through an explicitly confirmed change scope.
 - **Work from a selected UI element** — when an IDE, Flutter Inspector, Dart tooling, or agent host can provide the selected widget's class, source file, line, or widget-tree context, use that selection as the exact integration target. The agent can identify the intended role of the selected element, search for a matching Widget V3, show a live preview, install and adapt it, then replace or compose it at that location after confirmation.
@@ -377,6 +440,7 @@ cp -r skills-v3/kiro/.kiro <TARGET_PROJECT_ROOT>/
 
 | Skill | Use it when | What it can do |
 |---|---|---|
+| `flutter-widget-v3-onboard` | You are new to the system or need to choose the correct V3 workflow | Explains the complete V3 architecture in the user's language, performs an optional read-only workspace orientation, links the relevant Wiki/source, and recommends the smallest next skill without changing files |
 | `flutter-widget-v3-beginner` | You are starting a new Flutter app, or an existing app has not adopted Theme V3 yet | Classifies the workspace, proposes a safe scope, creates a confirmed new Flutter project when requested, installs the allowlisted Theme V3 runtime, adds a starter widget, preview and tests, and verifies Light/Dark behavior |
 | `flutter-widget-v3-search` | You know the UI intent but not the component name | Searches by category, keyword, behavior or design intent; compares the best candidates, semantic-token dependencies, preview availability and expected adaptation effort |
 | `flutter-widget-v3-install` | You have chosen a Widget V3 and want it in the current project | Retrieves metadata, Dart source and preview from MCP; installs the component into V3 paths; rewires it to the target project's `V3ThemeScope`; adds or refreshes its guide and targeted tests |

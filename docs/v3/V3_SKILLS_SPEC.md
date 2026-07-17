@@ -1,6 +1,6 @@
 # Skills V3 Canonical Specification
 
-สเปกนี้เป็น canonical source-of-truth สำหรับ Skills V3 ทั้ง 8 ตัว ก่อนแตกไปเป็น native packs ใต้ `skills-v3/codex/`, `skills-v3/claude-code/`, และ `skills-v3/kiro/`
+สเปกนี้เป็น canonical source-of-truth สำหรับ Skills V3 ทั้ง 9 ตัว ก่อนแตกไปเป็น native packs ใต้ `skills-v3/codex/`, `skills-v3/claude-code/`, และ `skills-v3/kiro/`
 
 Execution task: `V3-19` ใน [`task/V3_THEME_MCP_SKILLS_TASKS.md`](../../task/V3_THEME_MCP_SKILLS_TASKS.md)
 
@@ -14,10 +14,11 @@ Execution task: `V3-19` ใน [`task/V3_THEME_MCP_SKILLS_TASKS.md`](../../task/
 
 ## Capability Parity Requirement
 
-Skills V3 ต้องมี **8 skills** ตรงกับจำนวน skills เดิมทุกตัว โดยแทนที่ tool routing และ path scope ด้วยเวอร์ชัน V3:
+Skills V3 มี **8 implementation skills** ที่รักษา capability parity กับ skills เดิม และมี `flutter-widget-v3-onboard` เป็น read-only knowledge/router skill เพิ่มเติมสำหรับอธิบายระบบก่อนเลือก workflow:
 
 | Legacy skill | Skills V3 เทียบเท่า |
 |---|---|
+| — (V3 knowledge addition) | `flutter-widget-v3-onboard` |
 | `flutter-widget-beginner` | `flutter-widget-v3-beginner` |
 | `flutter-widget-search` | `flutter-widget-v3-search` |
 | `flutter-widget-install` | `flutter-widget-v3-install` |
@@ -64,6 +65,7 @@ generate_v3_widgetbook_use_case
 
 | Skill | Primary V3 tools |
 |---|---|
+| `v3-onboard` | `get_v3_design_system_info`, `get_v3_theme_foundation`, `get_v3_codebase_patterns`, `list_v3_categories`, `list_v3_widgets`, `search_v3_widgets`, `get_v3_widget_metadata`, `get_v3_widget_preview` |
 | `v3-beginner` | `get_v3_design_system_info`, `get_v3_theme_foundation`, `get_v3_codebase_patterns`, `list_v3_categories`, `search_v3_widgets`, `get_v3_widget_metadata`, `get_v3_widget_code`, `get_v3_widget_preview`, `get_v3_flutter_widget_template`, `generate_v3_widgetbook_use_case` |
 | `v3-search` | `list_v3_categories`, `search_v3_widgets`, `get_v3_widget_metadata` |
 | `v3-install` | `get_v3_widget_metadata`, `get_v3_widget_code`, `get_v3_widget_preview` |
@@ -72,6 +74,18 @@ generate_v3_widgetbook_use_case
 | `v3-figma-to-code` | `get_v3_figma_to_flutter_mapping`, `get_v3_flutter_widget_template`, `generate_v3_widget_code`, `list_v3_color_tokens`, `search_v3_color_tokens`, `get_v3_color_token`, `get_v3_design_system_info`, `get_v3_codebase_patterns` |
 | `v3-audit` | `audit_v3_widget`, `get_v3_widget_metadata`, `get_v3_design_system_info`, `get_v3_codebase_patterns`, `get_v3_widget_preview` |
 | `v3-upgrade` | `get_v3_widget_metadata`, `get_v3_widget_code`, `get_v3_widget_preview`, `search_v3_widgets` |
+
+## Canonical Workflow — `flutter-widget-v3-onboard`
+
+ใช้เมื่อผู้ใช้ยังไม่เข้าใจ Widget V3 ecosystem, ต้องการเรียนรู้ Theme/token/icon/preview/MCP/Skills, ต้องการ scan workspace แบบไม่แก้ไฟล์ หรือยังไม่รู้ว่าควรใช้ Skill ใดต่อ
+
+1. ระบุหัวข้อหรือเป้าหมายที่ผู้ใช้ต้องการเข้าใจ
+2. ถ้าอยู่ source repo ให้อ่าน agent rules, live source และ local guide; ถ้าอยู่นอก repo ให้ใช้ Remote MCP V3 และ public Wiki
+3. อธิบายตาม flow `Figma/DTCG → primitive → semantic → generated Theme V3 → V3ThemeScope → Widget V3 → V3LucideIcon → preview/tests → Remote MCP → Skills V3`
+4. ถ้าผู้ใช้ต้องการ workspace orientation ให้ scan แบบ read-only และสรุป foundation/widgets/previews/tests
+5. แนะนำ implementation skill ที่เล็กที่สุดและขอ confirm ก่อน handoff ไป workflow ที่เขียนไฟล์
+
+Skill นี้ห้ามแก้ไฟล์, bootstrap, install, migrate หรือ fallback ไป legacy โดยตัวเอง
 
 ## Canonical Workflow — `flutter-widget-v3-beginner`
 

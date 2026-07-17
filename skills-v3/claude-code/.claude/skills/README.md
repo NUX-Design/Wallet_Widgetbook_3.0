@@ -30,10 +30,11 @@ Use cases หลัก:
 
 > Flutter Inspector เป็นผู้ให้ context ของ element ที่เลือก Skills V3 ไม่ได้ควบคุม Inspector โดยตรง การแก้ application screen นอก V3 paths ต้องรวมอยู่ใน scope ที่ผู้ใช้ยืนยันอย่างชัดเจน
 
-## Skills ทั้ง 8 ตัว
+## Skills ทั้ง 9 ตัว
 
 | Skill | ใช้เมื่อ | ทำอะไรได้ |
 |---|---|---|
+| `flutter-widget-v3-onboard` | เพิ่งรู้จักระบบ หรือต้องการเลือก workflow ที่ถูกต้อง | อธิบาย Theme V3, tokens, Widget V3, Lucide icon, preview, MCP และ Skills ทั้งระบบแบบ read-only พร้อมแนะนำ Skill ถัดไปโดยไม่แก้ไฟล์ |
 | `flutter-widget-v3-beginner` | เริ่มโปรเจกต์ใหม่ หรือโปรเจกต์เดิมยังไม่มี Theme V3 | Scan workspace, เสนอ scope, bootstrap โปรเจกต์/Theme V3, เพิ่ม starter widget, preview และ tests ตาม flow `ask → scan → summarize → confirm → execute` |
 | `flutter-widget-v3-search` | รู้ use case แต่ไม่รู้ชื่อ component | ค้นหาจาก category, keyword, behavior หรือ design intent และเปรียบเทียบ semantic-token dependencies, preview และ adaptation effort |
 | `flutter-widget-v3-install` | เลือก Widget V3 ได้แล้ว | ดึง metadata, Dart source และ preview ผ่าน MCP ติดตั้งลง V3 paths พร้อม guide/tests และเชื่อมกับ `V3ThemeScope` ของ target repo |
@@ -83,6 +84,7 @@ Remote MCP เปิดเฉพาะ read-only V3 tools หาก workflow ต
 
 รายการ skills:
 
+- `flutter-widget-v3-onboard`
 - `flutter-widget-v3-beginner`
 - `flutter-widget-v3-search`
 - `flutter-widget-v3-install`

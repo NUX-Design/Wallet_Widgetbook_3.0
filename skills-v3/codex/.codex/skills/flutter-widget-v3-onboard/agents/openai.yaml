@@ -1,0 +1,4 @@
+interface:
+  display_name: "Flutter Widget V3 Onboard"
+  short_description: "Learn and navigate the Widget V3 system"
+  default_prompt: "Use $flutter-widget-v3-onboard to explain this Widget V3 system and recommend the right next workflow."

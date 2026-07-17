@@ -6,6 +6,7 @@ import { REMOTE_READ_ONLY_TOOL_NAMES } from "../mcp-server/remote_support.js";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const skillNames = [
+  "flutter-widget-v3-onboard",
   "flutter-widget-v3-beginner",
   "flutter-widget-v3-search",
   "flutter-widget-v3-install",
@@ -50,7 +51,7 @@ for (const pack of packs) {
         .sort()
     : [];
   if (JSON.stringify(actualSkills) !== JSON.stringify([...skillNames].sort())) {
-    violations.push(`${pack.root}: expected exactly 8 canonical Skills V3 folders`);
+    violations.push(`${pack.root}: expected exactly ${skillNames.length} canonical Skills V3 folders`);
   }
   if (pack.readme) {
     const readme = read(`${pack.root}/README.md`);
@@ -120,6 +121,17 @@ for (const pack of packs) {
       }
       if (/bootstrap-new[^\n]*stop here/i.test(source)) {
         violations.push(`${relativeSkill}: bootstrap-new still stops instead of creating a Flutter app`);
+      }
+    }
+    if (skillName === "flutter-widget-v3-onboard") {
+      for (const marker of [
+        "Stay read-only",
+        "V3LucideIcon",
+        "flutter-widget-v3-beginner",
+        "flutter-widget-v3-search",
+        "Flutter Inspector",
+      ]) {
+        if (!source.includes(marker)) violations.push(`${relativeSkill}: missing onboarding marker ${marker}`);
       }
     }
     if (skillName === "flutter-widget-v3-preview") {
