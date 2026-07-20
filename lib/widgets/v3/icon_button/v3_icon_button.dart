@@ -105,9 +105,10 @@ class V3IconButton extends StatelessWidget {
         ),
       ),
       foregroundColor: WidgetStateProperty.resolveWith(
-        (states) => _isDisabled(states)
-            ? colors.contentNeutral2
-            : colors.contentPrimary,
+        (states) =>
+            _isDisabled(states)
+                ? colors.contentNeutral2
+                : colors.contentPrimary,
       ),
       backgroundColor: WidgetStateProperty.resolveWith((states) {
         if (_isDisabled(states)) {
