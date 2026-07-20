@@ -116,3 +116,6 @@ docs/schema.json
 
 # Node modules
 node_modules/
+
+# uSpec generated interpretation cache
+.uspec-cache/

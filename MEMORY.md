@@ -2,6 +2,8 @@
 
 ## Project Snapshot
 
+- Official uSpec project skills are installed under `.agents/skills/` (13 skills) with shared instructions under `references/` (8 directories). `uspecs.config.json` pins `environment: codex`, `mcpProvider: figma-mcp`, and CLI `0.3.1`. Use `$create-component-md baseJsonPath=<path>` for `*_base.json` → `component.md`; this path does not require `firstrun`. Run `npx uspec-skills doctor` to verify the install and `npx uspec-skills update` when upgrading uSpec. Interpretation caches live under `.uspec-cache/`, which is gitignored and must never be committed.
+
 - Repository type: Flutter widget/design-system repository with a runnable demo app and a local Flutter Web preview host (`lib/preview_v3/`) for Widget V3 (Widgetbook was fully removed in VP-07).
 - Primary domain: reusable UI components for a financial app.
 - Main package name: `mcp_test_app`
