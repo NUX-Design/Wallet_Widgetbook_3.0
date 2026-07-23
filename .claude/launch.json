@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "v3-widget-preview-host",
+      "runtimeExecutable": "./scripts/serve-v3-preview.sh",
+      "runtimeArgs": ["--host", "127.0.0.1", "--port", "8090"],
+      "port": 8090
+    },
+    {
+      "name": "mcp-server-http",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start:http", "--prefix", "mcp-server"],
+      "port": 3310
+    }
+  ]
+}
