@@ -6,6 +6,8 @@
 
 ```text
 lib/widgets/v3/<category>/
+├── <component>-_base.json
+├── <component>.md
 ├── v3_<widget>.dart
 ├── preview_v3_<widget>.dart
 └── V3_<WIDGET>_GUIDE.md
@@ -15,6 +17,9 @@ test/widgets/v3/<category>/
 ```
 
 - path และชื่อ public class ต้องสื่อ `v3` ชัดเจน; public widget class ขึ้นต้นด้วย `V3`
+- ทุก Widget V3 ต้องมีไฟล์ใน component folder ครบทั้ง 5 รายการตาม tree ข้างต้น โดยใช้ `lib/widgets/v3/button/` เป็นตัวอย่าง canonical
+- `<component>-_base.json` คือ handoff จาก uSpec/Figma และ `<component>.md` คือ component source-of-truth Markdown ที่ generate จาก base JSON เดียวกัน
+- basename `<component>` ต้องตรงกันระหว่างชื่อ `_base.json`, ค่า `_meta.componentSlug`, ชื่อ component Markdown และ component identity ใน render metadata ห้าม rename แค่บางไฟล์
 - หนึ่งไฟล์หลักควรมี reusable widget ที่รับข้อมูลและ callbacks ผ่าน constructor แบบ explicit
 - ห้าม import widget หรือ theme V3 จาก widget เดิมที่อยู่นอก `lib/widgets/v3/`
 
@@ -36,10 +41,12 @@ test/widgets/v3/<category>/
 
 ## Preview, Test And Guide Requirements
 
+- ตรวจว่าชุดไฟล์ใน component folder ครบ: base JSON, component Markdown, preview Dart, implementation Dart และ V3 guide
 - มี standalone preview ที่เปิดดู Light/Dark ได้โดยไม่พึ่ง app flow
 - preview ต้องแสดง state สำคัญ เช่น default, interactive, disabled, loading หรือ error ตามประเภท widget
 - targeted tests ต้องครอบคลุม token mapping ใน Light/Dark, callback/disabled behavior, semantics และ text scaling ที่เกี่ยวข้อง
 - local guide ต้องมี usage example, public API, state behavior, accessibility notes และ metadata ตามรูปแบบด้านล่าง
+- targeted test ใต้ `test/widgets/v3/<category>/` ยังคงเป็น requirement เพิ่มเติมจากชุดไฟล์ 5 รายการ
 
 ## Required Metadata
 
