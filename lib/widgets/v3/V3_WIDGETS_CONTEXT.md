@@ -32,6 +32,8 @@
 lib/widgets/v3/
 ├── V3_WIDGETS_CONTEXT.md
 └── <category>/
+    ├── <component>-_base.json
+    ├── <component>.md
     ├── v3_<widget>.dart
     ├── preview_v3_<widget>.dart
     └── V3_<WIDGET>_GUIDE.md
@@ -41,6 +43,9 @@ test/widgets/v3/<category>/
 ```
 
 - path และชื่อ public class ต้องมี `v3`/`V3` ชัดเจน
+- ทุก component folder ต้องมีชุดไฟล์ 5 รายการครบตามโครงสร้างข้างต้น; ใช้ `lib/widgets/v3/button/` เป็น canonical example
+- `<component>-_base.json` และ `<component>.md` เป็นคู่ source/handoff เดียวกัน: `_meta.componentSlug`, basename และ render-meta component identity ต้องสอดคล้องกัน
+- เมื่อ base JSON เปลี่ยน ต้อง regenerate/update component Markdown ในงานเดียวกันและตรวจ `sourceHash`; ห้ามปล่อยเอกสารอ้าง extraction เก่า
 - แยก public enums/models ออกจาก implementation เมื่อขนาดหรือการ reuse เหมาะสม
 - private helper widgets ควรมีหน้าที่เดียวและอยู่ในไฟล์หลักได้เมื่อใช้เฉพาะ component นั้น
 - ห้าม import Theme V3 หรือ Widget V3 เข้า legacy widgets ใต้ `lib/widgets/` นอกโฟลเดอร์ `v3/`
@@ -91,21 +96,28 @@ flowchart LR
 
 ## Workflow การสร้าง Widget V3
 
-### 1. กำหนด scope จาก Design
+### 1. จัดเตรียม Figma handoff และ component Markdown
+
+- export `<component>-_base.json` จาก uSpec/Figma ลง component folder
+- ตรวจว่า `_meta.componentSlug` และ component identity ตรงกับ Widget V3 ที่กำลังสร้าง
+- สร้าง `<component>.md` จาก base JSON ด้วย `create-component-md`
+- ตรวจ render metadata, `sourceHash`, variant coverage และ Known gaps ก่อนเริ่ม implementation
+
+### 2. กำหนด scope จาก Design
 
 - ระบุกฎและ component reference ที่เกี่ยวข้องจาก `DESIGN.md`
 - ระบุ Figma file, file key และ node IDs ที่ตรวจสอบได้
 - สรุป variants, sizes, states, responsive behavior และ interaction ที่อยู่ใน scope
 - บันทึกสิ่งที่ไม่อยู่ใน scope เพื่อป้องกัน API ขยายจากการคาดเดา
 
-### 2. ทำ token mapping
+### 3. ทำ token mapping
 
 - map สีแต่ละส่วน/state ไปยัง slash-separated semantic token path เช่น `content/primary`
 - ตรวจ mapping ทั้ง Light และ Dark ผ่าน generated palette/preview
 - หาก token ไม่พอ ให้ทำ Theme V3 token workflow ก่อนเริ่ม hardcode implementation
 - บันทึก semantic tokens ทั้งหมดใน section `V3 Metadata` ของ local guide
 
-### 3. ออกแบบ public API
+### 4. ออกแบบ public API
 
 - รับ content, localized labels, callbacks และ state ผ่าน constructor ที่ explicit
 - ใช้ enum สำหรับชุด variant/state ที่ปิดและคาดเดาได้
@@ -113,7 +125,7 @@ flowchart LR
 - อย่าผูก reusable widget กับ app provider, navigation หรือ business logic โดยไม่จำเป็น
 - ใช้ `const` และแบ่ง helper widgets ตามความเหมาะสม
 
-### 4. Implement accessibility และ layout
+### 5. Implement accessibility และ layout
 
 - รองรับ keyboard/focus และ semantics สำหรับ interactive widget
 - touch target ควรมีพื้นที่อย่างน้อย 48×48 logical pixels; หาก visual spec เล็กกว่าให้ระบุ integration requirement ใน guide
@@ -121,14 +133,14 @@ flowchart LR
 - ตรวจ text scaling, overflow, RTL/locale implications และ contrast ใน Light/Dark
 - state ต้องไม่สื่อด้วยสีหรือ animation เพียงอย่างเดียว
 
-### 5. สร้าง preview
+### 6. สร้าง preview
 
 - standalone preview ต้องรันได้ด้วย `flutter run -t lib/widgets/v3/<category>/preview_v3_<widget>.dart`
 - ต้องมี Light/Dark toggle ที่ทำให้ widget ทั้งหมดอ่าน palette ของ mode ที่เลือกจริง
 - แสดง matrix ของ variants/states สำคัญ รวมถึง disabled, loading และ error เมื่อเกี่ยวข้อง
 - ตั้งชื่อไฟล์และ class ตาม convention (`preview_v3_<widget>.dart` มี `class V3<Widget>Preview`) แล้วรัน `dart run tool/generate_v3_preview_registry.dart` เพื่อ regenerate `lib/preview_v3/preview_registry.g.dart` โดยอัตโนมัติ (ไม่ต้องแก้ registry ด้วยมือ) เพื่อให้เปิดผ่าน `./scripts/serve-v3-preview.sh` ได้
 
-### 6. เขียน targeted tests
+### 7. เขียน targeted tests
 
 อย่างน้อยให้พิจารณาครอบคลุม:
 
@@ -139,7 +151,7 @@ flowchart LR
 - text scaling/overflow
 - preview theme switching
 
-### 7. เขียน local guide
+### 8. เขียน local guide
 
 ไฟล์ `V3_<WIDGET>_GUIDE.md` ต้องมี:
 
@@ -209,6 +221,8 @@ npm run generate-schema
 
 ## Definition of Done
 
+- component folder มี `<component>-_base.json`, `<component>.md`, `preview_v3_<widget>.dart`, `v3_<widget>.dart` และ `V3_<WIDGET>_GUIDE.md` ครบ
+- base JSON/component Markdown ใช้ basename, component slug, identity และ `sourceHash` ที่สอดคล้องกัน
 - implementation อยู่ใน `lib/widgets/v3/<category>/` และไม่มี legacy theme dependency
 - behavior, visual rules และ component semantics สอดคล้องกับ `DESIGN.md` หรือมี conflict resolution ที่บันทึกไว้
 - Figma scope/node IDs และ semantic token mapping ถูกบันทึกใน local guide
@@ -226,6 +240,8 @@ Widget pilot ที่ใช้เป็น reference ได้คือ `V3Mini
 - implementation: [`button/v3_mini_button.dart`](button/v3_mini_button.dart)
 - preview: [`button/preview_v3_mini_button.dart`](button/preview_v3_mini_button.dart)
 - local guide: [`button/V3_MINI_BUTTON_GUIDE.md`](button/V3_MINI_BUTTON_GUIDE.md)
+- Figma/uSpec base: [`button/button-_base.json`](button/button-_base.json)
+- component Markdown: [`button/button.md`](button/button.md)
 - test: `test/widgets/v3/button/v3_mini_button_test.dart`
 
 ใช้ pilot เพื่อดูรูปแบบไฟล์และ test strategy แต่ต้องยึด Figma spec และ semantic mapping ของ widget ใหม่เป็นหลัก

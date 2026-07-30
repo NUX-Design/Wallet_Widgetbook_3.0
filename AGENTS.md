@@ -111,6 +111,14 @@ Reason: repo-level overview docs may lag behind the live Flutter structure.
   - implementation `.dart`
   - standalone preview `preview_*.dart`
   - local documentation such as `*_GUIDE.md`, `*_CONTEXT.md`, or `*_spec.md`
+- Every reusable Widget V3 component folder under `lib/widgets/v3/<category>/` must contain the complete five-file source/handoff set:
+  1. `<component>-_base.json` — uSpec/Figma extraction input; `_meta.componentSlug` must equal `<component>`.
+  2. `<component>.md` — generated component source-of-truth Markdown derived from the matching base JSON.
+  3. `preview_v3_<widget>.dart` — standalone Light/Dark preview discoverable by the V3 preview registry generator.
+  4. `v3_<widget>.dart` — reusable Flutter implementation.
+  5. `V3_<WIDGET>_GUIDE.md` — local implementation, API, token, accessibility, preview, test, and metadata guide.
+- Treat `lib/widgets/v3/button/` as the canonical directory-shape example. The component artifact basename (`<component>`) must stay aligned across the base JSON filename, `_meta.componentSlug`, component Markdown filename, and component identity inside render metadata. Do not rename only one artifact.
+- Targeted tests under `test/widgets/v3/<category>/` remain required in addition to this five-file in-folder set.
 - Use the local widget markdown as the nearest documentation source-of-truth for that widget.
 - Standalone previews are valid debug entrypoints and can be run directly with `flutter run -t path/to/preview_file.dart`.
 - Widget V3 previews are auto-discovered by `dart run tool/generate_v3_preview_registry.dart`, which scans `lib/widgets/v3/**/preview_v3_*.dart` and regenerates `lib/preview_v3/preview_registry.g.dart` so they are reachable through the local web preview host at `http://127.0.0.1:8090/#/<category>/<WidgetClass>`. It derives the class name from the filename (`preview_v3_<widget>.dart` -> `class V3<Widget>Preview` must exist in the file) — no manual registration step. Run the generator after adding or renaming a preview file, and never hand-edit `preview_registry.g.dart`.
@@ -133,16 +141,17 @@ Use these default execution recipes unless the user explicitly asks for a differ
 #### Widget Change Playbook
 
 1. Read `MEMORY.md`.
-2. Read the target widget `.dart`.
-3. Read its local preview file.
-4. Read its local guide/spec/context markdown.
-5. Read related tests under `test/` if they exist.
-6. Edit the widget first, then preview/tests/docs as needed.
-7. Validate with the narrowest relevant command:
+2. Confirm the target Widget V3 folder has the mandatory five-file set (`<component>-_base.json`, `<component>.md`, `preview_v3_<widget>.dart`, `v3_<widget>.dart`, `V3_<WIDGET>_GUIDE.md`); create or regenerate missing artifacts within the task scope.
+3. Read the target widget `.dart`.
+4. Read its local preview file.
+5. Read its matching base JSON, component Markdown, and V3 guide.
+6. Read related tests under `test/` if they exist.
+7. Edit the source-of-truth artifact first, then widget, preview/tests/docs as needed; regenerate derived component Markdown instead of hand-diverging it from the base JSON.
+8. Validate with the narrowest relevant command:
    - `flutter analyze`
    - targeted `flutter test`
    - direct preview run via `flutter run -t ...`
-8. Update `MEMORY.md` if a new durable pattern or constraint was discovered.
+9. Update `MEMORY.md` if a new durable pattern or constraint was discovered.
 
 #### Localization Change Playbook
 

@@ -24,6 +24,23 @@
 5. hosted MCP ส่ง `previewSlug` และ `previewDelivery` ให้ Skill
 6. `flutter-widget-v3-preview` ดาวน์โหลด ตรวจ checksum และเปิด bundle จาก user cache บน `127.0.0.1`
 
+## Required Widget V3 Component Files
+
+ก่อน publish ทุก component folder ใต้ `lib/widgets/v3/<category>/` ต้องมีชุดไฟล์ขั้นต่ำครบตาม canonical example `lib/widgets/v3/button/`:
+
+```text
+<component>-_base.json
+<component>.md
+preview_v3_<widget>.dart
+v3_<widget>.dart
+V3_<WIDGET>_GUIDE.md
+```
+
+- base JSON และ component Markdown ต้องใช้ basename/component slug/identity เดียวกัน
+- เมื่อแทนที่ base JSON ต้อง regenerate component Markdown และตรวจ render-meta `sourceHash`
+- preview Dart ต้องตรง naming convention เพื่อให้ registry generator discover ได้
+- targeted tests ใต้ `test/widgets/v3/<category>/` ยังเป็น requirement เพิ่มเติมก่อน publish
+
 ไม่ต้องแก้ `SKILL.md`, launcher, preview router หรือ MCP handler แยกสำหรับ widget แต่ละตัว
 
 ## Required File Set
@@ -156,7 +173,9 @@ Render deployed source
 
 ## Definition Of Done
 
-- [ ] widget, preview, guide และ targeted tests อยู่ใน path ตาม convention
+- [ ] component folder มี base JSON, component Markdown, widget Dart, preview Dart และ V3 guide ครบ
+- [ ] base JSON/component Markdown มี basename, component slug, identity และ render-meta `sourceHash` ตรงกัน
+- [ ] targeted tests อยู่ใน path ตาม convention
 - [ ] preview แสดง Light/Dark และ states สำคัญตาม design source of truth
 - [ ] `dart run tool/generate_v3_preview_registry.dart --check` ผ่าน
 - [ ] generated registry ถูก commit และไม่มี manual edit

@@ -6,11 +6,12 @@
 import 'preview_definition.dart';
 import 'package:mcp_test_app/widgets/v3/button/preview_v3_mini_button.dart'
     as p0;
-import 'package:mcp_test_app/widgets/v3/icon/preview_v3_lucide_icon.dart' as p1;
+import 'package:mcp_test_app/widgets/v3/header/preview_v3_header.dart' as p1;
+import 'package:mcp_test_app/widgets/v3/icon/preview_v3_lucide_icon.dart' as p2;
 import 'package:mcp_test_app/widgets/v3/icon_button/preview_v3_icon_button.dart'
-    as p2;
-import 'package:mcp_test_app/widgets/v3/navigation/preview_v3_navigation.dart'
     as p3;
+import 'package:mcp_test_app/widgets/v3/navigation/preview_v3_navigation.dart'
+    as p4;
 
 final List<V3PreviewDefinition> generatedV3PreviewEntries = [
   V3PreviewDefinition(
@@ -19,18 +20,23 @@ final List<V3PreviewDefinition> generatedV3PreviewEntries = [
     builder: (context) => const p0.V3MiniButtonPreview(),
   ),
   V3PreviewDefinition(
+    category: 'header',
+    widgetName: 'V3Header',
+    builder: (context) => const p1.V3HeaderPreview(),
+  ),
+  V3PreviewDefinition(
     category: 'icon',
     widgetName: 'V3LucideIcon',
-    builder: (context) => const p1.V3LucideIconPreview(),
+    builder: (context) => const p2.V3LucideIconPreview(),
   ),
   V3PreviewDefinition(
     category: 'icon_button',
     widgetName: 'V3IconButton',
-    builder: (context) => const p2.V3IconButtonPreview(),
+    builder: (context) => const p3.V3IconButtonPreview(),
   ),
   V3PreviewDefinition(
     category: 'navigation',
     widgetName: 'V3Navigation',
-    builder: (context) => const p3.V3NavigationPreview(),
+    builder: (context) => const p4.V3NavigationPreview(),
   ),
 ];
