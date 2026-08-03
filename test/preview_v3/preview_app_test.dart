@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mcp_test_app/preview_v3/preview_app.dart';
 import 'package:mcp_test_app/preview_v3/preview_not_found.dart';
+import 'package:mcp_test_app/widgets/v3/button/preview_v3_default_button.dart';
 import 'package:mcp_test_app/widgets/v3/button/preview_v3_mini_button.dart';
 
 void main() {
@@ -37,7 +38,9 @@ void main() {
           const MaterialApp(home: V3PreviewRoute(rawSlug: '')),
         );
 
-        expect(find.byType(V3MiniButtonPreview), findsOneWidget);
+        // Deterministic slug order: "button/V3DefaultButton" sorts before
+        // "button/V3MiniButton" once the Button family has multiple sizes.
+        expect(find.byType(V3DefaultButtonPreview), findsOneWidget);
       },
     );
 
