@@ -17,7 +17,7 @@ class V3PreviewNotFound extends StatelessWidget {
 
     return Scaffold(
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Center(
             child: ConstrainedBox(

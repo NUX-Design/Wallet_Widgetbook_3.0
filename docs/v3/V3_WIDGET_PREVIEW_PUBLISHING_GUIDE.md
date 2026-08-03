@@ -12,6 +12,7 @@
 - Zero-Flutter contract: [`V3_ZERO_FLUTTER_PREVIEW_CONTRACT.md`](./V3_ZERO_FLUTTER_PREVIEW_CONTRACT.md)
 - Rollout/rollback: [`V3_ZERO_FLUTTER_PREVIEW_ROLLOUT.md`](./V3_ZERO_FLUTTER_PREVIEW_ROLLOUT.md)
 - Source preview architecture: [`../V3_WEB_PREVIEW_PLAN.md`](../V3_WEB_PREVIEW_PLAN.md)
+- iOS Simulator debug preview: [`V3_SIMULATOR_DEBUG_PREVIEW.md`](./V3_SIMULATOR_DEBUG_PREVIEW.md)
 
 ## What Is Automatic
 
@@ -133,6 +134,22 @@ Slug:     card/V3NewCard
 6. ตรวจ Light/Dark, states, interaction, narrow viewport, accessibility และ asset loading ตาม widget spec
 
 หากต้องการดู uncommitted changes ต้องใช้ source-development mode บนเครื่องที่มี Flutter เท่านั้น Published consumer mode ไม่รองรับ hot reload ของ source ที่ยังไม่ publish
+
+### iOS Simulator Debug Preview
+
+ใช้ native entrypoint ที่ไม่ import Web-only URL strategy เพื่อเปิด preview registry เดียวกันบน iOS Simulator:
+
+```bash
+flutter run \
+  -t lib/preview_v3/main_simulator.dart \
+  -d <simulator-udid> \
+  --dart-define=V3_PREVIEW_SLUG=button/V3MiniButton
+```
+
+- ไม่ส่ง `V3_PREVIEW_SLUG` จะเปิด preview แรกใน generated registry
+- ใช้ slug รูปแบบ `<category>/<WidgetClass>` เดียวกับ Web preview host
+- `lib/preview_v3/main.dart` ยังคงเป็น Web-only entrypoint และเป็นเจ้าของ fragment routing ผ่าน `setUrlStrategy(null)`
+- `main_simulator.dart` มีไว้สำหรับ native debug/hot reload เท่านั้น ไม่แทน Web build หรือ published preview bundle
 
 ## Published Consumer Workflow
 

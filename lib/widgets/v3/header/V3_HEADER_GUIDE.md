@@ -134,7 +134,7 @@ Preview:
 flutter run -t lib/widgets/v3/header/preview_v3_header.dart
 ```
 
-Preview ใช้ `background/primary`, สลับ Light/Dark แบบเต็มความกว้าง และแสดง `Action: …` เมื่อกด action แต่ละตำแหน่ง รูปแบบ feedback นี้เป็น preview-only; reusable widget ส่ง event ผ่าน callback และไม่สร้างข้อความหรือ navigation side effect เอง
+Preview ใช้ `background/primary`, สลับ Light/Dark แบบเต็มความกว้าง, วาง `V3DefaultButton` ที่ขอบล่างของหน้าจอ และแสดง `Action: …` เมื่อกด action หรือปุ่ม รูปแบบ feedback นี้เป็น preview-only; reusable widget ส่ง event ผ่าน callback และไม่สร้างข้อความหรือ navigation side effect เอง
 
 ## V3 Metadata
 

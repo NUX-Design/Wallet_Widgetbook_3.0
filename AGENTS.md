@@ -32,7 +32,7 @@ Operational rules for agents working in this repository. This repo is a Flutter 
 
 - Main Flutter app entry: `lib/main.dart`
 - Standalone widget previews: `lib/widgets/**/preview_*.dart`
-- Widget V3 local web preview host entry: `lib/preview_v3/main.dart` (routing/testable classes in `lib/preview_v3/preview_app.dart`, registry in `lib/preview_v3/preview_registry.dart`)
+- Widget V3 preview entries: Web `lib/preview_v3/main.dart`; native debug/Simulator `lib/preview_v3/main_simulator.dart`; shared routing/testable classes `lib/preview_v3/preview_app.dart`; registry `lib/preview_v3/preview_registry.dart`. Simulator workflow source of truth: `docs/v3/V3_SIMULATOR_DEBUG_PREVIEW.md`.
 - Theme system: `lib/config/themes/`
 - V3 design-system reference: `DESIGN.md`
 - Theme V3 architecture plan: `docs/V3_THEME_MCP_SKILLS_PLAN.md`
@@ -182,13 +182,13 @@ Use these default execution recipes unless the user explicitly asks for a differ
 6. Validate Light/Dark parity, alias resolution, generated output, preview/tests, and legacy regression gates appropriate to the task.
 7. Update the V3 task timestamp and evidence only after verification succeeds.
 
-#### Widget V3 Local Web Preview Change Playbook
+#### Widget V3 Preview Change Playbook
 
 1. Read `docs/v3/V3_WIDGET_PREVIEW_PUBLISHING_GUIDE.md` for new-widget onboarding, publishing, or preview troubleshooting.
-2. Read `docs/V3_WEB_PREVIEW_PLAN.md` and `task/V3_WEB_PREVIEW_TASKS.md` when changing preview-host architecture or historical migration scope.
-3. Preview routing/testable classes live in `lib/preview_v3/preview_app.dart`; `lib/preview_v3/main.dart` stays a thin entrypoint (only `setUrlStrategy(null)` + `runApp`) because it imports `flutter_web_plugins`, which is incompatible with VM-based `flutter test`.
+2. Read `docs/v3/V3_SIMULATOR_DEBUG_PREVIEW.md` before running or changing the native debug/Simulator flow. Read `docs/V3_WEB_PREVIEW_PLAN.md` and `task/V3_WEB_PREVIEW_TASKS.md` when changing preview-host architecture or historical migration scope.
+3. Preview routing/testable classes live in `lib/preview_v3/preview_app.dart`. Keep `lib/preview_v3/main.dart` as the thin Web-only entrypoint (`setUrlStrategy(null)` + `runApp`) because `flutter_web_plugins` is incompatible with VM/iOS targets. Use `lib/preview_v3/main_simulator.dart` for native debug; select a registered preview with `--dart-define=V3_PREVIEW_SLUG=<category>/<WidgetClass>` and do not add Web URL-strategy imports to it.
 4. New Widget V3 previews are picked up automatically by naming convention (`preview_v3_<widget>.dart` with `class V3<Widget>Preview`); after adding or renaming one, run `dart run tool/generate_v3_preview_registry.dart` to regenerate `lib/preview_v3/preview_registry.g.dart`. Never hand-edit that file or `lib/preview_v3/preview_registry.dart`'s consumption of it.
-5. Validate with `flutter analyze`, `dart run tool/generate_v3_preview_registry.dart --check`, targeted `flutter test test/preview_v3/ test/tool/`, `flutter build web --release -t lib/preview_v3/main.dart`, and a real run via `scripts/serve-v3-preview.sh` plus `curl -I` against the served bundle.
+5. Validate with `flutter analyze`, `dart run tool/generate_v3_preview_registry.dart --check`, targeted `flutter test test/preview_v3/ test/tool/`, `flutter build web --release -t lib/preview_v3/main.dart`, and a real Web run via `scripts/serve-v3-preview.sh` plus `curl -I` against the served bundle. For Simulator-facing work, additionally run `flutter run -t lib/preview_v3/main_simulator.dart -d <simulator-udid> --debug --dart-define=V3_PREVIEW_SLUG=<category>/<WidgetClass>` and verify a real rendered frame.
 6. For published consumer availability, merge to `main`, confirm bundle CI/release success, deploy the same commit on the existing Render service, keep `MCP_REMOTE_COMMIT_SHA` equal to that commit, and require `/info.previewBundle` plus `verify:mcp:remote:v3` to pass before claiming the Skill can show the new widget.
 7. Update the V3 web preview task timestamp and evidence only when the task actually changes that completed backlog; ordinary new-widget onboarding should not rewrite historical VP-01–VP-10 evidence.
 
