@@ -354,6 +354,14 @@ void main() {
       tester.getTopLeft(find.text('Header title')).dy,
     );
     expect(find.text('Action: None'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('v3-header-preview-default-button')),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.bySemanticsLabel('Default Button'));
+    await tester.pump();
+    expect(find.text('Action: Default Button'), findsOneWidget);
 
     await tester.tap(find.bySemanticsLabel('Go back'));
     await tester.pump();

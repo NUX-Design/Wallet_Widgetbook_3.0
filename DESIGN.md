@@ -208,18 +208,18 @@ colors:
   background-primary: "#fbfcff"
   background-white: "#ffffff"
   background-neutral: "#e5e5e5"
-  background-extension-neutral: "#f5f5f5"
-  background-extension-slate: "#f1f5f9"
-  background-extension-indigo: "#e0e7ff"
-  background-extension-navy: "#dbeafe"
-  background-extension-blue: "#f1f5ff"
-  background-extension-sky: "#e0f2fe"
-  background-extension-purple: "#f1f2ff"
-  background-extension-violet: "#ede9fe"
-  background-extension-red: "#ffe2e2"
-  background-extension-orange: "#ffedd5"
-  background-extension-yellow: "#fef9c3"
-  background-extension-gold: "#fdf6eb"
+  background-extension-neutral: "#fafafa"
+  background-extension-slate: "#f8fafc"
+  background-extension-indigo: "#eef2ff"
+  background-extension-navy: "#eff6ff"
+  background-extension-blue: "#fbfcff"
+  background-extension-sky: "#f0f9ff"
+  background-extension-purple: "#fbfbff"
+  background-extension-violet: "#f5f3ff"
+  background-extension-red: "#fef2f2"
+  background-extension-orange: "#fff7ed"
+  background-extension-yellow: "#fefce8"
+  background-extension-gold: "#fefbf5"
   background-extension-green: "#f0fdf4"
   border-primary: "#dde8fb"
   border-secondary: "#afc4f0"
@@ -265,12 +265,6 @@ colors:
   border-slate: "#94a3b8"
   background-blue: "#f1f5ff"
   content-white: "#ffffff"
-  color-background-card: "#ffffff"
-  color-border-card: "#d0e0f0"
-  color-text-primary: "#1a2332"
-  color-text-secondary: "#52627d"
-  neutral-white: "#ffffff"
-  color-watermark: "#ffffff"
 typography:
   display-extra-large:
     fontFamily: Noto Sans
@@ -381,9 +375,6 @@ rounded:
   rounded-full: 999px
   radius-0: 0px
   rounded-none: 0px
-  radius-card: 16px
-  radius-24: 24px
-  radius-card: 24px
 spacing:
   display-extra-large-spacing: 0px
   display-large-spacing: 0px
@@ -479,25 +470,14 @@ spacing:
   space-96: 96px
   space-120: 120px
   space-160: 160px
-  spacing-padding-vertical: 12px
-  spacing-padding-horizontal: 16px
-  spacing-gap-sm: 4px
 components:
-  button:
-    width: 2676px
-    height: 810px
-    variant: "Primary | Outline | Ghost"
-    size: "Small | Medium | Default | Mini"
-    state: "Default | Focus | Disabled | Active | Error"
-    left-icon: "Yes | No"
-    right-icon: "Yes | No"
-  icon-button:
-    width: 407px
-    height: 352px
-    roundness: "Round"
-    variant: "Primary"
-    size: "Medium | Small | Default | Large"
-    state: "Default | Hover & Active | Disabled"
+  header:
+    width: 2394px
+    height: 649px
+    icon-left: "Yes | No"
+    header: "Yes | No"
+    sub-header: "Yes | No"
+    icon-right: "No | Yes"
 themes:
   light:
     source: "Colors semantic"
@@ -526,18 +506,18 @@ themes:
       background-primary: "#fbfcff"
       background-white: "#ffffff"
       background-neutral: "#e5e5e5"
-      background-extension-neutral: "#f5f5f5"
-      background-extension-slate: "#f1f5f9"
-      background-extension-indigo: "#e0e7ff"
-      background-extension-navy: "#dbeafe"
-      background-extension-blue: "#f1f5ff"
-      background-extension-sky: "#e0f2fe"
-      background-extension-purple: "#f1f2ff"
-      background-extension-violet: "#ede9fe"
-      background-extension-red: "#ffe2e2"
-      background-extension-orange: "#ffedd5"
-      background-extension-yellow: "#fef9c3"
-      background-extension-gold: "#fdf6eb"
+      background-extension-neutral: "#fafafa"
+      background-extension-slate: "#f8fafc"
+      background-extension-indigo: "#eef2ff"
+      background-extension-navy: "#eff6ff"
+      background-extension-blue: "#fbfcff"
+      background-extension-sky: "#f0f9ff"
+      background-extension-purple: "#fbfbff"
+      background-extension-violet: "#f5f3ff"
+      background-extension-red: "#fef2f2"
+      background-extension-orange: "#fff7ed"
+      background-extension-yellow: "#fefce8"
+      background-extension-gold: "#fefbf5"
       background-extension-green: "#f0fdf4"
       border-primary: "#dde8fb"
       border-secondary: "#afc4f0"
@@ -570,7 +550,7 @@ themes:
       content-neutral2: "#fafafa"
       content-extension-slate: "#94a3b8"
       content-extension-blue: "#afc4f0"
-      content-extension-gold: "#f5ddb0"
+      content-extension-gold: "#d59a2d"
       content-extension-purple: "#b1b6e6"
       content-extension-indigo: "#818cf8"
       content-extension-navy: "#60a5fa"
@@ -605,10 +585,10 @@ themes:
       border-extension-info: "#3b82f6"
       content-blue: "#94a3b8"
       focus-outer: "#93c5fd"
-      focus-white: "#020617"
+      focus-white: "#0f172a"
       focus-primary: "#2563eb"
       state-success: "#86efac"
-      state-error: "#fca5a5"
+      state-error: "#f87171"
       button-primary: "#244ea2"
       state-warning: "#fef08a"
       border-tertiary: "#ccddfa"
@@ -658,17 +638,17 @@ Design system extracted from **Wi Design System**. This specification defines th
 
 ## Design System Summary
 
-- **Source**: Wi Design System · Generated: 2026-07-14
+- **Source**: Wi Design System · Generated: 2026-08-03
 - **Generator**: DesignOps Tools: DesignBridge v2.1 — [designops.tools](https://designops.tools)
 - **Spec**: [google-labs-code/design.md](https://github.com/google-labs-code/design.md) (alpha)
-- **Color tokens**: 274
-- **Spacing / size tokens**: 118
-- **Border radius tokens**: 21
+- **Color tokens**: 262
+- **Spacing / size tokens**: 112
+- **Border radius tokens**: 18
 - **Typography tokens**: 18
 - **Themes**: Light · Dark
 - **Text styles**: 18
 - **Effect styles**: 7
-- **Component sets**: 2
+- **Component sets**: 1
 
 ## Color Tokens
 
@@ -924,18 +904,18 @@ Design system extracted from **Wi Design System**. This specification defines th
 | `Background/Primary` | `#fbfcff` | ← `Blue/50` |
 | `Background/White` | `#ffffff` | ← `White` |
 | `Background/Neutral` | `#e5e5e5` | ← `Neutral/200` |
-| `Background/Extension/Neutral` | `#f5f5f5` | ← `Neutral/100` |
-| `Background/Extension/Slate` | `#f1f5f9` | ← `Slate/100` |
-| `Background/Extension/Indigo` | `#e0e7ff` | ← `Indigo/100` |
-| `Background/Extension/Navy` | `#dbeafe` | ← `Navy/100` |
-| `Background/Extension/Blue` | `#f1f5ff` | ← `Blue/100` |
-| `Background/Extension/Sky` | `#e0f2fe` | ← `Sky/100` |
-| `Background/Extension/Purple` | `#f1f2ff` | ← `Purple/100` |
-| `Background/Extension/Violet` | `#ede9fe` | ← `Violet/100` |
-| `Background/Extension/Red` | `#ffe2e2` | ← `Red/100` |
-| `Background/Extension/Orange` | `#ffedd5` | ← `Orange/100` |
-| `Background/Extension/Yellow` | `#fef9c3` | ← `Yellow/100` |
-| `Background/Extension/Gold` | `#fdf6eb` | ← `Gold/100` |
+| `Background/Extension/Neutral` | `#fafafa` | ← `Neutral/50` |
+| `Background/Extension/Slate` | `#f8fafc` | ← `Slate/50` |
+| `Background/Extension/Indigo` | `#eef2ff` | ← `Indigo/50` |
+| `Background/Extension/Navy` | `#eff6ff` | ← `Navy/50` |
+| `Background/Extension/Blue` | `#fbfcff` | ← `Blue/50` |
+| `Background/Extension/Sky` | `#f0f9ff` | ← `Sky/50` |
+| `Background/Extension/Purple` | `#fbfbff` | ← `Purple/50` |
+| `Background/Extension/Violet` | `#f5f3ff` | ← `Violet/50` |
+| `Background/Extension/Red` | `#fef2f2` | ← `Red/50` |
+| `Background/Extension/Orange` | `#fff7ed` | ← `Orange/50` |
+| `Background/Extension/Yellow` | `#fefce8` | ← `Yellow/50` |
+| `Background/Extension/Gold` | `#fefbf5` | ← `Gold/50` |
 | `Background/Extension/Green` | `#f0fdf4` | ← `Green/50` |
 | `Border/Primary` | `#dde8fb` | ← `Blue/200` |
 | `Border/Secondary` | `#afc4f0` | ← `Blue/400` |
@@ -954,7 +934,7 @@ Design system extracted from **Wi Design System**. This specification defines th
 | `Border/Tertiary` | `#456cb9` | ← `Blue/700` |
 | `Border/Slate` | `#94a3b8` | ← `Slate/400` |
 | `Background/Blue` | `#f1f5ff` | ← `Blue/100` |
-| `Content/White` | `#ffffff` | ← `Core/white` |
+| `Content/White` | `#ffffff` | ← `White` |
 
 **Multi-mode values:**
 
@@ -968,7 +948,7 @@ Design system extracted from **Wi Design System**. This specification defines th
 - `Content/Neutral2`: Light: `#404040` | Dark: `#fafafa`
 - `Content/Extension/Slate`: Light: `#334155` | Dark: `#94a3b8`
 - `Content/Extension/Blue`: Light: `#244ea2` | Dark: `#afc4f0`
-- `Content/Extension/Gold`: Light: `#d59a2d` | Dark: `#f5ddb0`
+- `Content/Extension/Gold`: Light: `#d59a2d` | Dark: `#d59a2d`
 - `Content/Extension/Purple`: Light: `#787db4` | Dark: `#b1b6e6`
 - `Content/Extension/Indigo`: Light: `#4338ca` | Dark: `#818cf8`
 - `Content/Extension/Navy`: Light: `#1d4ed8` | Dark: `#60a5fa`
@@ -982,18 +962,18 @@ Design system extracted from **Wi Design System**. This specification defines th
 - `Background/Primary`: Light: `#fbfcff` | Dark: `#0f172a`
 - `Background/White`: Light: `#ffffff` | Dark: `#1e293b`
 - `Background/Neutral`: Light: `#e5e5e5` | Dark: `#a3a3a3`
-- `Background/Extension/Neutral`: Light: `#f5f5f5` | Dark: `#0a0a0a`
-- `Background/Extension/Slate`: Light: `#f1f5f9` | Dark: `#020617`
-- `Background/Extension/Indigo`: Light: `#e0e7ff` | Dark: `#1e1b4b`
-- `Background/Extension/Navy`: Light: `#dbeafe` | Dark: `#172554`
-- `Background/Extension/Blue`: Light: `#f1f5ff` | Dark: `#072561`
-- `Background/Extension/Sky`: Light: `#e0f2fe` | Dark: `#082f49`
-- `Background/Extension/Purple`: Light: `#f1f2ff` | Dark: `#33386c`
-- `Background/Extension/Violet`: Light: `#ede9fe` | Dark: `#2e1065`
-- `Background/Extension/Red`: Light: `#ffe2e2` | Dark: `#450a0a`
-- `Background/Extension/Orange`: Light: `#ffedd5` | Dark: `#431407`
-- `Background/Extension/Yellow`: Light: `#fef9c3` | Dark: `#422006`
-- `Background/Extension/Gold`: Light: `#fdf6eb` | Dark: `#764d00`
+- `Background/Extension/Neutral`: Light: `#fafafa` | Dark: `#0a0a0a`
+- `Background/Extension/Slate`: Light: `#f8fafc` | Dark: `#020617`
+- `Background/Extension/Indigo`: Light: `#eef2ff` | Dark: `#1e1b4b`
+- `Background/Extension/Navy`: Light: `#eff6ff` | Dark: `#172554`
+- `Background/Extension/Blue`: Light: `#fbfcff` | Dark: `#072561`
+- `Background/Extension/Sky`: Light: `#f0f9ff` | Dark: `#082f49`
+- `Background/Extension/Purple`: Light: `#fbfbff` | Dark: `#33386c`
+- `Background/Extension/Violet`: Light: `#f5f3ff` | Dark: `#2e1065`
+- `Background/Extension/Red`: Light: `#fef2f2` | Dark: `#450a0a`
+- `Background/Extension/Orange`: Light: `#fff7ed` | Dark: `#431407`
+- `Background/Extension/Yellow`: Light: `#fefce8` | Dark: `#422006`
+- `Background/Extension/Gold`: Light: `#fefbf5` | Dark: `#764d00`
 - `Background/Extension/Green`: Light: `#f0fdf4` | Dark: `#052e16`
 - `Border/Primary`: Light: `#dde8fb` | Dark: `#334155`
 - `Border/Secondary`: Light: `#afc4f0` | Dark: `#334155`
@@ -1003,43 +983,16 @@ Design system extracted from **Wi Design System**. This specification defines th
 - `Border/Extension/Info`: Light: `#3b82f6` | Dark: `#3b82f6`
 - `Content/Blue`: Light: `#afc4f0` | Dark: `#94a3b8`
 - `Focus/outer`: Light: `#2563eb` | Dark: `#93c5fd`
-- `Focus/white`: Light: `#ffffff` | Dark: `#020617`
+- `Focus/white`: Light: `#ffffff` | Dark: `#0f172a`
 - `Focus/primary`: Light: `#2563eb` | Dark: `#2563eb`
 - `State/success`: Light: `#16a34a` | Dark: `#86efac`
-- `State/error`: Light: `#dc2626` | Dark: `#fca5a5`
+- `State/error`: Light: `#dc2626` | Dark: `#f87171`
 - `Button/Primary`: Light: `#244ea2` | Dark: `#244ea2`
 - `State/warning`: Light: `#ca8a04` | Dark: `#fef08a`
 - `Border/Tertiary`: Light: `#456cb9` | Dark: `#ccddfa`
 - `Border/Slate`: Light: `#94a3b8` | Dark: `#ccddfa`
 - `Background/Blue`: Light: `#f1f5ff` | Dark: `#334155`
 - `Content/White`: Light: `#ffffff` | Dark: `#ffffff`
-
-### Design Tokens
-
-| Token | Value | Alias source |
-|-------|-------|-------------|
-| `color/background/card` | `#ffffff` | — |
-| `color/border/card` | `#d0e0f0` | — |
-| `color/text/primary` | `#1a2332` | — |
-| `color/text/secondary` | `#52627d` | — |
-
-### Primitives
-
-| Token | Value | Alias source |
-|-------|-------|-------------|
-| `blue/100` | `#ecf1f9` | — |
-| `blue/200` | `#6181c2` | — |
-| `blue/500` | `#4c6ef5` | — |
-| `blue/600` | `#244ea2` | — |
-| `neutral/white` | `#ffffff` | — |
-
-### Semantic
-
-| Token | Value | Alias source |
-|-------|-------|-------------|
-| `color/text-primary` | `#ffffff` | ← `neutral/white` |
-| `color/text-secondary` | `#ecf1f9` | ← `blue/100` |
-| `color/watermark` | `#ffffff` | ← `neutral/white` |
 
 ## Spacing Tokens
 
@@ -1159,14 +1112,6 @@ Design system extracted from **Wi Design System**. This specification defines th
 | `space-120` | `120px` |
 | `space-160` | `160px` |
 
-### Design Tokens
-
-| Token | Value |
-|-------|-------|
-| `spacing/padding-vertical` | `12px` |
-| `spacing/padding-horizontal` | `16px` |
-| `spacing/gap-sm` | `4px` |
-
 ## Border Radius Tokens
 
 | Token | Value |
@@ -1189,9 +1134,6 @@ Design system extracted from **Wi Design System**. This specification defines th
 | `rounded-full` | `999px` |
 | `radius-0` | `0px` |
 | `rounded-none` | `0px` |
-| `radius/card` | `16px` |
-| `radius/24` | `24px` |
-| `radius/card` | `24px` |
 
 ## Letter Spacing Tokens
 
@@ -1333,153 +1275,69 @@ box-shadow: 0px 0px 0px 4px #2563eb, 0px 0px 0px 2px #ffffff;
 
 ### Variant Sets
 
-#### Button
-*Page: 📌 Button*
-> Button component ใช้สำหรับ action หลักในหน้าจอ รองรับ 3 visual style, 4 ขนาด, 5 states และ optional left/right icon
+#### Header
+*Page: Header*
+> Top App Bar — A page-level navigation bar that provides context and actions for the current screen.
 
-━━━━━━━━━━━━━━━━━━━━━━━━
-PROPERTIES
-━━━━━━━━━━━━━━━━━━━━━━━━
+📐 Structure:
+• Leading icon (left) — Back arrow or navigation trigger
+• Title area — Header title with optional subheader
+• Trailing icon (right) — Contextual action (close, info, more)
 
-Variant — visual style
-  • Primary   → action หลัก (filled, Button/Primary bg)
-  • Outline   → action รอง (bordered, Border/Primary)
-  • Ghost     → action เสริม (transparent, Content/Primary text)
+🔗 Platform Mapping:
 
-Size — height scale
-  • Mini     → 24px  (compact UI, tags)
-  • Small    → 36px  (inline actions)
-  • Medium   → 40px  (form fields)
-  • Default  → 48px  (primary CTA)
+Flutter (V3):
+  → Corresponds to Flutter's AppBar widget (Material 3)
+  → leading: V3IconButton (icon: V3LucideIcon, onPressed, semanticLabel)
+  → title: Text widget with V3Typography styles
+  → actions: List<V3IconButton>
+  → Uses tokens: content/primary, content/tertiary, background/white, border/primary
+  → Ref: lib/widgets/v3/icon_button/v3_icon_button.dart
 
-State — interactive state
-  • Default  → idle
-  • Focus    → keyboard/focus ring (Focus/outer + Focus/white)
-  • Active   → pressed / toggled
-  • Disabled → non-interactive (disabled + aria-disabled)
-  • Error    → invalid action (State/error)
+React:
+  → Corresponds to a <Header /> or <AppBar /> component
+  → Props: title (string), subtitle? (string), leadingIcon? (ReactNode), trailingIcon? (ReactNode), onBack? (() => void), onClose? (() => void)
+  → Renders as <header> with flexbox row layout (align-items: center)
 
-Left icon  → Yes / No  (icon slot ก่อน label)
-Right icon → Yes / No  (icon slot หลัง label)
+⚙️ Variant Properties:
+• Icon left (Yes/No) — Controls leading navigation icon visibility
+• Icon right (Yes/No) — Controls trailing action icon visibility
+• Header (Yes/No) — Controls title text visibility
+• Sub header (Yes/No) — Controls subtitle text visibility
 
-━━━━━━━━━━━━━━━━━━━━━━━━
-DESIGN TOKENS
-━━━━━━━━━━━━━━━━━━━━━━━━
+📝 Text Properties:
+• Header title — Primary page title (maps to AppBar.title in Flutter, props.title in React)
+• Subheader — Secondary descriptive text (maps to AppBar.bottom or subtitle slot)
 
-Fill      → Button/Primary (#244EA2)
-Text      → Core/white (#FFFFFF)
-Border    → Border/Primary
-Error     → State/error
-Focus     → Focus/outer + Focus/white
-Radius    → radius-full (999px — pill shape)
-Gap       → space-6 (6px)
-Padding X → space-16 (16px)
-Padding Y → space-2 (2px)
+🎨 Design Tokens Used:
+• content/primary — Icon active state
+• content/tertiary — Icon default state
+• background/white — Bar background
+• border/primary — Bottom divider line
 
-━━━━━━━━━━━━━━━━━━━━━━━━
-ACCESSIBILITY
-━━━━━━━━━━━━━━━━━━━━━━━━
+📏 Spacing & Sizing:
+• Height: 56dp (standard) / 64dp (with subheader)
+• Horizontal padding: 16dp
+• Icon touch target: 48×48dp (V3IconButton.defaultSize)
 
-React  → aria-disabled, aria-pressed (active), aria-invalid (error), aria-describedby (error msg), :focus-visible ring
-Flutter→ Semantics(button: true, enabled, hint), Tooltip, ExcludeSemantics สำหรับ icon-only
-Icon-only button ต้องระบุ aria-label / semanticLabel เสมอ
-
-━━━━━━━━━━━━━━━━━━━━━━━━
-USAGE
-━━━━━━━━━━━━━━━━━━━━━━━━
-
-React Next.js
-  <Button variant="primary" size="default" status="default">Label</Button>
-  <Button variant="outline" size="small" leftIcon={<Icon />}>Label</Button>
-  <Button status="error" errorMessageId="err-id">Label</Button>
-
-Flutter
-  AppButton(label: "Label", variant: ButtonVariant.primary, onPressed: () {})
-  AppButton(label: "Label", variant: ButtonVariant.outline, leftIcon: Icon(Icons.add), onPressed: () {})
-  AppIconButton(icon: Icon(Icons.add), semanticLabel: "เพิ่มรายการ", onPressed: () {})
-
-━━━━━━━━━━━━━━━━━━━━━━━━
-DARK MODE
-━━━━━━━━━━━━━━━━━━━━━━━━
-
-ใช้ Colors semantic collection (Light modeId: 13:3 / Dark modeId: 16:0)
-Button/Primary คงเดิมทั้ง 2 mode
-Button/Secondary: #FFFFFF (light) → #1E293B (dark)
-State/error: #DC2626 (light) → #FCA5A5 (dark)
-Focus/outer: #2563EB (light) → #93C5FD (dark)
-
-- **Total variants**: 192
-- **Frame size**: 2676 × 810px
+- **Total variants**: 10
+- **Frame size**: 2394 × 649px
 - **Variant properties**:
-  - `Variant: Primary | Outline | Ghost`
-  - `Size: Small | Medium | Default | Mini`
-  - `State: Default | Focus | Disabled | Active | Error`
-  - `Left icon: Yes | No`
-  - `Right icon: Yes | No`
-- **Sample variant names**: `Variant=Primary, Size=Small, State=Default, Left icon=No, Right icon=No` · `Variant=Primary, Size=Small, State=Default, Left icon=Yes, Right icon=No` · `Variant=Primary, Size=Small, State=Default, Left icon=No, Right icon=Yes` · `Variant=Primary, Size=Small, State=Default, Left icon=Yes, Right icon=Yes` · `Variant=Primary, Size=Small, State=Error, Left icon=No, Right icon=No` · `Variant=Primary, Size=Small, State=Error, Left icon=Yes, Right icon=No` · `Variant=Primary, Size=Small, State=Error, Left icon=No, Right icon=Yes` · `Variant=Primary, Size=Small, State=Error, Left icon=Yes, Right icon=Yes`
+  - `Icon left: Yes | No`
+  - `Header: Yes | No`
+  - `Sub header: Yes | No`
+  - `Icon right: No | Yes`
+- **Sample variant names**: `Icon left=Yes, Header=Yes, Sub header=No, Icon right=No` · `Icon left=Yes, Header=Yes, Sub header=No, Icon right=Yes` · `Icon left=No, Header=Yes, Sub header=No, Icon right=Yes` · `Icon left=Yes, Header=No, Sub header=No, Icon right=No` · `Icon left=No, Header=No, Sub header=No, Icon right=Yes` · `Icon left=Yes, Header=Yes, Sub header=Yes, Icon right=No` · `Icon left=Yes, Header=Yes, Sub header=Yes, Icon right=Yes` · `Icon left=No, Header=Yes, Sub header=Yes, Icon right=Yes`
 
 **Component anatomy** (default variant):
 
 ```
-└─ Component "Variant=Primary, Size=Small, State=Default, Left icon=No, Right icon=No" (69×36) [row, gap:6px, pad:2px 16px, align:center / center]
-  ├─ Text "Label" (37×20) → "Label"
-```
-
-**Interactive state map:**
-
-```css
-/* Component: Button */
-/* Variant property: State */
-.button {
-  /* State: Default */
-}
-.button:focus-visible {
-  /* State: Focus */
-}
-.button:disabled {
-  /* State: Disabled */
-}
-.button:active {
-  /* State: Active */
-}
-.button[aria-invalid="true"] {
-  /* State: Error */
-}
-```
-
-#### Icon Button
-*Page: 📌 Button*
-- **Total variants**: 12
-- **Frame size**: 407 × 352px
-- **Variant properties**:
-  - `Roundness: Round`
-  - `Variant: Primary`
-  - `Size: Medium | Small | Default | Large`
-  - `State: Default | Hover & Active | Disabled`
-- **Sample variant names**: `Roundness=Round, Variant=Primary, Size=Large, State=Default` · `Roundness=Round, Variant=Primary, Size=Large, State=Disabled` · `Roundness=Round, Variant=Primary, Size=Large, State=Hover & Active` · `Roundness=Round, Variant=Primary, Size=Default, State=Default` · `Roundness=Round, Variant=Primary, Size=Default, State=Disabled` · `Roundness=Round, Variant=Primary, Size=Default, State=Hover & Active` · `Roundness=Round, Variant=Primary, Size=Medium, State=Default` · `Roundness=Round, Variant=Primary, Size=Medium, State=Disabled`
-
-**Component anatomy** (default variant):
-
-```
-└─ Component "Roundness=Round, Variant=Primary, Size=Large, State=Default" (48×48) [row, pad:8px, align:center / center]
-  ├─ Instance "Icon" (24×24)
-    ├─ Vector "Vector"
-```
-
-**Interactive state map:**
-
-```css
-/* Component: Icon Button */
-/* Variant property: State */
-.icon-button {
-  /* State: Default */
-}
-.icon-button[data-state="hover--active"] {
-  /* State: Hover & Active */
-}
-.icon-button:disabled {
-  /* State: Disabled */
-}
+└─ Component "Icon left=Yes, Header=Yes, Sub header=No, Icon right=No" (375×124) [column, gap:24px, pad:40px 16px 12px 16px]
+  ├─ Frame "Frame 14481" (343×72) [column, gap:16px, align:center / start]
+    ├─ Instance "arrow-left"
+      ├─ Vector "Vector"
+    ├─ Frame "Frame 427318539" [column, gap:8px]
+      ├─ Text "Header title" → "Header title"
 ```
 
 ## Design Rules — Mandatory for AI Agents
@@ -1706,18 +1564,18 @@ Focus/outer: #2563EB (light) → #93C5FD (dark)
   --background-primary: #fbfcff;
   --background-white: #ffffff;
   --background-neutral: #e5e5e5;
-  --background-extension-neutral: #f5f5f5;
-  --background-extension-slate: #f1f5f9;
-  --background-extension-indigo: #e0e7ff;
-  --background-extension-navy: #dbeafe;
-  --background-extension-blue: #f1f5ff;
-  --background-extension-sky: #e0f2fe;
-  --background-extension-purple: #f1f2ff;
-  --background-extension-violet: #ede9fe;
-  --background-extension-red: #ffe2e2;
-  --background-extension-orange: #ffedd5;
-  --background-extension-yellow: #fef9c3;
-  --background-extension-gold: #fdf6eb;
+  --background-extension-neutral: #fafafa;
+  --background-extension-slate: #f8fafc;
+  --background-extension-indigo: #eef2ff;
+  --background-extension-navy: #eff6ff;
+  --background-extension-blue: #fbfcff;
+  --background-extension-sky: #f0f9ff;
+  --background-extension-purple: #fbfbff;
+  --background-extension-violet: #f5f3ff;
+  --background-extension-red: #fef2f2;
+  --background-extension-orange: #fff7ed;
+  --background-extension-yellow: #fefce8;
+  --background-extension-gold: #fefbf5;
   --background-extension-green: #f0fdf4;
   --border-primary: #dde8fb;
   --border-secondary: #afc4f0;
@@ -1763,18 +1621,6 @@ Focus/outer: #2563EB (light) → #93C5FD (dark)
   --border-slate: #94a3b8;
   --background-blue: #f1f5ff;
   --content-white: #ffffff;
-  --color-background-card: #ffffff;
-  --color-border-card: #d0e0f0;
-  --color-text-primary: #1a2332;
-  --color-text-secondary: #52627d;
-  --blue-100: #ecf1f9;
-  --blue-200: #6181c2;
-  --blue-500: #4c6ef5;
-  --blue-600: #244ea2;
-  --neutral-white: #ffffff;
-  --color-text-primary: #ffffff;
-  --color-text-secondary: #ecf1f9;
-  --color-watermark: #ffffff;
 
   /* ── Spacing ────────────────────────── */
   --display-extra-large-spacing: 0px;
@@ -1871,9 +1717,6 @@ Focus/outer: #2563EB (light) → #93C5FD (dark)
   --space-96: 96px;
   --space-120: 120px;
   --space-160: 160px;
-  --spacing-padding-vertical: 12px;
-  --spacing-padding-horizontal: 16px;
-  --spacing-gap-sm: 4px;
 
   /* ── Border radius ──────────────────── */
   --radius-2: 2px;
@@ -1894,9 +1737,6 @@ Focus/outer: #2563EB (light) → #93C5FD (dark)
   --rounded-full: 999px;
   --radius-0: 0px;
   --rounded-none: 0px;
-  --radius-card: 16px;
-  --radius-24: 24px;
-  --radius-card: 24px;
 
   /* ── Letter spacing ─────────────────── */
   --display-extra-large-letter-spacing: 0px;
@@ -2010,7 +1850,7 @@ Focus/outer: #2563EB (light) → #93C5FD (dark)
     --content-neutral2: #fafafa;
     --content-extension-slate: #94a3b8;
     --content-extension-blue: #afc4f0;
-    --content-extension-gold: #f5ddb0;
+    --content-extension-gold: #d59a2d;
     --content-extension-purple: #b1b6e6;
     --content-extension-indigo: #818cf8;
     --content-extension-navy: #60a5fa;
@@ -2045,10 +1885,10 @@ Focus/outer: #2563EB (light) → #93C5FD (dark)
     --border-extension-info: #3b82f6;
     --content-blue: #94a3b8;
     --focus-outer: #93c5fd;
-    --focus-white: #020617;
+    --focus-white: #0f172a;
     --focus-primary: #2563eb;
     --state-success: #86efac;
-    --state-error: #fca5a5;
+    --state-error: #f87171;
     --button-primary: #244ea2;
     --state-warning: #fef08a;
     --border-tertiary: #ccddfa;
@@ -2271,18 +2111,18 @@ module.exports = { theme: { extend: {
     'background-primary': '#fbfcff',
     'background-white': '#ffffff',
     'background-neutral': '#e5e5e5',
-    'background-extension-neutral': '#f5f5f5',
-    'background-extension-slate': '#f1f5f9',
-    'background-extension-indigo': '#e0e7ff',
-    'background-extension-navy': '#dbeafe',
-    'background-extension-blue': '#f1f5ff',
-    'background-extension-sky': '#e0f2fe',
-    'background-extension-purple': '#f1f2ff',
-    'background-extension-violet': '#ede9fe',
-    'background-extension-red': '#ffe2e2',
-    'background-extension-orange': '#ffedd5',
-    'background-extension-yellow': '#fef9c3',
-    'background-extension-gold': '#fdf6eb',
+    'background-extension-neutral': '#fafafa',
+    'background-extension-slate': '#f8fafc',
+    'background-extension-indigo': '#eef2ff',
+    'background-extension-navy': '#eff6ff',
+    'background-extension-blue': '#fbfcff',
+    'background-extension-sky': '#f0f9ff',
+    'background-extension-purple': '#fbfbff',
+    'background-extension-violet': '#f5f3ff',
+    'background-extension-red': '#fef2f2',
+    'background-extension-orange': '#fff7ed',
+    'background-extension-yellow': '#fefce8',
+    'background-extension-gold': '#fefbf5',
     'background-extension-green': '#f0fdf4',
     'border-primary': '#dde8fb',
     'border-secondary': '#afc4f0',
@@ -2328,18 +2168,6 @@ module.exports = { theme: { extend: {
     'border-slate': '#94a3b8',
     'background-blue': '#f1f5ff',
     'content-white': '#ffffff',
-    'color-background-card': '#ffffff',
-    'color-border-card': '#d0e0f0',
-    'color-text-primary': '#1a2332',
-    'color-text-secondary': '#52627d',
-    'blue-100': '#ecf1f9',
-    'blue-200': '#6181c2',
-    'blue-500': '#4c6ef5',
-    'blue-600': '#244ea2',
-    'neutral-white': '#ffffff',
-    'color-text-primary': '#ffffff',
-    'color-text-secondary': '#ecf1f9',
-    'color-watermark': '#ffffff',
   },
   spacing: {
     'display-extra-large-spacing': '0px',
@@ -2436,9 +2264,6 @@ module.exports = { theme: { extend: {
     'space-96': '96px',
     'space-120': '120px',
     'space-160': '160px',
-    'spacing-padding-vertical': '12px',
-    'spacing-padding-horizontal': '16px',
-    'spacing-gap-sm': '4px',
   },
   borderRadius: {
     'radius-2': '2px',
@@ -2459,9 +2284,6 @@ module.exports = { theme: { extend: {
     'rounded-full': '999px',
     'radius-0': '0px',
     'rounded-none': '0px',
-    'radius-card': '16px',
-    'radius-24': '24px',
-    'radius-card': '24px',
   },
   fontFamily: {
     'noto-sans': ['Noto Sans', 'sans-serif'],
@@ -2471,6 +2293,6 @@ module.exports = { theme: { extend: {
 
 ---
 
-*Generated on 2026-07-14 by **DesignOps Tools: DesignBridge v2.1** from "Wi Design System".*
+*Generated on 2026-08-03 by **DesignOps Tools: DesignBridge v2.1** from "Wi Design System".*
 *Spec: [google-labs-code/design.md](https://github.com/google-labs-code/design.md) · Format version: alpha*
 *[designops.tools](https://designops.tools) — Bridge your Figma design system to any AI tool.*
