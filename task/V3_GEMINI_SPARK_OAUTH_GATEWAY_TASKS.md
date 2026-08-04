@@ -101,16 +101,16 @@ Evidence: `docs/v3/V3_GEMINI_SPARK_GATEWAY_CREDENTIAL_RUNBOOK.md`; rehearsal ร
 ### GW-06: Implement Authorization Configuration
 
 - [ ] Authorization Code + PKCE `S256` เท่านั้น
-- [ ] exact-match redirect URI allowlist
+- [x] exact-match redirect URI allowlist
 - [ ] `state` validation
-- [ ] consent และ identity policy ตามที่อนุมัติใน ADR
-- [ ] refresh token เฉพาะเมื่อ staging handshake ยืนยันว่าจำเป็น
-- [ ] static client registration เป็น default; restricted DCR เฉพาะเมื่อ Gemini Spark ต้องการจริง
-- [ ] `nonce` เฉพาะ OIDC/provider-mandated flow
+- [x] consent และ identity policy ตามที่อนุมัติใน ADR
+- [x] refresh token เฉพาะเมื่อ staging handshake ยืนยันว่าจำเป็น
+- [x] static client registration เป็น default; restricted DCR เฉพาะเมื่อ Gemini Spark ต้องการจริง
+- [x] `nonce` เฉพาะ OIDC/provider-mandated flow
 
 Depends on: GW-05
 
-Evidence: Auth0 Custom API `Flutter Widget Wallet MCP Gateway Staging` ถูกสร้างใน tenant `flutter-widget-wallet-mcp.jp.auth0.com` เมื่อ `2026-08-05`; audience `https://flutter-widget-wallet-oauth-gateway.onrender.com/mcp`, JWT profile `Auth0`, signing algorithm `RS256`, user-delegated access `Per-app authorization`, client access `No apps allowed`; Authorization Code + PKCE, exact callback, permission และ provider-owned flow tests ยัง pending
+Evidence: Auth0 API/Application ใช้ RS256, audience-bound `mcp:read`, Authorization Code, exact Gemini callback, owner/client allowlists, no refresh-token grant และ static registration; PKCE S256 enforcement กับ state-mismatch negative test ยัง pending
 
 ### GW-07: Publish OAuth Resource Contract
 
@@ -162,7 +162,7 @@ Evidence: `oauth-gateway/src/security.js`; cross-identity tests; ADR/README ร�
 
 Depends on: GW-09
 
-Evidence: `oauth-gateway/src/{server,security}.js`; local security testsผ่าน; Gemini sync `28` upstream tools และ representative V3 read-only calls สำเร็จ
+Evidence: `oauth-gateway/src/{server,security}.js`; local security tests ผ่าน; Gemini sync `28` upstream tools และ representative V3 read-only calls สำเร็จ
 
 **Phase 3 Acceptance Gate**: automated tests ใน Phase 5 ผ่านบน staging, Gateway ไม่เพิ่ม/ลบ/เปลี่ยน tool contracts, request/response headers และ sessions ไม่รั่วข้าม identity
 
@@ -179,15 +179,15 @@ Evidence: Render service `srv-d9p1pf7qj5pc738io7v0`, Singapore/Free/single-insta
 
 ### GW-12: Generic MCP client smoke test on staging
 
-- [x] discovery
-- [x] authorization
-- [x] `initialize`
-- [x] `tools/list`
-- [x] representative read-only `tools/call`
+- [ ] discovery
+- [ ] authorization
+- [ ] `initialize`
+- [ ] `tools/list`
+- [ ] representative read-only `tools/call`
 
 Depends on: GW-11
 
-Evidence: Gemini custom app sync `28` tools; `search_v3_widgets`, `list_v3_widgets`, `list_v3_categories` สำเร็จ; Auth0 exchange success และ Gateway authenticated POST `200`/`202` ใน `docs/v3/V3_GEMINI_SPARK_OAUTH_GATEWAY_STAGING_EVIDENCE.md`
+Evidence: real Gemini client ผ่าน lifecycle และ tool calls แล้วใน GW-13; standalone generic OAuth MCP client harness ยัง pending เพื่อคง gate นี้แยกจาก Gemini-specific verification
 
 ### GW-13: Real Gemini Spark handshake and evidence archive
 
@@ -211,7 +211,7 @@ Evidence: `docs/v3/V3_GEMINI_SPARK_OAUTH_GATEWAY_STAGING_EVIDENCE.md`; SSE Initi
 - [x] wrong resource/audience
 - [x] insufficient scope
 - [x] invalid client identity
-- [ ] redirect URI mismatch
+- [x] redirect URI mismatch
 - [ ] `state` mismatch
 - [ ] PKCE downgrade หรือ verifier mismatch
 - [x] invalid JWKS signature หรือ failed introspection
@@ -219,7 +219,7 @@ Evidence: `docs/v3/V3_GEMINI_SPARK_OAUTH_GATEWAY_STAGING_EVIDENCE.md`; SSE Initi
 
 Depends on: GW-13
 
-Evidence: `oauth-gateway/test/token-verifier.test.js`; provider-owned redirect/state/PKCE tests รอ Auth0 staging client
+Evidence: `oauth-gateway/test/token-verifier.test.js`; Auth0 staging logs ยืนยัน callback mismatch ถูก reject ก่อนเพิ่ม exact Gateway callback; state/PKCE negative tests ยัง pending
 
 ### GW-15: MCP protocol tests
 
@@ -248,7 +248,7 @@ Evidence: `oauth-gateway/test/server.test.js`; 28/28 local tests ผ่าน; r
 
 Depends on: GW-13
 
-Evidence: `oauth-gateway/test/{server,security}.test.js`; 27/27 local tests ผ่าน
+Evidence: `oauth-gateway/test/{server,security}.test.js`; 28/28 local tests ผ่าน
 
 ### GW-17: Legacy regression gates
 
@@ -317,6 +317,8 @@ Evidence: _pending_
 Depends on: GW-18
 
 Evidence: _pending_
+
+Draft staging onboarding ถูกเพิ่มแบบ additive ใน `docs/v3/V3_REMOTE_MCP_GUIDE.md`; checkbox นี้ยังรอ production URL/client และ production verification ตาม dependency
 
 **Phase 6 Acceptance Gate**: Gemini canary ใช้งานจริงได้ตลอด observation window, legacy regression gates ยังผ่าน, monitoring ไม่มี secret leakage หรือ session isolation failure, rollback สามารถปิด Gateway โดยไม่หยุด existing MCP users
 
