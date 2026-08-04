@@ -1,7 +1,7 @@
 # Widget V3 Gemini Spark OAuth Gateway Tasks
 
 สร้างเมื่อ: `2026-08-04 23:18:05 +0700`
-อัปเดตล่าสุดเมื่อ: `2026-08-05 01:12:00 +0700`
+อัปเดตล่าสุดเมื่อ: `2026-08-05 01:36:00 +0700`
 
 Execution checklist นี้แตกจาก [`docs/v3/V3_GEMINI_SPARK_OAUTH_GATEWAY_PLAN.md`](../docs/v3/V3_GEMINI_SPARK_OAUTH_GATEWAY_PLAN.md) (สถานะแผน: `PLAN_APPROVED`, v0.4) งานนี้เป็นการเพิ่ม auth edge (OAuth-compatible MCP Resource Gateway) หน้า hosted MCP เดิม (`https://flutter-widget-wallet-mcp.onrender.com/mcp`) โดยไม่แทนที่หรือแก้ runtime/tool-contract เดิม
 
@@ -21,8 +21,8 @@ Execution checklist นี้แตกจาก [`docs/v3/V3_GEMINI_SPARK_OAUTH_
 ## Exit Criteria
 
 - [ ] Gemini Spark เชื่อมต่อผ่าน OAuth ได้จริงบน production ผ่าน allowlisted canary
-- [ ] existing direct bearer clients (Codex/Claude/Cursor/local stdio) ผ่าน regression โดยไม่แก้ config
-- [ ] upstream tool contracts, read-only boundary และ preview freshness ไม่เปลี่ยนจาก deployed version
+- [x] existing direct bearer clients (Codex/Claude/Cursor/local stdio) ผ่าน regression โดยไม่แก้ config
+- [x] upstream tool contracts, read-only boundary และ preview freshness ไม่เปลี่ยนจาก deployed version
 - [ ] rollback ปิด Gateway ได้โดย existing Render MCP ยังให้บริการต่อเนื่อง
 - [ ] ไม่มี secret/token literal รั่วใน Git, docs, logs หรือ PR text ตลอดทุก phase
 
@@ -215,11 +215,11 @@ Evidence: `docs/v3/V3_GEMINI_SPARK_OAUTH_GATEWAY_STAGING_EVIDENCE.md`; SSE Initi
 - [ ] `state` mismatch
 - [x] PKCE downgrade หรือ verifier mismatch
 - [x] invalid JWKS signature หรือ failed introspection
-- [ ] restricted DCR policy violation หากเปิด DCR
+- [x] restricted DCR policy violation หากเปิด DCR — N/A, DCR ไม่ได้เปิด
 
 Depends on: GW-13
 
-Evidence: `oauth-gateway/test/token-verifier.test.js`; Auth0 staging logs ยืนยัน callback mismatch, missing PKCE และ `plain` downgrade ถูก reject; state-mismatch negative test ยัง pending
+Evidence: `oauth-gateway/test/token-verifier.test.js`; Auth0 staging logs ยืนยัน callback mismatch, missing PKCE และ `plain` downgrade ถูก reject; DCR ปิดตาม static-registration decision; state-mismatch negative test ยัง pending
 
 ### GW-15: MCP protocol tests
 
@@ -230,13 +230,13 @@ Evidence: `oauth-gateway/test/token-verifier.test.js`; Auth0 staging logs ยื
 - [x] SSE streaming (local integration)
 - [x] cancellation (local integration)
 - [x] reconnect ด้วย `Last-Event-ID` (header preservation local integration)
-- [ ] session continuity
+- [x] session continuity
 - [x] cross-identity session reuse ต้อง fail
 - [x] upstream timeout/disconnect behavior (local integration)
 
 Depends on: GW-13
 
-Evidence: `oauth-gateway/test/{server,smoke-client}.test.js`; 30/30 local tests ผ่าน; real Gemini MCP lifecycle และ V3 tool calls ผ่าน staging
+Evidence: `oauth-gateway/test/{server,security,smoke-client}.test.js`; same-identity binding/reuse, TTL refresh, reconnect header preservation และ cross-identity rejection ผ่าน; upstream จริงเป็น stateless transport และ Gemini reinitialize/tool calls ต่อเนื่องได้; 30/30 local tests ผ่าน
 
 ### GW-16: Header and secret hygiene tests
 
