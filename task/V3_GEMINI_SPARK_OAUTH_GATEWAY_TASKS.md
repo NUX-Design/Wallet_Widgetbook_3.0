@@ -1,11 +1,11 @@
 # Widget V3 Gemini Spark OAuth Gateway Tasks
 
 สร้างเมื่อ: `2026-08-04 23:18:05 +0700`
-อัปเดตล่าสุดเมื่อ: `2026-08-05 00:11:14 +0700`
+อัปเดตล่าสุดเมื่อ: `2026-08-05 00:22:13 +0700`
 
 Execution checklist นี้แตกจาก [`docs/v3/V3_GEMINI_SPARK_OAUTH_GATEWAY_PLAN.md`](../docs/v3/V3_GEMINI_SPARK_OAUTH_GATEWAY_PLAN.md) (สถานะแผน: `PLAN_APPROVED`, v0.4) งานนี้เป็นการเพิ่ม auth edge (OAuth-compatible MCP Resource Gateway) หน้า hosted MCP เดิม (`https://flutter-widget-wallet-mcp.onrender.com/mcp`) โดยไม่แทนที่หรือแก้ runtime/tool-contract เดิม
 
-> สถานะ execution ปัจจุบัน: Phase 1 documentation และ local Gateway implementation เริ่มแล้วหลังผู้ใช้อนุมัติชุดสถาปัตยกรรมและส่ง Gemini redirect URI เมื่อ `2026-08-04`; external Auth0/Render provisioning, staging handshake และ production rollout ยังไม่เริ่ม
+> สถานะ execution ปัจจุบัน: Phase 1 documentation, local Gateway implementation, Render staging service และ Auth0 staging API เริ่มแล้วหลังผู้ใช้อนุมัติชุดสถาปัตยกรรมและส่ง Gemini redirect URI เมื่อ `2026-08-04`; Auth0 Application/permission, staging handshake และ production rollout ยังไม่เสร็จ
 
 ## Global Guardrails
 
@@ -110,7 +110,7 @@ Evidence: `docs/v3/V3_GEMINI_SPARK_GATEWAY_CREDENTIAL_RUNBOOK.md`; rehearsal ร
 
 Depends on: GW-05
 
-Evidence: _pending_
+Evidence: Auth0 Custom API `Flutter Widget Wallet MCP Gateway Staging` ถูกสร้างใน tenant `flutter-widget-wallet-mcp.jp.auth0.com` เมื่อ `2026-08-05`; audience `https://flutter-widget-wallet-oauth-gateway.onrender.com/mcp`, JWT profile `Auth0`, signing algorithm `RS256`, user-delegated access `Per-app authorization`, client access `No apps allowed`; Authorization Code + PKCE, exact callback, permission และ provider-owned flow tests ยัง pending
 
 ### GW-07: Publish OAuth Resource Contract
 
