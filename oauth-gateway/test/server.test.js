@@ -152,6 +152,30 @@ test("rejects cross-identity MCP session reuse", async (t) => {
   assert.deepEqual(await second.json(), { error: "session_identity_mismatch" });
 });
 
+test("accepts and binds an SSE-encoded InitializeResult", async (t) => {
+  const app = await start({
+    fetchImpl: async () => new Response(
+      'event: message\ndata: {"jsonrpc":"2.0","id":1,"result":{"protocolVersion":"2025-06-18"}}\n\n',
+      { headers: { "content-type": "text/event-stream", "mcp-session-id": "sse-session" } },
+    ),
+  });
+  t.after(() => app.server.close());
+
+  const initialize = await app.request("/mcp", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: '{"jsonrpc":"2.0","method":"initialize","id":1}',
+  });
+  assert.equal(initialize.status, 200);
+  assert.equal(initialize.headers.get("mcp-session-id"), "sse-session");
+
+  const reuse = await app.request("/mcp", {
+    method: "GET",
+    headers: { "mcp-session-id": "sse-session" },
+  });
+  assert.equal(reuse.status, 200);
+});
+
 test("does not bind or expose a session from a failed initialize result", async (t) => {
   const app = await start({
     fetchImpl: async () => new Response('{"jsonrpc":"2.0","id":1,"error":{"code":-32603,"message":"failed"}}', {

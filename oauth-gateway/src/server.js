@@ -130,10 +130,29 @@ async function readUpstreamBody(stream, limit, idleTimeoutMs) {
 }
 
 function successfulInitializeBody(body) {
+  const isInitializeResult = (payload) =>
+    payload?.jsonrpc === "2.0" && !payload.error && typeof payload.result?.protocolVersion === "string";
+  const text = body.toString("utf8").trim();
+
   try {
-    const payload = JSON.parse(body.toString("utf8"));
-    return payload?.jsonrpc === "2.0" && !payload.error && typeof payload.result?.protocolVersion === "string";
+    return isInitializeResult(JSON.parse(text));
   } catch {
+    // Streamable HTTP may encode a JSON-RPC response as an SSE `data` event.
+    // Inspect complete events only; never infer success from arbitrary text.
+    for (const event of text.split(/\r?\n\r?\n/)) {
+      const data = event
+        .split(/\r?\n/)
+        .filter((line) => line.startsWith("data:"))
+        .map((line) => line.slice(5).trimStart())
+        .join("\n")
+        .trim();
+      if (!data || data === "[DONE]") continue;
+      try {
+        if (isInitializeResult(JSON.parse(data))) return true;
+      } catch {
+        // Ignore malformed/non-JSON SSE events and fail closed below.
+      }
+    }
     return false;
   }
 }

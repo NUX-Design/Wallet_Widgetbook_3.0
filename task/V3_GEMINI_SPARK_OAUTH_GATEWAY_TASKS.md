@@ -1,11 +1,11 @@
 # Widget V3 Gemini Spark OAuth Gateway Tasks
 
 สร้างเมื่อ: `2026-08-04 23:18:05 +0700`
-อัปเดตล่าสุดเมื่อ: `2026-08-05 00:22:13 +0700`
+อัปเดตล่าสุดเมื่อ: `2026-08-05 01:12:00 +0700`
 
 Execution checklist นี้แตกจาก [`docs/v3/V3_GEMINI_SPARK_OAUTH_GATEWAY_PLAN.md`](../docs/v3/V3_GEMINI_SPARK_OAUTH_GATEWAY_PLAN.md) (สถานะแผน: `PLAN_APPROVED`, v0.4) งานนี้เป็นการเพิ่ม auth edge (OAuth-compatible MCP Resource Gateway) หน้า hosted MCP เดิม (`https://flutter-widget-wallet-mcp.onrender.com/mcp`) โดยไม่แทนที่หรือแก้ runtime/tool-contract เดิม
 
-> สถานะ execution ปัจจุบัน: Phase 1 documentation, local Gateway implementation, Render staging service และ Auth0 staging API เริ่มแล้วหลังผู้ใช้อนุมัติชุดสถาปัตยกรรมและส่ง Gemini redirect URI เมื่อ `2026-08-04`; Auth0 Application/permission, staging handshake และ production rollout ยังไม่เสร็จ
+> สถานะ execution ปัจจุบัน: local Gateway, Render staging, Auth0 API/Application/permission และ real Gemini Spark staging handshake ผ่านแล้ว; production OAuth credentials/canary, observation window และ rollback rehearsal ยังไม่เสร็จ
 
 ## Global Guardrails
 
@@ -41,13 +41,13 @@ Execution checklist นี้แตกจาก [`docs/v3/V3_GEMINI_SPARK_OAUTH_
 ### GW-01: Record Gemini Spark redirect URI and run staging handshake spike
 
 - [x] บันทึก redirect URI ที่ Gemini Spark Custom Connected Apps แสดงจริง
-- [ ] ทำ staging handshake spike ตรวจลำดับ: Protected Resource Metadata discovery → `401 WWW-Authenticate` → Authorization Server discovery → client registration → authorization/token exchange → MCP `initialize`
+- [x] ทำ staging handshake spike ตรวจลำดับ: Protected Resource Metadata discovery → `401 WWW-Authenticate` → Authorization Server discovery → client registration → authorization/token exchange → MCP `initialize`
 - [x] ระบุ OAuth/MCP protocol baseline สำหรับ staging spike
 - [x] ยืนยันว่า local spike/tests ไม่ใช้ production secret
 
 Depends on: Blocking Decisions (Authorization Server / IdP)
 
-Evidence: redirect URI และ protocol baseline ใน `docs/v3/adr/ADR-001-GEMINI-SPARK-OAUTH-GATEWAY.md`; local tests ใช้ keys/identity จำลองเท่านั้น
+Evidence: redirect URI และ protocol baseline ใน `docs/v3/adr/ADR-001-GEMINI-SPARK-OAUTH-GATEWAY.md`; real staging sequence ใน `docs/v3/V3_GEMINI_SPARK_OAUTH_GATEWAY_STAGING_EVIDENCE.md`; local tests ใช้ keys/identity จำลองเท่านั้น
 
 ### GW-02: Select architecture parameters and record ADR
 
@@ -75,14 +75,14 @@ Evidence: `docs/v3/V3_GEMINI_SPARK_OAUTH_GATEWAY_SECURITY.md`
 
 ### GW-04: Provision `GATEWAY_UPSTREAM_BEARER`
 
-- [ ] สร้าง `GATEWAY_UPSTREAM_BEARER` ใหม่
-- [ ] เพิ่ม token ใหม่เข้า `MCP_REMOTE_BEARER_TOKENS` แบบ add-only (เก็บ user bearer tokens เดิมทุกตัวไว้)
-- [ ] ตรวจ overlap window ที่ token เดิมและ gateway token ใช้งานพร้อมกันได้
-- [ ] verify gateway token เรียก upstream read-only contracts ได้ครบตาม deployed version
+- [x] สร้าง `GATEWAY_UPSTREAM_BEARER` ใหม่
+- [x] เพิ่ม token ใหม่เข้า `MCP_REMOTE_BEARER_TOKENS` แบบ add-only (เก็บ user bearer tokens เดิมทุกตัวไว้)
+- [x] ตรวจ overlap window ที่ token เดิมและ gateway token ใช้งานพร้อมกันได้
+- [x] verify gateway token เรียก upstream read-only contracts ได้ครบตาม deployed version
 
 Depends on: GW-03
 
-Evidence: _pending_
+Evidence: existing MCP env เก็บ bearer เดิมและ gateway-only bearer พร้อมกัน; Gemini sync `28` tools และเรียก V3 read-only tools ผ่าน Gateway สำเร็จ; ไม่มี token literal ในหลักฐาน
 
 ### GW-05: Write rotation and emergency revoke runbook
 
@@ -158,11 +158,11 @@ Evidence: `oauth-gateway/src/security.js`; cross-identity tests; ADR/README ร�
 - [x] CORS deny-by-default เว้นแต่มี browser requirement ที่ยืนยันแล้ว
 - [x] log redaction สำหรับ tokens, codes, cookies, secrets, sensitive body content
 - [x] structured audit events โดยไม่บันทึก source code หรือ credentials
-- [ ] ยืนยัน read-only capability boundary ตรงกับ upstream
+- [x] ยืนยัน read-only capability boundary ตรงกับ upstream
 
 Depends on: GW-09
 
-Evidence: `oauth-gateway/src/{server,security}.js`; local security tests ผ่าน; upstream read-only parity รอ staging
+Evidence: `oauth-gateway/src/{server,security}.js`; local security testsผ่าน; Gemini sync `28` upstream tools และ representative V3 read-only calls สำเร็จ
 
 **Phase 3 Acceptance Gate**: automated tests ใน Phase 5 ผ่านบน staging, Gateway ไม่เพิ่ม/ลบ/เปลี่ยน tool contracts, request/response headers และ sessions ไม่รั่วข้าม identity
 
@@ -171,33 +171,33 @@ Evidence: `oauth-gateway/src/{server,security}.js`; local security tests ผ่�
 ### GW-11: Deploy staging Gateway
 
 - [x] deploy Gateway บน staging URL แยกจาก production MCP URL เดิม
-- [ ] ตั้ง staging OAuth client และ allowlist เฉพาะผู้ทดสอบ
+- [x] ตั้ง staging OAuth client และ allowlist เฉพาะผู้ทดสอบ
 
 Depends on: GW-10
 
-Evidence: Render service `srv-d9p1pf7qj5pc738io7v0`, Singapore/Free/single-instance, branch `codex/gemini-spark-oauth-gateway`, deploy `dep-d9p1pje5nbts7397i0ag` live at commit `3ed5ad9048879515d38a989c7344db5496ce61f5`; `https://flutter-widget-wallet-oauth-gateway.onrender.com/health` และ RFC 9728 metadata ผ่าน; auth allowlists/upstream bearer ยังเป็น nonfunctional staging placeholders จนกว่าจะ provision GW-04/Auth0 client
+Evidence: Render service `srv-d9p1pf7qj5pc738io7v0`, Singapore/Free/single-instance; Auth0 static client จำกัด `mcp:read`, owner subject และ client allowlists; deploy `dep-d9p2jobm8hqs73a65lo0` live at commit `f57982caf65a598aa8bef0bfe71a8023ec928e96`
 
 ### GW-12: Generic MCP client smoke test on staging
 
-- [ ] discovery
-- [ ] authorization
-- [ ] `initialize`
-- [ ] `tools/list`
-- [ ] representative read-only `tools/call`
+- [x] discovery
+- [x] authorization
+- [x] `initialize`
+- [x] `tools/list`
+- [x] representative read-only `tools/call`
 
 Depends on: GW-11
 
-Evidence: _pending_
+Evidence: Gemini custom app sync `28` tools; `search_v3_widgets`, `list_v3_widgets`, `list_v3_categories` สำเร็จ; Auth0 exchange success และ Gateway authenticated POST `200`/`202` ใน `docs/v3/V3_GEMINI_SPARK_OAUTH_GATEWAY_STAGING_EVIDENCE.md`
 
 ### GW-13: Real Gemini Spark handshake and evidence archive
 
-- [ ] เชื่อม Gemini Spark จริงกับ staging
-- [ ] บันทึกและ archive handshake evidence (metadata fetches, `401` challenge, authorization request, token exchange outcome แบบ redact secrets, first MCP session, session/reconnect behavior)
-- [ ] แก้ Gemini-specific deviations ก่อนผ่าน phase
+- [x] เชื่อม Gemini Spark จริงกับ staging
+- [x] บันทึกและ archive handshake evidence (metadata fetches, `401` challenge, authorization request, token exchange outcome แบบ redact secrets, first MCP session, session/reconnect behavior)
+- [x] แก้ Gemini-specific deviations ก่อนผ่าน phase
 
 Depends on: GW-12
 
-Evidence: _pending_
+Evidence: `docs/v3/V3_GEMINI_SPARK_OAUTH_GATEWAY_STAGING_EVIDENCE.md`; SSE InitializeResult regression ใน `oauth-gateway/test/server.test.js`
 
 **Phase 4 Acceptance Gate**: Gemini Spark จริงเชื่อม staging สำเร็จ, evidence ไม่มี token/client secret/authorization code, production canary จะไม่ใช่การเชื่อม Gemini ครั้งแรก, staging failures ไม่กระทบ existing Render MCP users
 
@@ -223,9 +223,9 @@ Evidence: `oauth-gateway/test/token-verifier.test.js`; provider-owned redirect/s
 
 ### GW-15: MCP protocol tests
 
-- [ ] `initialize`
-- [ ] `tools/list`
-- [ ] representative `tools/call`
+- [x] `initialize`
+- [x] `tools/list`
+- [x] representative `tools/call`
 - [x] JSON-RPC errors
 - [x] SSE streaming (local integration)
 - [x] cancellation (local integration)
@@ -236,7 +236,7 @@ Evidence: `oauth-gateway/test/token-verifier.test.js`; provider-owned redirect/s
 
 Depends on: GW-13
 
-Evidence: `oauth-gateway/test/server.test.js`; 27/27 local tests ผ่าน; real MCP initialize/tools lifecycle ยังรอ staging
+Evidence: `oauth-gateway/test/server.test.js`; 28/28 local tests ผ่าน; real Gemini MCP lifecycle และ V3 tool calls ผ่าน staging
 
 ### GW-16: Header and secret hygiene tests
 
@@ -325,8 +325,8 @@ Evidence: _pending_
 - [ ] Blocking decisions ได้รับอนุมัติและบันทึกใน ADR (รอยืนยัน hosting budget)
 - [x] Authorization Server และ Resource Gateway แยก responsibility ชัดเจน
 - [x] ไม่มี hand-rolled Authorization Server endpoints
-- [ ] Gemini Spark ผ่าน staging discovery, OAuth และ MCP handshake จริง
-- [ ] staging handshake evidence ถูก archive โดยไม่มี secret
+- [x] Gemini Spark ผ่าน staging discovery, OAuth และ MCP handshake จริง
+- [x] staging handshake evidence ถูก archive โดยไม่มี secret
 - [ ] Production Gemini canary ผ่าน OAuth, `initialize`, `tools/list`, representative Widget V3 reads, streaming, cancellation และ reconnect
 - [x] RFC 9728 metadata, `WWW-Authenticate` และ RFC 8707 resource binding ผ่าน local validation
 - [x] JWT/JWKS ทำงานตาม Auth0-compatible contract ใน local cryptographic tests
