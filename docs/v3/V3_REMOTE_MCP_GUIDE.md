@@ -105,3 +105,31 @@ Quick freshness check (anonymous):
 curl -s https://flutter-widget-wallet-mcp.onrender.com/health
 curl -s https://flutter-widget-wallet-mcp.onrender.com/info
 ```
+
+## Gemini Spark OAuth Gateway (Staging Only)
+
+Gemini Spark ใช้ OAuth Gateway แบบ additive หน้า MCP เดิม โดยไม่เปลี่ยน URL หรือ bearer config ของ Codex, Claude, Cursor และ clients เดิม
+
+```text
+Staging Gateway: https://flutter-widget-wallet-oauth-gateway.onrender.com/mcp
+Authorization:   Auth0 Authorization Code
+Scope:           mcp:read
+Status:          Personal/Staging closeout; not production-ready
+```
+
+ขั้นตอนเชื่อม staging:
+
+1. ไปที่ Gemini Spark → แอปที่เชื่อมต่อ → แอปที่กำหนดเอง
+2. กรอก Staging Gateway URL ด้านบน
+3. เปิดการตั้งค่าขั้นสูง แล้วกรอก OAuth Client ID และ Client Secret จาก secret manager ห้ามบันทึกค่าจริงลง repo หรือส่งผ่านข้อความ
+4. คัดลอก redirect URI ที่ Gemini แสดง และตรวจว่า Auth0 Application allowlist ตรงแบบ exact match
+5. กดยอมรับความเสี่ยง → เชื่อมต่อ → ทำ Google/Auth0 consent สำหรับ `mcp:read`
+6. ตรวจว่า Gemini แสดงรายการ tools จาก upstream และรัน representative V3 read-only call เช่น `list_v3_categories`
+
+ข้อควรระวัง:
+
+- URL ของ Gemini ต้องเป็น Gateway URL ไม่ใช่ MCP เดิม แต่ clients เดิมยังใช้ `https://flutter-widget-wallet-mcp.onrender.com/mcp` ต่อไป
+- Owner เลือกปิดรอบนี้เป็น Personal/Staging บน Render Free; Auth0 Google development keys ใช้ได้เฉพาะ staging และถ้าจะเปิด production ภายหลังต้องใช้ Google OAuth credentials ของโครงการเอง
+- Render Free อาจ cold start และยังไม่ใช่ production SLO
+- ถ้าแก้ subject/client allowlist หลัง account linking ล้มเหลว ให้ลบเฉพาะ custom connection นี้ใน Google Account แล้วเชื่อมใหม่เพื่อบังคับ token exchange ใหม่
+- หลักฐาน staging แบบ redact อยู่ที่ `docs/v3/V3_GEMINI_SPARK_OAUTH_GATEWAY_STAGING_EVIDENCE.md`

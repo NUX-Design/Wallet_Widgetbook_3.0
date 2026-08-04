@@ -1,0 +1,50 @@
+name: OAuth Gateway CI
+
+on:
+  push:
+    branches: ["main", "dev"]
+    paths:
+      - "oauth-gateway/**"
+      - "docs/v3/adr/ADR-001-GEMINI-SPARK-OAUTH-GATEWAY.md"
+      - "docs/v3/V3_GEMINI_SPARK_OAUTH_GATEWAY_SECURITY.md"
+      - ".github/workflows/oauth-gateway-ci.yml"
+  pull_request:
+    branches: ["main", "dev"]
+    paths:
+      - "oauth-gateway/**"
+      - "docs/v3/adr/ADR-001-GEMINI-SPARK-OAUTH-GATEWAY.md"
+      - "docs/v3/V3_GEMINI_SPARK_OAUTH_GATEWAY_SECURITY.md"
+      - ".github/workflows/oauth-gateway-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: oauth-gateway
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: oauth-gateway/package-lock.json
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Check syntax
+        run: npm run check
+
+      - name: Run security and protocol tests
+        run: npm test
+
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
