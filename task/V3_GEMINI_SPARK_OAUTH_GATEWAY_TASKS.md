@@ -1,7 +1,7 @@
 # Widget V3 Gemini Spark OAuth Gateway Tasks
 
 สร้างเมื่อ: `2026-08-04 23:18:05 +0700`
-อัปเดตล่าสุดเมื่อ: `2026-08-04 23:50:35 +0700`
+อัปเดตล่าสุดเมื่อ: `2026-08-05 00:11:14 +0700`
 
 Execution checklist นี้แตกจาก [`docs/v3/V3_GEMINI_SPARK_OAUTH_GATEWAY_PLAN.md`](../docs/v3/V3_GEMINI_SPARK_OAUTH_GATEWAY_PLAN.md) (สถานะแผน: `PLAN_APPROVED`, v0.4) งานนี้เป็นการเพิ่ม auth edge (OAuth-compatible MCP Resource Gateway) หน้า hosted MCP เดิม (`https://flutter-widget-wallet-mcp.onrender.com/mcp`) โดยไม่แทนที่หรือแก้ runtime/tool-contract เดิม
 
@@ -170,12 +170,12 @@ Evidence: `oauth-gateway/src/{server,security}.js`; local security tests ผ่�
 
 ### GW-11: Deploy staging Gateway
 
-- [ ] deploy Gateway บน staging URL แยกจาก production MCP URL เดิม
+- [x] deploy Gateway บน staging URL แยกจาก production MCP URL เดิม
 - [ ] ตั้ง staging OAuth client และ allowlist เฉพาะผู้ทดสอบ
 
 Depends on: GW-10
 
-Evidence: _pending_
+Evidence: Render service `srv-d9p1pf7qj5pc738io7v0`, Singapore/Free/single-instance, branch `codex/gemini-spark-oauth-gateway`, deploy `dep-d9p1pje5nbts7397i0ag` live at commit `3ed5ad9048879515d38a989c7344db5496ce61f5`; `https://flutter-widget-wallet-oauth-gateway.onrender.com/health` และ RFC 9728 metadata ผ่าน; auth allowlists/upstream bearer ยังเป็น nonfunctional staging placeholders จนกว่าจะ provision GW-04/Auth0 client
 
 ### GW-12: Generic MCP client smoke test on staging
 
