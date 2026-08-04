@@ -43,6 +43,8 @@ Operational rules for agents working in this repository. This repo is a Flutter 
 - Widget V3 zero-Flutter consumer preview backlog: `task/V3_ZERO_FLUTTER_PREVIEW_TASKS.md`
 - Widget V3 Lucide icon adapter plan: `docs/V3_LUCIDE_ICON_PLAN.md`
 - Widget V3 Lucide icon adapter backlog: `task/V3_LUCIDE_ICON_TASKS.md`
+- Widget V3 Gemini Spark OAuth Gateway plan: `docs/v3/V3_GEMINI_SPARK_OAUTH_GATEWAY_PLAN.md`
+- Widget V3 Gemini Spark OAuth Gateway backlog: `task/V3_GEMINI_SPARK_OAUTH_GATEWAY_TASKS.md`
 - Widget V3 zero-Flutter preview frozen contract: `mcp-server/v3/bundle_contract.js` (machine) + `docs/v3/V3_ZERO_FLUTTER_PREVIEW_CONTRACT.md` (human); rollout/rollback: `docs/v3/V3_ZERO_FLUTTER_PREVIEW_ROLLOUT.md`
 - Widget V3 preview publishing/scale guide: `docs/v3/V3_WIDGET_PREVIEW_PUBLISHING_GUIDE.md` — canonical operational workflow for making a new Widget V3 discoverable by the local host, hosted MCP, preview bundle, and `flutter-widget-v3-preview` skill.
 - Widget V3 zero-Flutter preview tooling: `scripts/v3-preview-bundle/` (`pack-v3-preview-bundle.mjs` packer, `launch-v3-preview.mjs` repo-independent launcher, `zero-flutter-acceptance.mjs` + `browser-verify.mjs` verifiers); CI `.github/workflows/v3-preview-bundle.yml`; MCP delivery in `mcp-server/v3/bundle_store.js` + `bundle_catalog.js` + `http-server.js` route `/v3/preview-bundle/*`. Generated bundle output `dist/` is gitignored.
@@ -215,6 +217,7 @@ Use these default execution recipes unless the user explicitly asks for a differ
 7. When asked for V3 progress, inspect the V3 checklist timestamp, checkboxes, dependencies, and attached evidence; do not infer progress from the architecture plan alone.
 8. For Widget V3 local HTML/browser preview or Widgetbook removal, use `task/V3_WEB_PREVIEW_TASKS.md`; do not append that work to the completed Theme V3 backlog.
 9. For Lucide package integration, Figma icon mapping, SVG overrides, or the shared V3 icon adapter, use `task/V3_LUCIDE_ICON_TASKS.md` and preserve Widget-typed icon slots in reusable Widget V3 APIs.
+10. For the Gemini Spark OAuth Gateway (auth edge in front of the existing hosted Render MCP), use `task/V3_GEMINI_SPARK_OAUTH_GATEWAY_TASKS.md`; do not treat any of it as implemented until its checkboxes are checked, and do not begin implementation before the plan's Blocking Decisions are approved.
 
 ### Change Workflow
 
