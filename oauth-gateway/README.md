@@ -11,6 +11,18 @@ npm test
 npm run check
 ```
 
+Generic remote smoke verification requires a short-lived access token issued by
+the configured Authorization Server. The verifier never prints the token:
+
+```bash
+OAUTH_GATEWAY_ACCESS_TOKEN="<short-lived-access-token>" npm run verify:remote
+```
+
+It verifies RFC 9728 discovery, the unauthenticated `401` challenge,
+`initialize`, `tools/list`, and a representative `list_v3_categories`
+`tools/call`. Override the target with `OAUTH_GATEWAY_URL`,
+`OAUTH_GATEWAY_SMOKE_TOOL`, and JSON `OAUTH_GATEWAY_SMOKE_ARGUMENTS`.
+
 Runtime configuration is documented in `.env.example`. Real secrets belong in
 Render/Auth0 only. Never provide `MCP_REMOTE_PROXY_SHARED_SECRET` to this
 service.

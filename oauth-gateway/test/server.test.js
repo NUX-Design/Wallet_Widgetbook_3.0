@@ -342,7 +342,11 @@ test("redacts audit fields marked as secrets", async (t) => {
   const app = await start({ audit: (event, fields) => events.push({ event, fields }) });
   t.after(() => app.server.close());
   await app.request("/mcp", { method: "GET", headers: { authorization: "Bearer client" } });
-  assert.ok(events.some(({ event }) => event === "gateway.request_completed"));
+  const completed = events.find(({ event }) => event === "gateway.request_completed");
+  assert.ok(completed);
+  assert.equal(Number.isSafeInteger(completed.fields.latency_ms), true);
+  assert.deepEqual(completed.fields.rpc_methods, []);
+  assert.ok(events.some(({ event, fields }) => event === "gateway.response_completed" && Number.isSafeInteger(fields.duration_ms)));
   assert.equal(JSON.stringify(events).includes("gateway-only-secret"), false);
   assert.equal(JSON.stringify(events).includes("Bearer client"), false);
 });

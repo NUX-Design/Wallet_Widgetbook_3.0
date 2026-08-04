@@ -54,3 +54,6 @@ sequenceDiagram
 - Record only event type, timestamp, status, issuer host, hashed identity key,
   MCP method, latency, and redacted error category.
 - Replace credentials in screenshots before committing evidence.
+
+Production monitoring thresholds, incident response, evidence template และ
+rollback rehearsal อยู่ใน `V3_GEMINI_SPARK_OAUTH_GATEWAY_OPERATIONS.md`.

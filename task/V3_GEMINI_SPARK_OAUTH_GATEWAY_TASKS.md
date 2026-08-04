@@ -100,7 +100,7 @@ Evidence: `docs/v3/V3_GEMINI_SPARK_GATEWAY_CREDENTIAL_RUNBOOK.md`; rehearsal ร
 
 ### GW-06: Implement Authorization Configuration
 
-- [ ] Authorization Code + PKCE `S256` เท่านั้น
+- [x] Authorization Code + PKCE `S256` เท่านั้น
 - [x] exact-match redirect URI allowlist
 - [ ] `state` validation
 - [x] consent และ identity policy ตามที่อนุมัติใน ADR
@@ -110,7 +110,7 @@ Evidence: `docs/v3/V3_GEMINI_SPARK_GATEWAY_CREDENTIAL_RUNBOOK.md`; rehearsal ร
 
 Depends on: GW-05
 
-Evidence: Auth0 API/Application ใช้ RS256, audience-bound `mcp:read`, Authorization Code, exact Gemini callback, owner/client allowlists, no refresh-token grant และ static registration; PKCE S256 enforcement กับ state-mismatch negative test ยัง pending
+Evidence: Auth0 API/Application ใช้ RS256, audience-bound `mcp:read`, Authorization Code, exact Gemini callback, owner/client allowlists, no refresh-token grant และ static registration; Auth0 third-party client reject flow ที่ไม่มี PKCE และ reject `code_challenge_method=plain`; state-mismatch negative test ยัง pending
 
 ### GW-07: Publish OAuth Resource Contract
 
@@ -187,7 +187,7 @@ Evidence: Render service `srv-d9p1pf7qj5pc738io7v0`, Singapore/Free/single-insta
 
 Depends on: GW-11
 
-Evidence: real Gemini client ผ่าน lifecycle และ tool calls แล้วใน GW-13; standalone generic OAuth MCP client harness ยัง pending เพื่อคง gate นี้แยกจาก Gemini-specific verification
+Evidence: generic verifier `oauth-gateway/scripts/verify-remote.mjs` ครอบคลุม discovery/challenge/initialize/tools lifecycle และมี parser tests; การรันด้วย short-lived non-Gemini access token จริงยัง pending เพื่อคง gate นี้แยกจาก Gemini-specific verification
 
 ### GW-13: Real Gemini Spark handshake and evidence archive
 
@@ -213,13 +213,13 @@ Evidence: `docs/v3/V3_GEMINI_SPARK_OAUTH_GATEWAY_STAGING_EVIDENCE.md`; SSE Initi
 - [x] invalid client identity
 - [x] redirect URI mismatch
 - [ ] `state` mismatch
-- [ ] PKCE downgrade หรือ verifier mismatch
+- [x] PKCE downgrade หรือ verifier mismatch
 - [x] invalid JWKS signature หรือ failed introspection
 - [ ] restricted DCR policy violation หากเปิด DCR
 
 Depends on: GW-13
 
-Evidence: `oauth-gateway/test/token-verifier.test.js`; Auth0 staging logs ยืนยัน callback mismatch ถูก reject ก่อนเพิ่ม exact Gateway callback; state/PKCE negative tests ยัง pending
+Evidence: `oauth-gateway/test/token-verifier.test.js`; Auth0 staging logs ยืนยัน callback mismatch, missing PKCE และ `plain` downgrade ถูก reject; state-mismatch negative test ยัง pending
 
 ### GW-15: MCP protocol tests
 
@@ -236,7 +236,7 @@ Evidence: `oauth-gateway/test/token-verifier.test.js`; Auth0 staging logs ยื
 
 Depends on: GW-13
 
-Evidence: `oauth-gateway/test/server.test.js`; 28/28 local tests ผ่าน; real Gemini MCP lifecycle และ V3 tool calls ผ่าน staging
+Evidence: `oauth-gateway/test/{server,smoke-client}.test.js`; 30/30 local tests ผ่าน; real Gemini MCP lifecycle และ V3 tool calls ผ่าน staging
 
 ### GW-16: Header and secret hygiene tests
 
@@ -248,7 +248,7 @@ Evidence: `oauth-gateway/test/server.test.js`; 28/28 local tests ผ่าน; r
 
 Depends on: GW-13
 
-Evidence: `oauth-gateway/test/{server,security}.test.js`; 28/28 local tests ผ่าน
+Evidence: `oauth-gateway/test/{server,security,smoke-client}.test.js`; 30/30 local tests ผ่าน
 
 ### GW-17: Legacy regression gates
 
@@ -340,7 +340,7 @@ Draft staging onboarding ถูกเพิ่มแบบ additive ใน `docs
 - [x] Existing direct bearer endpoint และ local `stdio` ผ่าน regression โดยไม่แก้ config
 - [x] Upstream tool contracts, read-only boundary และ preview freshness ไม่เปลี่ยนจาก deployed version
 - [ ] Gateway credential rotation runbook ผ่าน rehearsal
-- [ ] Monitoring, incident response และ rollback runbooks พร้อมใช้
+- [x] Monitoring, incident response และ rollback runbooks พร้อมใช้
 - [ ] Rollback Gateway ได้โดย existing Render MCP ยังคงให้บริการ
 
 ## Reference

@@ -167,6 +167,7 @@ export function createGatewayServer({ config, verifyToken, fetchImpl = fetch, au
   });
 
   return createServer(async (req, res) => {
+    const requestStartedAt = Date.now();
     const url = new URL(req.url ?? "/", config.publicOrigin);
 
     if (req.method === "GET" && url.pathname === "/health") {
@@ -190,7 +191,7 @@ export function createGatewayServer({ config, verifyToken, fetchImpl = fetch, au
 
     const ip = clientIp(req, config);
     if (!globalLimiter.take("global") || !identityLimiter.take(`ip:${ip}`)) {
-      audit("gateway.rate_limited", { ip });
+      audit("gateway.rate_limited", { ip, latency_ms: Date.now() - requestStartedAt });
       return sendJson(res, 429, { error: "rate_limited" }, { "retry-after": "60" });
     }
 
@@ -198,7 +199,7 @@ export function createGatewayServer({ config, verifyToken, fetchImpl = fetch, au
     try {
       identity = await verifyToken(req.headers.authorization);
     } catch (error) {
-      audit("gateway.auth_rejected", { reason: error.message, ip });
+      audit("gateway.auth_rejected", { reason: error.message, ip, latency_ms: Date.now() - requestStartedAt });
       const missing = error.message === "missing_token";
       const insufficientScope = error.message === "insufficient_scope";
       const forbiddenIdentity = ["invalid_subject", "invalid_client"].includes(error.message);
@@ -212,7 +213,7 @@ export function createGatewayServer({ config, verifyToken, fetchImpl = fetch, au
 
     const identityId = identityHash(identity);
     if (!identityLimiter.take(`identity:${identityId}`)) {
-      audit("gateway.rate_limited", { identity: identityId, ip });
+      audit("gateway.rate_limited", { identity: identityId, ip, latency_ms: Date.now() - requestStartedAt });
       return sendJson(res, 429, { error: "rate_limited" }, { "retry-after": "60" });
     }
 
@@ -220,7 +221,7 @@ export function createGatewayServer({ config, verifyToken, fetchImpl = fetch, au
     try {
       sessionBindings.assert(incomingSessionId, identity);
     } catch (error) {
-      audit("gateway.session_rejected", { identity: identityId, ip, reason: error.code });
+      audit("gateway.session_rejected", { identity: identityId, ip, reason: error.code, latency_ms: Date.now() - requestStartedAt });
       return sendJson(res, error.statusCode, { error: error.code });
     }
 
@@ -273,7 +274,11 @@ export function createGatewayServer({ config, verifyToken, fetchImpl = fetch, au
         if (!successfulInitializeBody(initializeBody)) {
           delete responseHeaders["mcp-session-id"];
           res.writeHead(upstream.status, responseHeaders);
-          audit("gateway.initialize_rejected", { identity: identityId, status: upstream.status });
+          audit("gateway.initialize_rejected", {
+            identity: identityId,
+            status: upstream.status,
+            latency_ms: Date.now() - requestStartedAt,
+          });
           return res.end(initializeBody);
         }
         try {
@@ -283,22 +288,38 @@ export function createGatewayServer({ config, verifyToken, fetchImpl = fetch, au
           return sendJson(res, error.statusCode ?? 502, { error: error.code ?? "upstream_protocol_error" });
         }
         res.writeHead(upstream.status, responseHeaders);
-        audit("gateway.request_completed", { identity: identityId, method: req.method, status: upstream.status });
+        audit("gateway.request_completed", {
+          identity: identityId,
+          method: req.method,
+          rpc_methods: rpcMethods,
+          status: upstream.status,
+          latency_ms: Date.now() - requestStartedAt,
+        });
         return res.end(initializeBody);
       }
 
       res.writeHead(upstream.status, responseHeaders);
-      audit("gateway.request_completed", { identity: identityId, method: req.method, status: upstream.status });
-      if (!upstream.body) return res.end();
+      audit("gateway.request_completed", {
+        identity: identityId,
+        method: req.method,
+        rpc_methods: rpcMethods,
+        status: upstream.status,
+        latency_ms: Date.now() - requestStartedAt,
+      });
+      if (!upstream.body) {
+        audit("gateway.response_completed", { identity: identityId, status: upstream.status, duration_ms: Date.now() - requestStartedAt });
+        return res.end();
+      }
       const source = Readable.fromWeb(upstream.body);
       const watchdog = idleWatchdog(config.upstreamIdleTimeoutMs, () => {
         upstreamAbort.abort(new Error("upstream_idle_timeout"));
         source.destroy(new Error("upstream_idle_timeout"));
       });
       await pipeline(source, watchdog, res);
+      audit("gateway.response_completed", { identity: identityId, status: upstream.status, duration_ms: Date.now() - requestStartedAt });
     } catch (error) {
       clearTimeout(headerTimer);
-      audit("gateway.upstream_failed", { identity: identityId, reason: error.name });
+      audit("gateway.upstream_failed", { identity: identityId, reason: error.name, latency_ms: Date.now() - requestStartedAt });
       if (!res.headersSent) return sendJson(res, 502, { error: "upstream_unavailable" });
       res.destroy();
     }

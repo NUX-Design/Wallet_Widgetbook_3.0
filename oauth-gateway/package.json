@@ -8,8 +8,9 @@
   },
   "scripts": {
     "start": "node src/index.js",
-    "check": "node --check src/*.js",
-    "test": "node --test"
+    "check": "node --check src/*.js scripts/*.mjs",
+    "test": "node --test",
+    "verify:remote": "node scripts/verify-remote.mjs"
   },
   "dependencies": {
     "jose": "^6.1.0"
