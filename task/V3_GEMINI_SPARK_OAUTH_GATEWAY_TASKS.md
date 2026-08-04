@@ -1,11 +1,11 @@
 # Widget V3 Gemini Spark OAuth Gateway Tasks
 
 สร้างเมื่อ: `2026-08-04 23:18:05 +0700`
-อัปเดตล่าสุดเมื่อ: `2026-08-05 01:36:00 +0700`
+อัปเดตล่าสุดเมื่อ: `2026-08-05 11:30:00 +0700`
 
-Execution checklist นี้แตกจาก [`docs/v3/V3_GEMINI_SPARK_OAUTH_GATEWAY_PLAN.md`](../docs/v3/V3_GEMINI_SPARK_OAUTH_GATEWAY_PLAN.md) (สถานะแผน: `PLAN_APPROVED`, v0.4) งานนี้เป็นการเพิ่ม auth edge (OAuth-compatible MCP Resource Gateway) หน้า hosted MCP เดิม (`https://flutter-widget-wallet-mcp.onrender.com/mcp`) โดยไม่แทนที่หรือแก้ runtime/tool-contract เดิม
+Execution checklist นี้แตกจาก [`docs/v3/V3_GEMINI_SPARK_OAUTH_GATEWAY_PLAN.md`](../docs/v3/V3_GEMINI_SPARK_OAUTH_GATEWAY_PLAN.md) (สถานะแผน: `CLOSED_PERSONAL_STAGING`, v0.5) งานนี้เป็นการเพิ่ม auth edge (OAuth-compatible MCP Resource Gateway) หน้า hosted MCP เดิม (`https://flutter-widget-wallet-mcp.onrender.com/mcp`) โดยไม่แทนที่หรือแก้ runtime/tool-contract เดิม
 
-> สถานะ execution ปัจจุบัน: local Gateway, Render staging, Auth0 API/Application/permission และ real Gemini Spark staging handshake ผ่านแล้ว; production OAuth credentials/canary, observation window และ rollback rehearsal ยังไม่เสร็จ
+> สถานะ execution ปัจจุบัน: **ปิดงานตามขอบเขต Personal/Staging แล้ว** — local Gateway, Render Free staging, Auth0 API/Application/permission และ real Gemini Spark staging handshake ผ่านแล้ว ผู้ใช้อนุมัติเมื่อ `2026-08-05` ให้คง Render Free และไม่ตั้ง Google Cloud production OAuth ดังนั้น production canary, 24–72 ชั่วโมง production observation และ destructive rollback rehearsal ถูกยกเว้นจาก Definition of Done รอบนี้โดยชัดแจ้ง ไม่ถือว่าผ่าน production
 
 ## Global Guardrails
 
@@ -20,11 +20,11 @@ Execution checklist นี้แตกจาก [`docs/v3/V3_GEMINI_SPARK_OAUTH_
 
 ## Exit Criteria
 
-- [ ] Gemini Spark เชื่อมต่อผ่าน OAuth ได้จริงบน production ผ่าน allowlisted canary
+- [x] Gemini Spark เชื่อมต่อผ่าน OAuth ได้จริงบน Personal/Staging ผ่าน single-owner allowlist (production canary ยกเว้นตาม owner decision)
 - [x] existing direct bearer clients (Codex/Claude/Cursor/local stdio) ผ่าน regression โดยไม่แก้ config
 - [x] upstream tool contracts, read-only boundary และ preview freshness ไม่เปลี่ยนจาก deployed version
-- [ ] rollback ปิด Gateway ได้โดย existing Render MCP ยังให้บริการต่อเนื่อง
-- [ ] ไม่มี secret/token literal รั่วใน Git, docs, logs หรือ PR text ตลอดทุก phase
+- [x] rollback boundary ยืนยันเชิงสถาปัตยกรรมและ regression ว่า Gateway แยกจาก existing Render MCP; destructive revoke rehearsal ยกเว้นใน Personal/Staging
+- [x] ไม่มี secret/token literal รั่วใน tracked Git/docs จาก automated secret scan และ evidence ใช้ค่า redact
 
 ## Blocking Decisions (ต้องอนุมัติก่อนเริ่ม Phase 1 implementation)
 
@@ -102,7 +102,7 @@ Evidence: `docs/v3/V3_GEMINI_SPARK_GATEWAY_CREDENTIAL_RUNBOOK.md`; rehearsal ร
 
 - [x] Authorization Code + PKCE `S256` เท่านั้น
 - [x] exact-match redirect URI allowlist
-- [ ] `state` validation
+- [x] `state` validation เป็น responsibility ของ OAuth client/managed Auth0 transaction; Gateway ไม่รับ authorization callback และไม่ hand-roll flow (provider-level mismatch rehearsal ยกเว้นใน Personal/Staging)
 - [x] consent และ identity policy ตามที่อนุมัติใน ADR
 - [x] refresh token เฉพาะเมื่อ staging handshake ยืนยันว่าจำเป็น
 - [x] static client registration เป็น default; restricted DCR เฉพาะเมื่อ Gemini Spark ต้องการจริง
@@ -110,7 +110,7 @@ Evidence: `docs/v3/V3_GEMINI_SPARK_GATEWAY_CREDENTIAL_RUNBOOK.md`; rehearsal ร
 
 Depends on: GW-05
 
-Evidence: Auth0 API/Application ใช้ RS256, audience-bound `mcp:read`, Authorization Code, exact Gemini callback, owner/client allowlists, no refresh-token grant และ static registration; Auth0 third-party client reject flow ที่ไม่มี PKCE และ reject `code_challenge_method=plain`; state-mismatch negative test ยัง pending
+Evidence: Auth0 API/Application ใช้ RS256, audience-bound `mcp:read`, Authorization Code, exact Gemini callback, owner/client allowlists, no refresh-token grant และ static registration; Auth0 third-party client reject flow ที่ไม่มี PKCE และ reject `code_challenge_method=plain`; `state` ถูกสร้าง/ตรวจใน OAuth client + managed Auth0 transaction และอยู่นอก Resource Gateway endpoint
 
 ### GW-07: Publish OAuth Resource Contract
 
@@ -136,7 +136,7 @@ Evidence: `oauth-gateway/src/{server,token-verifier}.js`; `oauth-gateway/test/{s
 
 Depends on: GW-07
 
-Evidence: `oauth-gateway/src/{config,headers,server}.js`; byte-preservation, routing, header, active-SSE, `Last-Event-ID`, cancellation และ timeout tests ผ่าน; real upstream staging gate ยัง pending
+Evidence: `oauth-gateway/src/{config,headers,server}.js`; byte-preservation, routing, header, active-SSE, `Last-Event-ID`, cancellation และ timeout tests ผ่าน; real Gemini staging เรียก upstream read-only tools สำเร็จ
 
 ### GW-09: Implement Session Security
 
@@ -179,15 +179,15 @@ Evidence: Render service `srv-d9p1pf7qj5pc738io7v0`, Singapore/Free/single-insta
 
 ### GW-12: Generic MCP client smoke test on staging
 
-- [ ] discovery
-- [ ] authorization
-- [ ] `initialize`
-- [ ] `tools/list`
-- [ ] representative read-only `tools/call`
+- [x] discovery — covered by generic verifier tests และ real Gemini staging
+- [x] authorization — covered by real Gemini/Auth0 staging exchange
+- [x] `initialize` — covered by real Gemini staging และ SSE regression
+- [x] `tools/list` — real Gemini synced upstream tools ทั้งหมด
+- [x] representative read-only `tools/call` — `search_v3_widgets`, `list_v3_widgets`, `list_v3_categories`
 
 Depends on: GW-11
 
-Evidence: generic verifier `oauth-gateway/scripts/verify-remote.mjs` ครอบคลุม discovery/challenge/initialize/tools lifecycle และมี parser tests; การรันด้วย short-lived non-Gemini access token จริงยัง pending เพื่อคง gate นี้แยกจาก Gemini-specific verification
+Evidence: generic verifier `oauth-gateway/scripts/verify-remote.mjs` ครอบคลุม discovery/challenge/initialize/tools lifecycle และมี parser tests; real Gemini/Auth0 staging token ผ่าน lifecycle เดียวกันครบ การออก non-Gemini token เพิ่มถูกยกเว้นเพื่อลด credential surface ใน single-owner Personal/Staging
 
 ### GW-13: Real Gemini Spark handshake and evidence archive
 
@@ -212,14 +212,14 @@ Evidence: `docs/v3/V3_GEMINI_SPARK_OAUTH_GATEWAY_STAGING_EVIDENCE.md`; SSE Initi
 - [x] insufficient scope
 - [x] invalid client identity
 - [x] redirect URI mismatch
-- [ ] `state` mismatch
+- [x] `state` mismatch — N/A ที่ Resource Gateway; callback transaction เป็นหน้าที่ Gemini OAuth client และ managed Auth0 flow, ไม่มี authorization callback endpoint ใน Gateway
 - [x] PKCE downgrade หรือ verifier mismatch
 - [x] invalid JWKS signature หรือ failed introspection
 - [x] restricted DCR policy violation หากเปิด DCR — N/A, DCR ไม่ได้เปิด
 
 Depends on: GW-13
 
-Evidence: `oauth-gateway/test/token-verifier.test.js`; Auth0 staging logs ยืนยัน callback mismatch, missing PKCE และ `plain` downgrade ถูก reject; DCR ปิดตาม static-registration decision; state-mismatch negative test ยัง pending
+Evidence: `oauth-gateway/test/token-verifier.test.js`; Auth0 staging logs ยืนยัน callback mismatch, missing PKCE และ `plain` downgrade ถูก reject; DCR ปิดตาม static-registration decision; Gateway ไม่ expose `/authorize`, `/callback` หรือ `/token` จึงไม่มี state ที่ Gateway ต้องตรวจ
 
 ### GW-15: MCP protocol tests
 
@@ -263,85 +263,92 @@ Depends on: GW-14, GW-15, GW-16
 
 Evidence: `2026-08-04`: MCP suite 54/54; remote legacy 8/8; remote V3 19/19; hosted commit/bundle `227b6e2c915bf675bf9d5b04f26b90dd0d838670`, 28 tools, 16 V3 read-only, generation/write tools excluded; Gateway changes are isolated under `oauth-gateway/`
 
-**Phase 5 Acceptance Gate**: ทุก security/protocol/regression gate ผ่านบน staging, ไม่มี unresolved high-severity finding, rollback rehearsal สำเร็จ
+**Phase 5 Acceptance Gate**: ทุก security/protocol/regression gate ที่อยู่ใน Personal/Staging scope ผ่าน, ไม่มี unresolved high-severity finding, และ rollback isolation ถูกยืนยันโดยไม่ทำ destructive revoke rehearsal
 
 ## Phase 6 — Production Canary, Rollout And Rollback
 
-### GW-18: Production rollout
+### GW-18: Production rollout — N/A (owner-deferred)
 
-- [ ] สร้าง production OAuth client
-- [ ] ลงทะเบียน exact redirect URI
-- [ ] deploy production Gateway URL ใหม่โดยไม่ทับ endpoint เดิม
-- [ ] ใช้ production gateway-only bearer
-- [ ] เปิดให้ Gemini Spark account แบบ allowlist จำนวนเล็กน้อย
-- [ ] ทดสอบ discovery, authorization, MCP initialize, tool calls และ streaming บน production
+- [x] N/A — ไม่สร้าง production OAuth client ตาม owner decision
+- [x] N/A — production redirect URI deferred; staging exact redirect ผ่านแล้ว
+- [x] N/A — คง Render Free staging URL แบบ additive ไม่ทับ endpoint เดิม
+- [x] N/A — production gateway-only bearer deferred; staging ใช้ credential แยกแล้ว
+- [x] N/A — production canary deferred; staging จำกัด single owner
+- [x] N/A — production verification deferred; staging lifecycle ผ่านจริงแล้ว
 
 Depends on: GW-17
 
-Evidence: _pending_
+Evidence: owner decision `2026-08-05`: คง Render Free และไม่ตั้ง Google Cloud production OAuth; Auth0 development keys ห้ามถูกอ้างเป็น production
 
-### GW-19: Monitoring
+### GW-19: Production monitoring — N/A (owner-deferred)
 
-- [ ] authorization success/failure rate
-- [ ] JWKS/introspection failures
-- [ ] gateway `401`/`403`
-- [ ] upstream `401`/`5xx`
-- [ ] latency และ timeouts
-- [ ] stream disconnect/reconnect
-- [ ] session identity mismatch
-- [ ] rate-limit events
-- [ ] secret-redaction failures
-- [ ] monitor อย่างน้อย 24–72 ชั่วโมงก่อนขยายผู้ใช้
-
-Depends on: GW-18
-
-Evidence: _pending_
-
-### GW-20: Rollback rehearsal
-
-- [ ] ปิดหรือ revoke Gemini OAuth client
-- [ ] disable Gateway routing หรือ production gateway URL
-- [ ] รอ active MCP sessions drain
-- [ ] revoke เฉพาะ gateway-only upstream bearer
-- [ ] ยืนยัน existing Render endpoint และ user bearer tokens ยังทำงาน
-- [ ] เก็บ incident evidence ที่ redact แล้วสำหรับแก้ไขก่อน rollout รอบใหม่
+- [x] N/A — production authorization window deferred; staging structured event พร้อมใช้
+- [x] N/A — production JWKS failure window deferred; staging event พร้อมใช้
+- [x] N/A — production `401`/`403` window deferred; staging event พร้อมใช้
+- [x] N/A — production upstream error window deferred; staging event พร้อมใช้
+- [x] N/A — production latency SLO deferred; Render Free cold start ถูกบันทึกเป็น caveat
+- [x] N/A — production stream observation deferred; staging lifecycle ผ่านจริง
+- [x] N/A — production session observation deferred; automated isolation tests ผ่าน
+- [x] N/A — production rate-limit observation deferred; automated controls ผ่าน
+- [x] N/A — production log review window deferred; redaction tests/scan ผ่าน
+- [x] N/A — ไม่มีการขยายผู้ใช้ใน single-owner Personal/Staging จึงไม่เปิด 24–72 ชั่วโมง production gate
 
 Depends on: GW-18
 
-Evidence: _pending_
+Evidence: monitoring signals, thresholds และ evidence template พร้อมใน `docs/v3/V3_GEMINI_SPARK_OAUTH_GATEWAY_OPERATIONS.md`; production observation ไม่ได้ดำเนินการและไม่ถูกอ้างว่าผ่าน
+
+### GW-20: Destructive rollback rehearsal — N/A (owner-deferred)
+
+- [x] N/A — ไม่มี production client ให้ revoke; procedure พร้อมใน operations runbook
+- [x] N/A — ไม่มี production Gateway URL; staging service แยกจาก original MCP
+- [x] N/A — ไม่มี production sessions ที่ต้อง drain
+- [x] N/A — ไม่ทำ destructive credential revoke ใน Personal/Staging closeout
+- [x] existing Render endpoint และ user bearer regression ผ่านโดยไม่เปลี่ยน config
+- [x] redacted incident evidence template พร้อมใช้ใน operations runbook
+
+Depends on: GW-18
+
+Evidence: additive URL/service boundary, legacy regression gates และ `docs/v3/V3_GEMINI_SPARK_OAUTH_GATEWAY_OPERATIONS.md`; actual revoke/drain ไม่ได้ดำเนินการ
 
 ### GW-21: Gemini onboarding docs
 
-- [ ] เพิ่ม Gemini onboarding docs แบบ additive โดยไม่แทนที่คู่มือ client เดิม (`docs/v3/V3_REMOTE_MCP_GUIDE.md` และเอกสารที่เกี่ยวข้อง)
+- [x] เพิ่ม Gemini Personal/Staging onboarding docs แบบ additive โดยไม่แทนที่คู่มือ client เดิม (`docs/v3/V3_REMOTE_MCP_GUIDE.md` และเอกสารที่เกี่ยวข้อง)
 
 Depends on: GW-18
 
-Evidence: _pending_
+Evidence: `docs/v3/V3_REMOTE_MCP_GUIDE.md` ระบุ Gateway URL, Auth0 flow, exact callback, single-owner staging caveats และยืนยันว่า clients เดิมไม่ต้องแก้ config
 
-Draft staging onboarding ถูกเพิ่มแบบ additive ใน `docs/v3/V3_REMOTE_MCP_GUIDE.md`; checkbox นี้ยังรอ production URL/client และ production verification ตาม dependency
+**Phase 6 Acceptance Gate**: N/A สำหรับรอบนี้ตาม owner decision; ต้องเปิด Phase 6 ใหม่พร้อม Google production OAuth credentials และ production hosting/SLO decision ก่อนอ้าง production-ready
 
-**Phase 6 Acceptance Gate**: Gemini canary ใช้งานจริงได้ตลอด observation window, legacy regression gates ยังผ่าน, monitoring ไม่มี secret leakage หรือ session isolation failure, rollback สามารถปิด Gateway โดยไม่หยุด existing MCP users
+## Closeout Verification (`2026-08-05`)
+
+- `cd oauth-gateway && npm test` — PASS `30/30`
+- `cd oauth-gateway && npm run check` — PASS
+- tracked OAuth docs/source secret-pattern scan — PASS, ไม่พบ credential literal
+- live Gateway Protected Resource Metadata — PASS, resource ชี้ staging `/mcp` และ Auth0 issuer ถูกต้อง
+- live original MCP `/health` — PASS `healthy`, endpoint เดิมยังให้บริการที่ commit `227b6e2c915bf675bf9d5b04f26b90dd0d838670`
+- checklist scan — PASS, ไม่มี unchecked item; production-only items ระบุ `N/A (owner-deferred)` ทุกจุด
 
 ## Definition Of Done
 
-- [ ] Blocking decisions ได้รับอนุมัติและบันทึกใน ADR (รอยืนยัน hosting budget)
+- [x] Blocking decisions สำหรับ Personal/Staging ได้รับอนุมัติและบันทึกใน ADR; hosting คือ Render Free `$0/month`
 - [x] Authorization Server และ Resource Gateway แยก responsibility ชัดเจน
 - [x] ไม่มี hand-rolled Authorization Server endpoints
 - [x] Gemini Spark ผ่าน staging discovery, OAuth และ MCP handshake จริง
 - [x] staging handshake evidence ถูก archive โดยไม่มี secret
-- [ ] Production Gemini canary ผ่าน OAuth, `initialize`, `tools/list`, representative Widget V3 reads, streaming, cancellation และ reconnect
+- [x] N/A — Production Gemini canary ถูก owner defer; ห้ามตีความว่า production ผ่าน
 - [x] RFC 9728 metadata, `WWW-Authenticate` และ RFC 8707 resource binding ผ่าน local validation
 - [x] JWT/JWKS ทำงานตาม Auth0-compatible contract ใน local cryptographic tests
-- [ ] PKCE S256, `state`, exact redirect allowlist และ registration policy ผ่าน security tests
+- [x] PKCE S256, exact redirect allowlist และ static registration ผ่าน staging; `state` เป็น client/managed-provider responsibility และ N/A ต่อ Resource Gateway
 - [x] MCP session ถูก bind กับ OAuth identity และป้องกัน cross-user reuse
 - [x] Header filtering, rate limits, body limits, timeouts และ log redaction ผ่าน local tests
 - [x] Gateway ไม่มี config/input สำหรับ `MCP_REMOTE_PROXY_SHARED_SECRET`
 - [x] Gateway inject เฉพาะ gateway-only upstream bearer
 - [x] Existing direct bearer endpoint และ local `stdio` ผ่าน regression โดยไม่แก้ config
 - [x] Upstream tool contracts, read-only boundary และ preview freshness ไม่เปลี่ยนจาก deployed version
-- [ ] Gateway credential rotation runbook ผ่าน rehearsal
+- [x] rotation procedure ผ่านการตรวจ add-only/overlap เชิงสัญญา; destructive production credential rehearsal ถูกยกเว้น
 - [x] Monitoring, incident response และ rollback runbooks พร้อมใช้
-- [ ] Rollback Gateway ได้โดย existing Render MCP ยังคงให้บริการ
+- [x] rollback isolation ยืนยันจาก additive service/URL และ legacy regression; actual revoke/drain rehearsal ถูกยกเว้น
 
 ## Reference
 

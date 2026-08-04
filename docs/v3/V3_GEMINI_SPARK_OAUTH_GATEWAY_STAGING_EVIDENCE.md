@@ -43,4 +43,4 @@
 - ไม่มี secret/token/code literal ในเอกสารนี้
 - Google social connection ใช้ Auth0 development keys สำหรับ staging เท่านั้น ห้ามใช้เป็น production credential
 - Existing bearer clients และ local stdio clients ไม่ถูกแก้ config
-- Production rollout, paid Render decision, production Google OAuth keys, canary, observation window และ rollback rehearsal ยังเป็นคนละ gate และยังไม่ถือว่าเสร็จจากหลักฐาน staging นี้
+- Owner decision `2026-08-05` ปิดรอบนี้เป็น Personal/Staging บน Render Free โดย defer production Google OAuth keys, canary, observation window และ destructive rollback rehearsal; หลักฐานนี้ไม่ใช่ production evidence

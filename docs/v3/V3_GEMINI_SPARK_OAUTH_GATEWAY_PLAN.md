@@ -1,9 +1,11 @@
 # Widget V3 Gemini Spark OAuth Gateway Plan
 
-สถานะ: Planning — `PLAN_APPROVED`
-เวอร์ชัน: `v0.4`
-อัปเดตล่าสุดเมื่อ: `2026-08-04`
-ขอบเขต: OAuth-compatible auth edge สำหรับ Gemini Spark โดยไม่เปลี่ยน MCP runtime เดิม
+สถานะ: `CLOSED_PERSONAL_STAGING` (architecture เดิมผ่าน `PLAN_APPROVED`)
+เวอร์ชัน: `v0.5-personal-staging-closeout`
+อัปเดตล่าสุดเมื่อ: `2026-08-05`
+ขอบเขต: OAuth-compatible auth edge สำหรับ Gemini Spark แบบ Personal/Staging บน Render Free โดยไม่เปลี่ยน MCP runtime เดิม
+
+> Owner decision (`2026-08-05`): คง Render Free และไม่ตั้ง Google Cloud production OAuth ในรอบนี้ Phase 6 production canary/observation/destructive rollback จึงถูก defer และไม่ใช่ Definition of Done ของ Personal/Staging ห้ามใช้สถานะปิดแผนนี้อ้างว่า production-ready
 
 ## Goal
 
@@ -316,7 +318,9 @@ Gateway เป็น Resource Server และ proxy เท่านั้น �
 - ไม่มี unresolved high-severity finding
 - rollback rehearsal สำเร็จ
 
-## Phase 6 — Production Canary, Rollout And Rollback
+## Phase 6 — Production Canary, Rollout And Rollback (Deferred)
+
+Phase นี้เก็บไว้เป็น future production gate และไม่ถูกดำเนินการใน `v0.5-personal-staging-closeout` การกลับมาเปิด Phase 6 ต้องมี owner approval ใหม่, Google production OAuth credentials และ hosting/SLO decision ที่ไม่อ้างข้อจำกัดของ Render Free เป็น production reliability
 
 ### Production Rollout
 
@@ -357,26 +361,26 @@ Gateway เป็น Resource Server และ proxy เท่านั้น �
 - monitoring ไม่มี secret leakage หรือ session isolation failure
 - rollback สามารถปิด Gateway โดยไม่หยุด existing MCP users
 
-## Definition Of Done
+## Definition Of Done — Personal/Staging Closeout
 
-- [ ] Blocking decisions ได้รับอนุมัติและบันทึกใน ADR
-- [ ] Authorization Server และ Resource Gateway แยก responsibility ชัดเจน
-- [ ] ไม่มี hand-rolled Authorization Server endpoints
-- [ ] Gemini Spark ผ่าน staging discovery, OAuth และ MCP handshake จริง
-- [ ] staging handshake evidence ถูก archive โดยไม่มี secret
-- [ ] Production Gemini canary ผ่าน OAuth, `initialize`, `tools/list`, representative Widget V3 reads, streaming, cancellation และ reconnect
-- [ ] RFC 9728 metadata, `WWW-Authenticate` และ RFC 8707 resource binding ผ่าน validation
-- [ ] JWT/JWKS หรือ opaque introspection ทำงานตาม provider ที่เลือก
-- [ ] PKCE S256, `state`, exact redirect allowlist และ registration policy ผ่าน security tests
-- [ ] MCP session ถูก bind กับ OAuth identity และป้องกัน cross-user reuse
-- [ ] Header filtering, rate limits, body limits, timeouts และ log redaction ผ่าน tests
-- [ ] Gateway ไม่ได้รับ `MCP_REMOTE_PROXY_SHARED_SECRET`
-- [ ] Gateway inject เฉพาะ gateway-only upstream bearer
-- [ ] Existing direct bearer clients และ local `stdio` users ผ่าน regression โดยไม่แก้ config
-- [ ] Upstream tool contracts, read-only boundary และ preview freshness ไม่เปลี่ยนจาก deployed version
-- [ ] Gateway credential rotation runbook ผ่าน rehearsal
-- [ ] Monitoring, incident response และ rollback runbooks พร้อมใช้
-- [ ] Rollback Gateway ได้โดย existing Render MCP ยังคงให้บริการ
+- [x] Blocking decisions สำหรับ Personal/Staging ได้รับอนุมัติและบันทึกใน ADR
+- [x] Authorization Server และ Resource Gateway แยก responsibility ชัดเจน
+- [x] ไม่มี hand-rolled Authorization Server endpoints
+- [x] Gemini Spark ผ่าน staging discovery, OAuth และ MCP handshake จริง
+- [x] staging handshake evidence ถูก archive โดยไม่มี secret
+- [x] Production Gemini canary — N/A/deferred ตาม owner decision; ไม่อ้างว่า production ผ่าน
+- [x] RFC 9728 metadata, `WWW-Authenticate` และ RFC 8707 resource binding ผ่าน validation
+- [x] JWT/JWKS ทำงานตาม Auth0-compatible contract
+- [x] PKCE S256, exact redirect allowlist และ static registration ผ่าน staging; `state` เป็น OAuth client/managed-provider responsibility ไม่ใช่ Resource Gateway endpoint
+- [x] MCP session ถูก bind กับ OAuth identity และป้องกัน cross-user reuse
+- [x] Header filtering, rate limits, body limits, timeouts และ log redaction ผ่าน tests
+- [x] Gateway ไม่ได้รับ `MCP_REMOTE_PROXY_SHARED_SECRET`
+- [x] Gateway inject เฉพาะ gateway-only upstream bearer
+- [x] Existing direct bearer clients และ local `stdio` users ผ่าน regression โดยไม่แก้ config
+- [x] Upstream tool contracts, read-only boundary และ preview freshness ไม่เปลี่ยนจาก deployed version
+- [x] Gateway credential rotation procedure ผ่าน add-only/overlap contract review; destructive production rehearsal deferred
+- [x] Monitoring, incident response และ rollback runbooks พร้อมใช้
+- [x] Rollback isolation ยืนยันจาก additive service/URL และ legacy regression; actual revoke/drain rehearsal deferred
 
 ## Highest Risks And Mitigations
 

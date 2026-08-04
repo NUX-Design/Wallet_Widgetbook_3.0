@@ -1,6 +1,8 @@
 # Gemini Spark OAuth Gateway Operations Runbook
 
-ใช้กับ production canary ของ OAuth Gateway เท่านั้น Existing MCP endpoint และ direct bearer clients อยู่นอก blast radius ของการปิด Gateway
+เอกสารนี้เตรียมไว้สำหรับ future production canary ของ OAuth Gateway เท่านั้น Existing MCP endpoint และ direct bearer clients อยู่นอก blast radius ของการปิด Gateway
+
+> สถานะ `2026-08-05`: owner เลือก Personal/Staging บน Render Free และ defer Google production OAuth ดังนั้น monitoring window และ destructive rollback rehearsal ด้านล่างยังไม่ได้ดำเนินการ และห้ามอ้างเป็น production evidence
 
 ## Preconditions
 
