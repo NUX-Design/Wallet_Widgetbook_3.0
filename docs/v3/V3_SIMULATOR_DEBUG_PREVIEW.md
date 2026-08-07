@@ -67,7 +67,7 @@ flutter run \
 --dart-define=V3_PREVIEW_SLUG=navigation/V3Navigation
 ```
 
-หากไม่ส่ง `V3_PREVIEW_SLUG` ระบบจะเปิด preview แรกตามลำดับ deterministic ของ generated registry:
+หากไม่ส่ง `V3_PREVIEW_SLUG` `main_simulator.dart` จะเปิด `header/V3Header` เป็นค่า default เสมอ (ค่านี้ hardcode ไว้ที่ `_defaultSimulatorPreviewSlug` ใน `lib/preview_v3/main_simulator.dart` เฉพาะ entrypoint นี้เท่านั้น) — ต่างจาก `main.dart` (Web) และ `preview_app.dart` shared router ที่ยังเปิด preview แรกตามลำดับ deterministic ของ generated registry เหมือนเดิมเมื่อ slug ว่าง:
 
 ```bash
 flutter run \
@@ -75,6 +75,8 @@ flutter run \
   -d <simulator-udid> \
   --debug
 ```
+
+เปลี่ยน default นี้ได้โดยแก้ค่า `_defaultSimulatorPreviewSlug` ในไฟล์เดียวนั้น
 
 ## Debug Controls
 
