@@ -10,6 +10,18 @@
 
 `main_simulator.dart` ไม่ import `flutter_web_plugins` จึง build บน iOS ได้ ส่วน `main.dart` ต้องคงเป็น Web-only เพราะเรียก `setUrlStrategy(null)` เพื่อรักษา fragment route ใน browser
 
+## Splash-Then-Destination-Then-Loop Flow
+
+ทุกครั้งที่รันผ่าน `main_simulator.dart` (ไม่ว่าจะส่ง `V3_PREVIEW_SLUG` หรือไม่) แอปจะเล่น flow นี้เสมอ — เป็น behavior ของ entrypoint นี้เพียงไฟล์เดียว ไม่กระทบ `main.dart` (Web) หรือ `preview_app.dart` (shared router ที่ Web ยังใช้ตรงแบบเดิม):
+
+1. เล่น splash `V3SplashAnimationPreview` (`lib/widgets/v3/splash/preview_v3_splash_animation.dart`, asset `lib/assets/lottie/wi_splash.json`) เป็นหน้า pre-loading ก่อนเสมอ
+2. เมื่อ animation เล่นจบ (`V3SplashAnimation.onCompleted` ยิงเมื่อ `AnimationStatus.completed` และไม่ได้ตั้ง `repeat`) จะ redirect ไปหน้าปลายทางที่ resolve จาก `rawSlug` เหมือนที่ `V3PreviewRoute` ทำเสมอมา (ถ้าไม่ส่ง slug จะเปิด preview แรกของ registry ตามปกติ)
+3. หน้าปลายทางมีปุ่ม CTA "Loop back to splash" ลอยติดขอบล่าง (key `v3-simulator-splash-loop-cta`) กดแล้ววนกลับไปเล่น splash ใหม่ — flow นี้วนซ้ำไปเรื่อยๆ
+
+โครงสร้าง widget: `main()` -> `V3SimulatorSplashLoopApp` -> `V3SimulatorSplashLoopHost` (คุม state `_showSplash` ด้วย `setState`, ไม่ใช้ `Navigator`) -> splash หรือ `_V3SimulatorLoopDestination` (ห่อ `V3PreviewRoute(rawSlug: rawSlug)` เดิมด้วย CTA ลอยด้านล่าง)
+
+ทดสอบด้วย `test/preview_v3/main_simulator_test.dart` (pump ผ่าน asset load + animation duration ด้วย `pumpAndSettle`, ยืนยัน splash -> destination -> tap CTA -> splash)
+
 ## Prerequisites
 
 - ติดตั้ง Flutter และ Xcode พร้อม iOS Simulator runtime
@@ -93,7 +105,8 @@ npx --yes serve-sim@latest "$SIM"
 
 ## Verification Checklist
 
-- preview ที่แสดงตรงกับ slug ที่ส่ง
+- splash เล่นก่อนเสมอ แล้ว redirect ไป preview ที่ตรงกับ slug ที่ส่ง (หรือ preview แรกถ้าไม่ส่ง)
+- ปุ่ม CTA "Loop back to splash" ที่ขอบล่างของหน้าปลายทางกดแล้ววนกลับไป splash ได้จริง
 - ไม่มี exception หรือ `RenderFlex overflow` ใน Flutter debug console
 - Light/Dark mode แสดง semantic tokens ถูกต้อง
 - interaction และ action feedback ทำงาน
