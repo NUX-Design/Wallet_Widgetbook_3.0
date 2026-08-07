@@ -10,9 +10,7 @@ void main() {
     testWidgets('renders the wi splash asset', (tester) async {
       await pumpTestApp(
         tester,
-        const V3SplashAnimation(
-          assetPath: 'lib/assets/lottie/wi_splash.json',
-        ),
+        const V3SplashAnimation(assetPath: 'lib/assets/lottie/wi_splash.json'),
         wrapWithScaffold: false,
         assetStrategy: TestAssetStrategy.placeholderAssets,
         assetBundle: PlaceholderAssetBundle(
@@ -28,9 +26,7 @@ void main() {
       expect(lottie.fit, BoxFit.cover);
     });
 
-    testWidgets('exposes the animation controller for replay', (
-      tester,
-    ) async {
+    testWidgets('exposes the animation controller for replay', (tester) async {
       AnimationController? controller;
 
       await pumpTestApp(
