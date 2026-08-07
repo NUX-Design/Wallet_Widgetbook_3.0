@@ -18,6 +18,8 @@ import 'package:mcp_test_app/widgets/v3/icon_button/preview_v3_icon_button.dart'
     as p6;
 import 'package:mcp_test_app/widgets/v3/navigation/preview_v3_navigation.dart'
     as p7;
+import 'package:mcp_test_app/widgets/v3/splash/preview_v3_splash_animation.dart'
+    as p8;
 
 final List<V3PreviewDefinition> generatedV3PreviewEntries = [
   V3PreviewDefinition(
@@ -59,5 +61,10 @@ final List<V3PreviewDefinition> generatedV3PreviewEntries = [
     category: 'navigation',
     widgetName: 'V3Navigation',
     builder: (context) => const p7.V3NavigationPreview(),
+  ),
+  V3PreviewDefinition(
+    category: 'splash',
+    widgetName: 'V3SplashAnimation',
+    builder: (context) => const p8.V3SplashAnimationPreview(),
   ),
 ];
