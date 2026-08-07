@@ -61,8 +61,7 @@ class V3SimulatorSplashLoopHost extends StatefulWidget {
       _V3SimulatorSplashLoopHostState();
 }
 
-class _V3SimulatorSplashLoopHostState
-    extends State<V3SimulatorSplashLoopHost> {
+class _V3SimulatorSplashLoopHostState extends State<V3SimulatorSplashLoopHost> {
   bool _showSplash = true;
 
   void _goToDestination() => setState(() => _showSplash = false);
