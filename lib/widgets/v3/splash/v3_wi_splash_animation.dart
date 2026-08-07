@@ -1,0 +1,236 @@
+import 'dart:ui' show lerpDouble;
+
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+/// Native reimplementation of the "wi splash" wipe-transition intro.
+///
+/// Ports the exact transform/opacity/clip values from the source
+/// `Splash.svg` export (CSS `@keyframes`) to Flutter's own animation system.
+/// The original export is kept as a reference asset at
+/// `lib/assets/images/splash/wi_splash_source.svg` — it is not loaded via
+/// the asset bundle at runtime (see the two reasons below); the static
+/// fragments below were extracted from it by hand into inline SVG strings.
+/// Two reasons this isn't rendered directly from the Lottie/SVG exports:
+/// - `flutter_svg`/`vector_graphics` render static SVG only; they do not
+///   execute CSS `@keyframes` or SMIL animation, so the exported animated
+///   SVG would show a single static frame.
+/// - The `lottie` package does not clip the wide "Transition" precomp
+///   (authored at 1118x852 or 749x852) to the 375x852 splash canvas, so the
+///   giant background "W" watermark bleeds outside the intended reveal
+///   window as a visible wedge/seam artifact instead of wiping cleanly.
+///
+/// A `ClipRect` sized to the 375x852 canvas plus two `Positioned` layers
+/// driven by one `AnimationController` reproduces the same wipe reveal
+/// without depending on either package's animation support for this shape.
+///
+/// This is offered as an alternative renderer to [V3SplashAnimation]/the
+/// Lottie export, selectable via the toggle in
+/// `preview_v3_splash_animation.dart` — it does not replace the Lottie path.
+class V3WiSplashAnimation extends StatefulWidget {
+  const V3WiSplashAnimation({
+    super.key,
+    this.autoPlay = true,
+    this.repeat = false,
+    this.onControllerReady,
+    this.onCompleted,
+  });
+
+  final bool autoPlay;
+  final bool repeat;
+  final ValueChanged<AnimationController>? onControllerReady;
+
+  /// Fires once when the animation finishes playing forward (i.e. it is not
+  /// [repeat]ing). Used to drive "splash finished, navigate onward" flows.
+  final VoidCallback? onCompleted;
+
+  @override
+  State<V3WiSplashAnimation> createState() => _V3WiSplashAnimationState();
+}
+
+class _V3WiSplashAnimationState extends State<V3WiSplashAnimation>
+    with SingleTickerProviderStateMixin {
+  // Matches the source export: 3s total, wipe/W motion complete by 83.33%
+  // (2.5s) and hold through the remaining 0.5s.
+  static const _duration = Duration(milliseconds: 3000);
+  static const _activePhaseFraction = 0.8333;
+  static const _wipeOpacityCurve = Cubic(0.5, 0, 0.5, 1);
+  static const _wMotionCurve = Cubic(0.22, 1, 0.36, 1);
+
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this, duration: _duration);
+    widget.onControllerReady?.call(_controller);
+    _controller.addStatusListener(_handleStatusChanged);
+    if (widget.autoPlay) {
+      _controller.forward(from: 0);
+    }
+  }
+
+  void _handleStatusChanged(AnimationStatus status) {
+    if (status == AnimationStatus.completed && !widget.repeat) {
+      widget.onCompleted?.call();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.removeStatusListener(_handleStatusChanged);
+    _controller.dispose();
+    super.dispose();
+  }
+
+  double get _phaseProgress =>
+      (_controller.value / _activePhaseFraction).clamp(0.0, 1.0);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox.expand(
+      child: ClipRect(
+        child: FittedBox(
+          fit: BoxFit.cover,
+          child: SizedBox(
+            width: 375,
+            height: 852,
+            child: AnimatedBuilder(
+              animation: _controller,
+              builder: (context, _) {
+                final p = _phaseProgress;
+                final groupX = lerpDouble(0.5, -374.5, p)!;
+                final groupOpacity = _wipeOpacityCurve.transform(p);
+                final wX =
+                    lerpDouble(429.5, 114.473, _wMotionCurve.transform(p))!;
+                return Stack(
+                  clipBehavior: Clip.hardEdge,
+                  children: [
+                    const Positioned.fill(child: _V3WiSplashBackground()),
+                    const Positioned.fill(child: _V3WiSplashLogo()),
+                    Opacity(
+                      opacity: groupOpacity,
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Positioned(
+                            left: groupX,
+                            top: 0,
+                            child: const _V3WiSplashWipeBackground(),
+                          ),
+                          Positioned(
+                            left: groupX + wX,
+                            top: 90,
+                            child: const _V3WiSplashWMark(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Base radial-gradient background, always visible underneath the wipe.
+class _V3WiSplashBackground extends StatelessWidget {
+  const _V3WiSplashBackground();
+
+  @override
+  Widget build(BuildContext context) {
+    return SvgPicture.string(
+      '''
+<svg width="375" height="852" viewBox="0 0 375 852" xmlns="http://www.w3.org/2000/svg">
+<rect width="375" height="852" fill="url(#paint0)"/>
+<defs>
+<radialGradient id="paint0" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(187.5 -85.2) rotate(-90) scale(766.8 450)">
+<stop stop-color="#3272F3"/>
+<stop offset="0.42" stop-color="#0D4CCB"/>
+<stop offset="1" stop-color="#0C2A6B"/>
+</radialGradient>
+</defs>
+</svg>
+''',
+      width: 375,
+      height: 852,
+    );
+  }
+}
+
+/// Static "wi wallet" logo mark and wordmark — never animated in the source
+/// export, always visible underneath the wipe.
+class _V3WiSplashLogo extends StatelessWidget {
+  const _V3WiSplashLogo();
+
+  @override
+  Widget build(BuildContext context) {
+    return SvgPicture.string(
+      '''
+<svg width="375" height="852" viewBox="0 0 375 852" xmlns="http://www.w3.org/2000/svg">
+<g transform="translate(0 395.5)">
+<path transform="translate(56)" d="M30.0019 60C28.9768 59.9999 27.9525 59.9483 26.9326 59.8457C25.9331 59.7434 24.9391 59.5917 23.9548 59.3901C22.9881 59.1931 22.0226 58.9414 21.0778 58.6501C20.1483 58.3645 19.2238 58.0222 18.3239 57.6424C11.1243 54.5873 5.39911 48.8616 2.35834 41.6765C1.97622 40.7788 1.63844 39.8529 1.34708 38.9228C1.05572 37.9928 0.807836 37.0118 0.610092 36.0465C0.408441 35.0612 0.255501 34.0665 0.154839 33.066C-0.0516131 31.0273 -0.0516131 28.9727 0.154839 26.934C0.255086 25.9334 0.408029 24.9387 0.610092 23.9535C0.807836 22.9863 1.05667 22.0205 1.34708 21.079C1.63748 20.1375 1.97909 19.2214 2.35834 18.3179C5.39564 11.1312 11.1221 5.40611 18.3239 2.35576C19.2228 1.97497 20.1483 1.63836 21.0778 1.34801C22.0239 1.05358 22.9839 0.80638 23.9548 0.608005C24.9391 0.406436 25.9331 0.254708 26.9326 0.152473C28.9731 -0.0508245 31.0287 -0.0508245 33.0692 0.152473C34.0656 0.254334 35.0679 0.40714 36.047 0.608005C37.0173 0.806382 37.9768 1.05358 38.9222 1.34801C39.8517 1.6336 40.7781 1.97592 41.6761 2.35576C43.4608 3.10953 45.1679 4.03447 46.7734 5.11684C51.5986 8.37817 55.3732 12.9619 57.6417 18.3142C58.0238 19.2157 58.3616 20.1424 58.6511 21.0753C58.9449 22.0207 59.1912 22.9798 59.388 23.9498C59.5898 24.9351 59.7415 25.9298 59.8433 26.9303C60.0522 28.9689 60.0522 31.0237 59.8433 33.0623C59.7411 34.0609 59.5896 35.0613 59.388 36.0428C59.1922 37.0043 58.9434 37.9739 58.6511 38.9173C58.3587 39.8607 58.0209 40.7722 57.6417 41.6709C54.6009 48.856 48.8757 54.5817 41.6761 57.6368C40.7791 58.0176 39.8517 58.3561 38.9222 58.6446C37.9927 58.933 37.0119 59.1875 36.047 59.3846C35.0679 59.5854 34.0656 59.7373 33.0692 59.8401C32.0501 59.9442 31.0264 59.9982 30.0019 60V60ZM26.5763 22.2541L32.1531 44.5621H38.4968L49.0572 22.2541H42.9934L35.9575 39.0084L33.1942 22.2541H26.5763ZM11.9448 22.2541L17.294 44.5584H23.9026L25.565 41.5984L26.1826 40.3434L26.4793 39.3654L26.6099 38.6179L26.7591 37.348V35.1577L26.6752 33.0567L26.1733 29.2916L21.2215 39.0976L18.6317 22.2541H11.9448ZM31.2072 11.7713C30.7578 11.7714 30.312 11.8501 29.8899 12.0037C29.4449 12.1635 29.0315 12.401 28.6697 12.7047C28.2813 13.0323 27.9574 13.4286 27.7144 13.8742C27.484 14.2983 27.3364 14.7618 27.2797 15.2408C27.2498 15.4738 27.2444 15.7095 27.2629 15.9436C27.2804 16.1785 27.3216 16.4105 27.386 16.6371C27.5891 17.3541 28.0231 17.9844 28.6212 18.4314C28.8253 18.5813 29.0446 18.7093 29.2761 18.8125C29.5079 18.9146 29.7499 18.992 29.9981 19.0431C30.2474 19.0944 30.5011 19.1206 30.7556 19.1212C31.2048 19.1205 31.6504 19.0424 32.0729 18.8906C32.516 18.7283 32.9278 18.4903 33.2894 18.1878C33.6793 17.8616 34.0035 17.465 34.2447 17.0183C34.4761 16.5944 34.6243 16.1309 34.6813 15.6517C34.7417 15.1846 34.7059 14.7103 34.5768 14.2572C34.3733 13.5404 33.9394 12.9102 33.3416 12.463C33.1373 12.3129 32.9186 12.1848 32.6867 12.0818C32.4549 11.9792 32.2111 11.9012 31.9628 11.8494C31.7145 11.7982 31.4626 11.772 31.209 11.7713H31.2072Z" fill="#D59A2D"/>
+<g transform="translate(128 12.5)">
+<path d="M20.0269 34.4077L14.6983 10.939H21.2705L23.8906 27.5533L24.0235 28.9149L24.5124 27.5533L31.0846 10.939L37.3453 11.2563L26.6427 34.4077H20.0269ZM11.7678 34.4077H5.2839L0 10.94H6.52554L9.14568 27.5543L9.27857 28.9159L9.76749 27.5543L14.1192 18.6571C14.4198 19.4379 14.6573 20.2425 14.8292 21.0629C15.0428 22.0552 15.1617 23.0663 15.1843 24.082C15.2125 25.1772 15.1307 26.2724 14.9403 27.3506C14.7514 28.4426 14.3825 29.494 13.8494 30.4599L11.7678 34.4077ZM38.1476 34.4077L40.9383 10.94H47.1545L44.3598 34.4077H38.1476ZM41.2111 4.13027C41.3497 3.08916 41.8452 2.13211 42.6094 1.42948C43.3425 0.707578 44.3227 0.307345 45.3406 0.314279C45.8151 0.308066 46.2851 0.408809 46.7171 0.609313C47.1253 0.801067 47.4888 1.07965 47.7832 1.42644C48.0786 1.77312 48.2914 2.18499 48.405 2.62982C48.5259 3.11923 48.5562 3.62745 48.4943 4.12824C48.3906 5.15757 47.906 6.10744 47.1396 6.7834C46.394 7.47939 45.418 7.86051 44.4084 7.84993C43.9458 7.8714 43.4844 7.78676 43.0579 7.60222C42.6315 7.41767 42.2509 7.13788 41.944 6.7834C41.6405 6.4221 41.4175 5.99773 41.2902 5.53963C41.163 5.08154 41.1346 4.60067 41.2071 4.13027H41.2111ZM77.4606 34.4077L72.132 10.939H78.7042L81.3243 27.5533L81.4572 28.9149L81.9461 27.5533L88.5183 10.939L94.779 11.2563L84.0773 34.4067L77.4606 34.4077ZM69.2015 34.4077H62.7146L57.4307 10.94H63.9582L66.5784 27.5543L66.7113 28.9159L67.2002 27.5543L71.5519 18.6571C71.8525 19.4379 72.0899 20.2425 72.2619 21.0629C72.4755 22.0552 72.5944 23.0663 72.617 24.082C72.6451 25.1772 72.5634 26.2724 72.373 27.3506C72.1841 28.4426 71.8152 29.494 71.2821 30.4599L69.2015 34.4077ZM116.891 28.6878C116.77 29.5829 116.704 30.4849 116.693 31.3886C116.682 32.3987 116.748 33.4082 116.891 34.4077H112.14C111.909 34.2624 111.718 34.0594 111.585 33.8177C111.371 33.4685 111.199 33.094 111.074 32.7025C110.919 32.2312 110.815 31.7441 110.764 31.2497C110.704 30.7141 110.704 30.1733 110.764 29.6377L112.45 15.4292C111.918 15.2887 111.376 15.1901 110.829 15.1342C110.34 15.0889 109.934 15.0662 109.608 15.0662C108.657 15.0524 107.716 15.2604 106.855 15.6745C106.024 16.0841 105.29 16.6719 104.701 17.398C104.061 18.1987 103.558 19.1043 103.214 20.0765C102.814 21.182 102.546 22.3324 102.414 23.5032C102.324 24.2562 102.28 25.0144 102.281 25.7731C102.273 26.5041 102.378 27.2319 102.592 27.9295C102.766 28.5248 103.087 29.0643 103.524 29.4958C103.769 29.7027 104.054 29.8542 104.36 29.9403C104.666 30.0265 104.986 30.0453 105.3 29.9956C105.672 29.9452 106.05 29.9917 106.399 30.1306C106.749 30.2696 107.058 30.4965 107.299 30.7904C107.83 31.4677 108.305 32.1889 108.72 32.9468C107.861 33.4476 106.962 33.8729 106.033 34.2181C105.226 34.5288 104.382 34.7272 103.524 34.8082C102.237 34.9304 100.946 34.6281 99.8388 33.9454C98.8049 33.2814 97.938 32.3786 97.3079 31.3095C96.6378 30.1697 96.1717 28.917 95.9314 27.6101C95.6659 26.2576 95.621 24.8696 95.7985 23.5022C95.9937 21.7288 96.4816 20.0022 97.2415 18.3956C97.9723 16.8391 98.9729 15.4308 100.195 14.239C101.44 13.0377 102.894 12.0834 104.48 11.4246C106.208 10.7119 108.057 10.357 109.92 10.3804C110.541 10.3804 111.155 10.3956 111.762 10.426C112.369 10.4564 113.028 10.524 113.738 10.6288C114.449 10.7349 115.226 10.8785 116.069 11.0597C116.913 11.2408 117.868 11.4679 118.933 11.7409L116.891 28.6878ZM129.189 34.4077H123.016L127.146 0L133.274 0.317311L129.189 34.4077ZM141.711 34.4077H135.539L139.668 0L145.796 0.317311L141.711 34.4077ZM163.647 20.0177C163.821 19.3678 163.881 18.6917 163.825 18.0205C163.779 17.4286 163.605 16.8547 163.314 16.3406C163.035 15.8582 162.637 15.459 162.16 15.1828C161.623 14.883 161.017 14.7343 160.405 14.7519C159.749 14.7584 159.101 14.8961 158.496 15.1575C157.808 15.4555 157.188 15.896 156.675 16.4511C156.061 17.1193 155.559 17.8862 155.188 18.721C154.723 19.7775 154.431 20.9045 154.322 22.0575C153.996 24.6934 154.329 26.7284 155.321 28.1626C155.797 28.8644 156.441 29.4305 157.19 29.8078C157.94 30.1851 158.771 30.361 159.606 30.319C160.646 30.3184 161.683 30.1887 162.692 29.9327C163.915 29.6026 165.109 29.17 166.262 28.6391L167.329 32.8606C165.822 33.5842 164.244 34.1396 162.622 34.5172C161.221 34.8295 159.791 34.9892 158.357 34.9937C156.582 35.0553 154.82 34.6655 153.228 33.8592C151.921 33.1644 150.794 32.1606 149.943 30.9313C149.119 29.712 148.558 28.3271 148.299 26.869C148.018 25.358 147.966 23.8118 148.144 22.2846C148.346 20.5227 148.865 18.8143 149.676 17.2459C150.418 15.8167 151.42 14.5456 152.629 13.5009C153.815 12.4858 155.169 11.6942 156.626 11.1631C158.107 10.6181 159.67 10.3416 161.244 10.3459C162.752 10.318 164.245 10.6604 165.596 11.3445C166.814 11.9584 167.832 12.9201 168.527 14.1133C169.236 15.4076 169.589 16.8741 169.548 18.3571C169.495 20.2283 169.04 22.0647 168.216 23.7363H155.786C156.184 22.7476 156.765 21.8463 157.496 21.0812C157.773 20.7611 158.11 20.5015 158.488 20.3182C158.865 20.135 159.276 20.0317 159.693 20.0146L163.647 20.0177ZM176.656 15.4302H172.97L173.415 11.8443L177.189 10.9319L177.856 5.34886L183.939 3.39728L181.319 25.4132C181.061 26.64 181.242 27.9205 181.83 29.0223C182.078 29.435 182.429 29.7725 182.848 29.9999C183.266 30.2274 183.736 30.3364 184.21 30.316C184.701 30.3092 185.191 30.2638 185.675 30.1801C186.356 30.0578 187.024 29.8756 187.674 29.6357L188.473 33.767C187.319 34.1603 186.305 34.4645 185.431 34.6794C184.64 34.8806 183.828 34.9871 183.012 34.9967C180.169 34.9967 178.104 34.1796 176.817 32.5453C175.531 30.9111 175.079 28.5354 175.463 25.4183L176.656 15.4302ZM188.467 15.4302C187.89 15.4505 187.32 15.3009 186.824 14.9993C186.386 14.7176 186.002 14.3561 185.691 13.9328C185.375 13.4987 185.128 13.0163 184.958 12.5033C184.787 11.9925 184.654 11.4688 184.562 10.937H191L190.467 15.4312L188.467 15.4302Z" fill="#D59A2D"/>
+</g>
+</g>
+</svg>
+''',
+      width: 375,
+      height: 852,
+      fit: BoxFit.none,
+      alignment: Alignment.topLeft,
+    );
+  }
+}
+
+/// The wide (1118x852) gradient panel the "W" mark rides on top of while
+/// wiping across the canvas.
+class _V3WiSplashWipeBackground extends StatelessWidget {
+  const _V3WiSplashWipeBackground();
+
+  @override
+  Widget build(BuildContext context) {
+    return SvgPicture.string(
+      '''
+<svg width="1118" height="852" viewBox="0 0 1118 852" xmlns="http://www.w3.org/2000/svg">
+<rect width="1118" height="852" fill="url(#paint1)"/>
+<defs>
+<radialGradient id="paint1" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(559 -85.2) rotate(-90) scale(766.8 1341.6)">
+<stop stop-color="#3272F3"/>
+<stop offset="0.42" stop-color="#0D4CCB"/>
+<stop offset="1" stop-color="#0C2A6B"/>
+</radialGradient>
+</defs>
+</svg>
+''',
+      width: 1118,
+      height: 852,
+    );
+  }
+}
+
+/// The oversized brand "W" watermark that wipes across
+/// [_V3WiSplashWipeBackground] — its own coordinates are already local to
+/// its bounding box (no baked-in translate), so [V3WiSplashAnimation]
+/// positions it directly.
+class _V3WiSplashWMark extends StatelessWidget {
+  const _V3WiSplashWMark();
+
+  @override
+  Widget build(BuildContext context) {
+    return SvgPicture.string(
+      '''
+<svg width="737" height="651" viewBox="0 0 737 651" xmlns="http://www.w3.org/2000/svg">
+<path d="M290.23 207.796L400.845 650.488H526.737L736.055 207.796H615.892L476.28 540.228L421.55 207.796H290.23ZM0 207.796L106.242 650.288H237.461L270.379 591.676L282.592 566.679L288.421 547.342L291.185 532.464L294.05 507.316V463.933L292.392 422.254L282.39 347.562L184.24 542.132L132.928 207.846L0 207.796ZM381.999 0.0500975C373.1 0.0896267 364.284 1.64321 355.916 4.65887C347.129 7.82405 338.955 12.505 331.792 18.4852C324.062 25.0143 317.601 32.9148 312.745 41.7795C308.165 50.1659 305.247 59.3449 304.152 68.831C303.53 73.4643 303.418 78.1487 303.8 82.8076C304.15 87.4787 305.003 92.1002 306.363 96.5839C308.954 105.73 313.435 114.273 319.53 121.581C322.848 125.521 326.633 129.083 330.737 132.202C334.881 135.139 339.266 137.683 343.854 139.866C348.487 141.808 353.274 143.329 358.177 144.425C363.124 145.417 368.158 145.898 373.204 145.878C382.098 145.898 390.92 144.376 399.287 141.369C417.718 134.604 433.064 121.415 442.507 104.248C447.07 95.8688 450.002 86.7122 451.151 77.2471C451.688 72.5734 451.867 67.8671 451.604 63.1703C451.164 58.5618 450.262 53.9966 448.99 49.5443C446.35 40.3302 441.802 31.7866 435.622 24.4465C432.329 20.4988 428.591 16.949 424.465 13.8764C420.39 10.9128 416.013 8.39416 411.399 6.36212C406.872 4.13736 402.053 2.5901 397.076 1.75335C392.14 0.605561 387.066 0.011209 381.999 0V0.0500975Z" fill="#D59A2D"/>
+</svg>
+''',
+      width: 737,
+      height: 651,
+    );
+  }
+}
