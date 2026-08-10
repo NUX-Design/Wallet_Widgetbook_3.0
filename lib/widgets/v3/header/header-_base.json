@@ -11747,9 +11747,9 @@
           "display": "375"
         },
         "height": {
-          "value": 152,
+          "value": 124,
           "token": null,
-          "display": "152"
+          "display": "124"
         },
         "itemSpacing": {
           "value": 24,
@@ -11763,9 +11763,9 @@
         },
         "padding": {
           "top": {
-            "value": 40,
-            "token": "space-40",
-            "display": "space-40 (40)"
+            "value": 12,
+            "token": "space-12",
+            "display": "space-12 (12)"
           },
           "bottom": {
             "value": 12,
@@ -11858,9 +11858,9 @@
             "display": "375"
           },
           "height": {
-            "value": 152,
+            "value": 124,
             "token": null,
-            "display": "152"
+            "display": "124"
           },
           "itemSpacing": {
             "value": 24,
@@ -11874,9 +11874,9 @@
           },
           "padding": {
             "top": {
-              "value": 40,
-              "token": "space-40",
-              "display": "space-40 (40)"
+              "value": 12,
+              "token": "space-12",
+              "display": "space-12 (12)"
             },
             "bottom": {
               "value": 12,

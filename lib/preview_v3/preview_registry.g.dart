@@ -18,8 +18,10 @@ import 'package:mcp_test_app/widgets/v3/icon_button/preview_v3_icon_button.dart'
     as p6;
 import 'package:mcp_test_app/widgets/v3/navigation/preview_v3_navigation.dart'
     as p7;
-import 'package:mcp_test_app/widgets/v3/splash/preview_v3_splash_animation.dart'
+import 'package:mcp_test_app/widgets/v3/profile_header/preview_v3_profile_header.dart'
     as p8;
+import 'package:mcp_test_app/widgets/v3/splash/preview_v3_splash_animation.dart'
+    as p9;
 
 final List<V3PreviewDefinition> generatedV3PreviewEntries = [
   V3PreviewDefinition(
@@ -63,8 +65,13 @@ final List<V3PreviewDefinition> generatedV3PreviewEntries = [
     builder: (context) => const p7.V3NavigationPreview(),
   ),
   V3PreviewDefinition(
+    category: 'profile_header',
+    widgetName: 'V3ProfileHeader',
+    builder: (context) => const p8.V3ProfileHeaderPreview(),
+  ),
+  V3PreviewDefinition(
     category: 'splash',
     widgetName: 'V3SplashAnimation',
-    builder: (context) => const p8.V3SplashAnimationPreview(),
+    builder: (context) => const p9.V3SplashAnimationPreview(),
   ),
 ];

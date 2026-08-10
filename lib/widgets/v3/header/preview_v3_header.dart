@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../config/themes/v3/v3_theme_scope.dart';
-import '../button/v3_default_button.dart';
 import '../icon/v3_icon_stroke.dart';
 import '../icon/v3_lucide_icon.dart';
 import 'v3_header.dart';
@@ -113,15 +112,6 @@ class _V3HeaderPreviewState extends State<V3HeaderPreview> {
                               ?.copyWith(color: colors.contentPrimary),
                         ),
                       ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                    child: V3DefaultButton(
-                      key: const ValueKey('v3-header-preview-default-button'),
-                      label: 'Default Button',
-                      semanticLabel: 'Default Button',
-                      onPressed: () => _recordAction('Default Button'),
                     ),
                   ),
                 ],
