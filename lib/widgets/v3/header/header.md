@@ -53,7 +53,7 @@ _None._
 | Runtime concern | Contract |
 |---|---|
 | App bar integration | Implements `PreferredSizeWidget` and is assigned directly to `Scaffold.appBar`. |
-| Safe area | `preferredSize` excludes the top inset. `Scaffold` reserves the detected inset and `SafeArea` consumes `MediaQuery.padding.top`; no device-specific height is hardcoded. |
+| Safe area | Component มี top padding 12px ตาม Figma และ `preferredSize` ไม่รวม device top inset. `Scaffold` reserves the detected inset and `SafeArea` consumes `MediaQuery.padding.top`; no device-specific height is hardcoded. |
 | Theme | Surface uses `background/primary`, divider uses `background/blue`, and text/icons use `content/primary` through `V3ThemeScope` in Light/Dark. |
 | Content | `title` and `subtitle` are nullable, localized caller-owned strings; subtitle requires title. |
 | Top action row | Nullable `leadingAction` and `topTrailingAction` occupy the left/right edges of the top row. |
@@ -144,9 +144,9 @@ Structural overview of all ten measured configurations. Subtitle only appears wi
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | Host container | – | – | – | – | – | – | – | – | – | – | Page-level vertical header |
 | ↳ fixedWidth | 375 | 375 | 375 | 375 | 375 | 375 | 375 | 375 | 375 | 375 | Constant measured width |
-| ↳ height | 124 | 124 | 84 | 76 | 76 | 152 | 152 | 112 | 112 | 84 | Hug height follows visible zones |
+| ↳ height | 96 | 96 | 56 | 48 | 48 | 124 | 124 | 84 | 84 | 56 | Hug height follows visible zones |
 | ↳ itemSpacing | 24 | 24 | 24 | 24 | 24 | 24 | 24 | 24 | 24 | 24 | Constant root vertical spacing |
-| ↳ paddingTop | space-40 (40) | space-40 (40) | space-40 (40) | space-40 (40) | space-40 (40) | space-40 (40) | space-40 (40) | space-40 (40) | space-40 (40) | space-40 (40) | Figma safe-area baseline; Flutter runtime uses the detected device inset via `SafeArea` |
+| ↳ paddingTop | space-12 (12) | space-12 (12) | space-12 (12) | space-12 (12) | space-12 (12) | space-12 (12) | space-12 (12) | space-12 (12) | space-12 (12) | space-12 (12) | Constant component top inset; device safe area is additive at runtime |
 | ↳ paddingBottom | space-12 (12) | space-12 (12) | space-12 (12) | space-12 (12) | space-12 (12) | space-12 (12) | space-12 (12) | space-12 (12) | space-12 (12) | space-12 (12) | Constant bottom inset |
 | ↳ paddingStart | space-16 (16) | space-16 (16) | space-16 (16) | space-16 (16) | space-16 (16) | space-16 (16) | space-16 (16) | space-16 (16) | space-16 (16) | space-16 (16) | Logical leading inset |
 | ↳ paddingEnd | space-16 (16) | space-16 (16) | space-16 (16) | space-16 (16) | space-16 (16) | space-16 (16) | space-16 (16) | space-16 (16) | space-16 (16) | space-16 (16) | Logical trailing inset |

@@ -63,6 +63,7 @@ class V3Header extends StatelessWidget implements PreferredSizeWidget {
   final V3HeaderAction? topTrailingAction;
 
   static const double _horizontalPadding = V3Spacing.space16;
+  static const double _topPadding = V3Spacing.space12;
   static const double _bottomPadding = V3Spacing.space12;
   static const double _iconSize = V3Spacing.space24;
   static const double _actionTargetSize = 48;
@@ -77,7 +78,8 @@ class V3Header extends StatelessWidget implements PreferredSizeWidget {
   /// This excludes the device's top safe-area inset. [Scaffold] adds that
   /// inset to its app-bar extent, while the widget consumes it with [SafeArea].
   @override
-  Size get preferredSize => Size.fromHeight(_contentHeight + _bottomPadding);
+  Size get preferredSize =>
+      Size.fromHeight(_topPadding + _contentHeight + _bottomPadding);
 
   double get _contentHeight {
     if (!_hasText) {
@@ -122,7 +124,7 @@ class V3Header extends StatelessWidget implements PreferredSizeWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(
                 _horizontalPadding,
-                0,
+                _topPadding,
                 _horizontalPadding,
                 _bottomPadding,
               ),
@@ -130,7 +132,7 @@ class V3Header extends StatelessWidget implements PreferredSizeWidget {
             ),
             if (leadingAction != null)
               Positioned(
-                top: -((_actionTargetSize - _iconSize) / 2),
+                top: _topPadding - ((_actionTargetSize - _iconSize) / 2),
                 left:
                     _horizontalPadding - ((_actionTargetSize - _iconSize) / 2),
                 child: _HeaderActionButton(
@@ -141,7 +143,7 @@ class V3Header extends StatelessWidget implements PreferredSizeWidget {
               ),
             if (topTrailingAction != null)
               Positioned(
-                top: -((_actionTargetSize - _iconSize) / 2),
+                top: _topPadding - ((_actionTargetSize - _iconSize) / 2),
                 right:
                     _horizontalPadding - ((_actionTargetSize - _iconSize) / 2),
                 child: _HeaderActionButton(
@@ -153,6 +155,7 @@ class V3Header extends StatelessWidget implements PreferredSizeWidget {
             if (trailingAction != null)
               Positioned(
                 top:
+                    _topPadding +
                     (_hasText
                         ? (leadingAction == null
                             ? 0

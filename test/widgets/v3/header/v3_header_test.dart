@@ -97,10 +97,6 @@ void main() {
   testWidgets('full variant matches Figma layout and accessible targets', (
     tester,
   ) async {
-    tester.view.padding = FakeViewPadding(
-      top: 40 * tester.view.devicePixelRatio,
-    );
-    addTearDown(tester.view.resetPadding);
     await pumpHeader(
       tester,
       V3Header(
@@ -113,7 +109,7 @@ void main() {
 
     expect(
       tester.getSize(find.byKey(const ValueKey('v3-header-surface'))),
-      const Size(375, 152),
+      const Size(375, 124),
     );
     expect(
       tester.getSize(
@@ -129,11 +125,11 @@ void main() {
     );
     expect(
       tester.getTopLeft(find.byKey(const ValueKey('v3-header-title'))).dy,
-      80,
+      52,
     );
     expect(
       tester.getTopLeft(find.byKey(const ValueKey('v3-header-subtitle'))).dy,
-      120,
+      92,
     );
   });
 
@@ -141,37 +137,37 @@ void main() {
     tester,
   ) async {
     final cases = <V3Header, double>{
-      V3Header(leadingAction: action('Back')): 36,
-      V3Header(trailingAction: action('Close')): 36,
-      const V3Header(title: 'Title'): 44,
-      V3Header(title: 'Title', trailingAction: action('Info')): 44,
-      const V3Header(title: 'Title', subtitle: 'Subtitle'): 72,
+      V3Header(leadingAction: action('Back')): 48,
+      V3Header(trailingAction: action('Close')): 48,
+      const V3Header(title: 'Title'): 56,
+      V3Header(title: 'Title', trailingAction: action('Info')): 56,
+      const V3Header(title: 'Title', subtitle: 'Subtitle'): 84,
       V3Header(
             title: 'Title',
             subtitle: 'Subtitle',
-            trailingAction: action('Info'),
-          ):
-          72,
-      V3Header(title: 'Title', leadingAction: action('Back')): 84,
-      V3Header(
-            title: 'Title',
-            leadingAction: action('Back'),
             trailingAction: action('Info'),
           ):
           84,
+      V3Header(title: 'Title', leadingAction: action('Back')): 96,
+      V3Header(
+            title: 'Title',
+            leadingAction: action('Back'),
+            trailingAction: action('Info'),
+          ):
+          96,
       V3Header(
             title: 'Title',
             subtitle: 'Subtitle',
             leadingAction: action('Back'),
           ):
-          112,
+          124,
       V3Header(
             title: 'Title',
             subtitle: 'Subtitle',
             leadingAction: action('Back'),
             trailingAction: action('Info'),
           ):
-          112,
+          124,
     };
 
     for (final entry in cases.entries) {
@@ -203,10 +199,10 @@ void main() {
     );
 
     expect(find.byType(V3Header), findsOneWidget);
-    expect(header.preferredSize.height, 112);
+    expect(header.preferredSize.height, 124);
     expect(
       tester.getSize(find.byKey(const ValueKey('v3-header-surface'))).height,
-      171,
+      183,
     );
     expect(find.text('Page content'), findsOneWidget);
   });
@@ -316,7 +312,7 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(
       tester.getSize(find.byKey(const ValueKey('v3-header-surface'))).height,
-      greaterThan(112),
+      greaterThan(124),
     );
   });
 
@@ -354,14 +350,7 @@ void main() {
       tester.getTopLeft(find.text('Header title')).dy,
     );
     expect(find.text('Action: None'), findsOneWidget);
-    expect(
-      find.byKey(const ValueKey('v3-header-preview-default-button')),
-      findsOneWidget,
-    );
-
-    await tester.tap(find.bySemanticsLabel('Default Button'));
-    await tester.pump();
-    expect(find.text('Action: Default Button'), findsOneWidget);
+    expect(find.text('Default Button'), findsNothing);
 
     await tester.tap(find.bySemanticsLabel('Go back'));
     await tester.pump();
