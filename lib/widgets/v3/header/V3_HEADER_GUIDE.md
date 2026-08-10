@@ -6,8 +6,8 @@ Page-level Header ตาม Figma component set `Header` สำหรับใ�
 
 - Component set: [`Header` `372:297`](https://www.figma.com/design/mhUvPg9tOjlvQvEW6glQhJ/Wi-Design-System?node-id=372-297)
 - Full variant: [`568:1322`](https://www.figma.com/design/mhUvPg9tOjlvQvEW6glQhJ/Wi-Design-System?node-id=568-1322)
-- Full variant: leading action + title + subtitle + trailing action, ขนาดอ้างอิง 375×152px ที่ Figma safe-area baseline 40px
-- Runtime top inset ใช้ `SafeArea`/`MediaQuery.padding.top` ตามอุปกรณ์; horizontal 16px, bottom 12px
+- Full variant: leading action + title + subtitle + trailing action, ขนาดอ้างอิง 375×124px
+- Component padding ใช้ vertical 12px และ horizontal 16px; runtime ยังใช้ `SafeArea`/`MediaQuery.padding.top` เพิ่มเหนือ component เมื่อวางใน `Scaffold.appBar`
 - Visual icon 24px; action target 48×48px
 - Leading-to-content gap 16px; title-to-subtitle gap 8px
 - Title ใช้ `heading/small`; subtitle ใช้ `paragraph/small`
@@ -82,7 +82,7 @@ V3Header(
 | `leadingAction` | `V3HeaderAction?` | Optional leading navigation action |
 | `trailingAction` | `V3HeaderAction?` | Optional contextual action |
 | `topTrailingAction` | `V3HeaderAction?` | Optional action ฝั่งขวาของ top action row |
-| `preferredSize` | `Size` | ความสูง content + bottom padding โดยไม่รวม top safe area; `Scaffold` จะบวก device inset ให้ |
+| `preferredSize` | `Size` | ความสูง top padding + content + bottom padding โดยไม่รวม device top safe area; `Scaffold` จะบวก device inset ให้ |
 
 ### `V3HeaderAction`
 
@@ -99,7 +99,7 @@ V3Header(
 - รองรับ 10 composition variants ที่พบใน Figma handoff ผ่าน nullable properties
 - implement `PreferredSizeWidget` และส่งเข้า `Scaffold.appBar` ได้โดยตรง
 - top safe area detect จาก `MediaQuery.padding.top` ผ่าน `SafeArea` จึงรองรับ status bar, notch และ Dynamic Island ของแต่ละอุปกรณ์โดยไม่ hardcode
-- ความสูงจริง = `MediaQuery.padding.top + preferredSize.height`; full variant มี `preferredSize.height = 112` และได้ 152px เมื่อ top inset เท่ากับ Figma baseline 40px
+- ความสูง component ของ full variant คือ `preferredSize.height = 124`; เมื่อใช้เป็น `Scaffold.appBar` ความสูงบนหน้าจอคือ `MediaQuery.padding.top + 124px`
 - หากไม่มี title จะไม่อนุญาต subtitle
 - ต้องมีอย่างน้อย title หรือ action หนึ่งตัว
 - action visual 24px แต่มี touch target 48×48px
@@ -123,10 +123,9 @@ V3Header(
 | `paragraph/small` | Subtitle typography |
 | `shadow/sm` | Figma `shadow-sm` |
 | `space-8` | Title-to-subtitle gap |
-| `space-12` | Bottom padding/action padding |
+| `space-12` | Top และ bottom component padding/action padding |
 | `space-16` | Horizontal padding/leading-to-content gap |
 | `space-24` | Visual icon |
-| `space-40` | Figma safe-area baseline สำหรับอ้างอิงเท่านั้น; runtime ใช้ device inset |
 
 Preview:
 
@@ -134,7 +133,7 @@ Preview:
 flutter run -t lib/widgets/v3/header/preview_v3_header.dart
 ```
 
-Preview ใช้ `background/primary`, สลับ Light/Dark แบบเต็มความกว้าง, วาง `V3DefaultButton` ที่ขอบล่างของหน้าจอ และแสดง `Action: …` เมื่อกด action หรือปุ่ม รูปแบบ feedback นี้เป็น preview-only; reusable widget ส่ง event ผ่าน callback และไม่สร้างข้อความหรือ navigation side effect เอง
+Preview ใช้ `background/primary`, สลับ Light/Dark แบบเต็มความกว้าง และแสดง `Action: …` เมื่อกด action ของ Header เท่านั้น โดยไม่ใส่ component อื่นในหน้าจอเพื่อรักษาขอบเขตของ preview ให้ชัดเจน รูปแบบ feedback นี้เป็น preview-only; reusable widget ส่ง event ผ่าน callback และไม่สร้างข้อความหรือ navigation side effect เอง
 
 ## V3 Metadata
 
