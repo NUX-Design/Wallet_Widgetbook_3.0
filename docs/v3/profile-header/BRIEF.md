@@ -231,14 +231,14 @@ Automated coverage:
 - Component spec: `lib/widgets/v3/profile_header/profile-header.md`
 - Guide: `lib/widgets/v3/profile_header/V3_PROFILE_HEADER_GUIDE.md`
 - Tests: `test/widgets/v3/profile_header/v3_profile_header_test.dart`
-- Jira detail reference: `docs/v3/profile-header/PRD.md`
 - Wiki: https://github.com/NUX-Design/Wallet_Widgetbook_3.0/wiki/V3-Profile-Header
 
 ## Follow-up
 
 - [x] Reconcile Theme V3 `State/error` จาก Figma: Light `Red/600` / Dark `Red/500`
-- [ ] [TO CONFIRM] กำหนด owner, Jira labels และ Jira component
-- [ ] [TO CONFIRM] Product ต้องการ avatar image source หรือ notification badge ใน iteration ถัดไปหรือไม่
+- [x] Owner: Niwat Yahuadong
+- [x] Jira labels: `design-system`, `flutter`, `profile-header`, `widget-v3`
+- [x] Iteration ถัดไปต้องรองรับทั้ง avatar image source และ notification badge
 
 ## Definition of Done
 
