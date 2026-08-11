@@ -231,7 +231,7 @@ final class V3ColorPalette {
     focusOuter: V3PrimitiveColors.navy300,
     focusPrimary: V3PrimitiveColors.navy600,
     focusWhite: V3PrimitiveColors.slate900,
-    stateError: V3PrimitiveColors.red400,
+    stateError: V3PrimitiveColors.red500,
     stateSuccess: V3PrimitiveColors.green300,
     stateWarning: V3PrimitiveColors.yellow200,
   );
