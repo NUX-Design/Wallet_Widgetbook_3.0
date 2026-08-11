@@ -58,11 +58,9 @@ V3ProfileHeader(
 | Avatar initials, user name, notification icon, balance text | `content/primary` | ตรงกับ Figma Light `Slate/900` / Dark `White` |
 | Verification icon — pending | `state/warning` | ตรงกับ Figma Light `Yellow/600` / Dark `Yellow/200` |
 | Verification icon — success | `state/success` | ตรงกับ Figma Light `Green/600` / Dark `Green/300` |
-| Verification icon — error | `state/error` | ตรงกับ Figma Light `Red/600`; **Dark drift** ด้านล่าง |
+| Verification icon — error | `state/error` | ตรงกับ Figma Light `Red/600` / Dark `Red/500` |
 
-### บันทึกความคลาดเคลื่อน (Known gap)
-
-Figma variable `State/error` ของ component set นี้ resolve เป็น `Red/500` ใน Dark mode แต่ semantic token ที่ generate ไว้แล้วใน `lib/config/themes/v3/tokens/semantic/dark.tokens.json` (`State.error`) alias ไปที่ `Red/400` — เป็น drift ระดับ token กลางที่มีมาก่อน component นี้และกระทบทุก consumer ของ `state/error` ไม่ใช่แค่ widget นี้ จึงไม่ approximate หรือ hardcode `Red/500` ไว้ใน widget นี้โดยลำพัง แต่ใช้ semantic token `state/error` ที่มีอยู่ (`content`/`state` ระบบเดียวกันทั้งแอป) และบันทึก drift นี้ไว้ที่นี่สำหรับงาน reconciliation token แยกในอนาคต
+`State/error` ได้รับการ reconcile จาก Figma page `Header` (`351:3000`) แล้ว: Light alias ไป `Red/600` และ Dark alias ไป `Red/500` ผ่าน semantic token กลาง จึงมีผลสม่ำเสมอกับ Widget V3 ทุกตัวที่ใช้ `state/error`
 
 ## Icons
 

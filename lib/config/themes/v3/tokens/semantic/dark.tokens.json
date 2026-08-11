@@ -1271,12 +1271,12 @@
       "$value": {
         "colorSpace": "srgb",
         "components": [
-          0.9725490212440491,
-          0.4431372582912445,
-          0.4431372582912445
+          0.9372549057006836,
+          0.2666666805744171,
+          0.2666666805744171
         ],
         "alpha": 1,
-        "hex": "#F87171"
+        "hex": "#EF4444"
       },
       "$extensions": {
         "com.figma.variableId": "VariableID:20:2015",
@@ -1284,9 +1284,9 @@
           "ALL_SCOPES"
         ],
         "com.figma.aliasData": {
-          "targetVariableId": "VariableID:83adaadbd89f909513a6fc3277254f8024ad2795/-1:-1",
-          "targetVariableName": "Red/400",
-          "targetVariableSetId": "VariableCollectionId:68d4eb53b4896ec78baea6c69ac3ca69f22d60c6/-1:-1",
+          "targetVariableId": "VariableID:11:74",
+          "targetVariableName": "Red/500",
+          "targetVariableSetId": "VariableCollectionId:8:225",
           "targetVariableSetName": "Color primitives"
         }
       }
