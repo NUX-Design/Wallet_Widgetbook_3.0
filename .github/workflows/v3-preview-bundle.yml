@@ -102,7 +102,8 @@ jobs:
           if gh release view "$TAG" >/dev/null 2>&1; then
             echo "Release $TAG already exists (immutable); skipping re-upload."
           else
-            gh release create "$TAG" \
+            . scripts/v3-preview-bundle/retry-gh.sh
+            retry_gh gh release create "$TAG" \
               dist/v3-preview-bundle/v3-preview-bundle.tar.gz \
               dist/v3-preview-bundle/manifest.json \
               --title "Widget V3 preview bundle ${GITHUB_SHA}" \
@@ -116,7 +117,8 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          MAIN_HEAD_SHA="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/main" --jq '.object.sha')"
+          . scripts/v3-preview-bundle/retry-gh.sh
+          MAIN_HEAD_SHA="$(retry_gh gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/main" --jq '.object.sha')"
           export MAIN_HEAD_SHA
           node scripts/v3-preview-bundle/assert-latest-publishable.mjs
 
@@ -125,10 +127,11 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
+          . scripts/v3-preview-bundle/retry-gh.sh
           TAG="v3-preview-latest"
           # Recreate the pointer release so its assets are always the newest bundle.
-          gh release delete "$TAG" --yes --cleanup-tag >/dev/null 2>&1 || true
-          gh release create "$TAG" \
+          retry_gh gh release delete "$TAG" --yes --cleanup-tag >/dev/null 2>&1 || true
+          retry_gh gh release create "$TAG" \
             dist/v3-preview-bundle/v3-preview-bundle.tar.gz \
             dist/v3-preview-bundle/manifest.json \
             --title "Widget V3 preview bundle (latest)" \
