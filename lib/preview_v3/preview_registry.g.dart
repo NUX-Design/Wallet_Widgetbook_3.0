@@ -12,16 +12,18 @@ import 'package:mcp_test_app/widgets/v3/button/preview_v3_mini_button.dart'
     as p2;
 import 'package:mcp_test_app/widgets/v3/button/preview_v3_small_button.dart'
     as p3;
-import 'package:mcp_test_app/widgets/v3/header/preview_v3_header.dart' as p4;
-import 'package:mcp_test_app/widgets/v3/icon/preview_v3_lucide_icon.dart' as p5;
+import 'package:mcp_test_app/widgets/v3/card/preview_v3_balance_card.dart'
+    as p4;
+import 'package:mcp_test_app/widgets/v3/header/preview_v3_header.dart' as p5;
+import 'package:mcp_test_app/widgets/v3/icon/preview_v3_lucide_icon.dart' as p6;
 import 'package:mcp_test_app/widgets/v3/icon_button/preview_v3_icon_button.dart'
-    as p6;
-import 'package:mcp_test_app/widgets/v3/navigation/preview_v3_navigation.dart'
     as p7;
-import 'package:mcp_test_app/widgets/v3/profile_header/preview_v3_profile_header.dart'
+import 'package:mcp_test_app/widgets/v3/navigation/preview_v3_navigation.dart'
     as p8;
-import 'package:mcp_test_app/widgets/v3/splash/preview_v3_splash_animation.dart'
+import 'package:mcp_test_app/widgets/v3/profile_header/preview_v3_profile_header.dart'
     as p9;
+import 'package:mcp_test_app/widgets/v3/splash/preview_v3_splash_animation.dart'
+    as p10;
 
 final List<V3PreviewDefinition> generatedV3PreviewEntries = [
   V3PreviewDefinition(
@@ -45,33 +47,38 @@ final List<V3PreviewDefinition> generatedV3PreviewEntries = [
     builder: (context) => const p3.V3SmallButtonPreview(),
   ),
   V3PreviewDefinition(
+    category: 'card',
+    widgetName: 'V3BalanceCard',
+    builder: (context) => const p4.V3BalanceCardPreview(),
+  ),
+  V3PreviewDefinition(
     category: 'header',
     widgetName: 'V3Header',
-    builder: (context) => const p4.V3HeaderPreview(),
+    builder: (context) => const p5.V3HeaderPreview(),
   ),
   V3PreviewDefinition(
     category: 'icon',
     widgetName: 'V3LucideIcon',
-    builder: (context) => const p5.V3LucideIconPreview(),
+    builder: (context) => const p6.V3LucideIconPreview(),
   ),
   V3PreviewDefinition(
     category: 'icon_button',
     widgetName: 'V3IconButton',
-    builder: (context) => const p6.V3IconButtonPreview(),
+    builder: (context) => const p7.V3IconButtonPreview(),
   ),
   V3PreviewDefinition(
     category: 'navigation',
     widgetName: 'V3Navigation',
-    builder: (context) => const p7.V3NavigationPreview(),
+    builder: (context) => const p8.V3NavigationPreview(),
   ),
   V3PreviewDefinition(
     category: 'profile_header',
     widgetName: 'V3ProfileHeader',
-    builder: (context) => const p8.V3ProfileHeaderPreview(),
+    builder: (context) => const p9.V3ProfileHeaderPreview(),
   ),
   V3PreviewDefinition(
     category: 'splash',
     widgetName: 'V3SplashAnimation',
-    builder: (context) => const p9.V3SplashAnimationPreview(),
+    builder: (context) => const p10.V3SplashAnimationPreview(),
   ),
 ];
