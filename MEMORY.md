@@ -10,6 +10,10 @@
 - MCP package/server name for cross-repo widget access: `flutter-widget-wallet-mcp`
 - Verified on review date: 2026-06-25
 
+## Documentation Templates
+
+- `docs/v3/V3_WIDGET_JIRA_TEMPLATE.md` (added `2026-08-18`) is the canonical Jira ticket template for creating a new Flutter Widget V3 component, derived from the real ticket XD-167 (`V3ProfileHeader`). It fixes the Summary format (`[Wi Design System] Create Flutter Widget V3 {ComponentName}`), the mandatory labels (`design-system`, `flutter`, `{component-slug}`, `widget-v3`), and a fixed description block order (Release Evidence → Status → Design Reference → Objective → Problem → Target Users → Core Use Cases → Scope → Component API → Design Specs → Theme/Status Mapping → Interaction & Accessibility → Acceptance Criteria → UI Test Coverage → Automated Test Evidence → Deliverables → Follow-up → Definition of Done). Use this template instead of freeform when asked to draft a Widget V3 Jira ticket; fill `{{...}}` placeholders from the actual component's five-file set and test/preview evidence.
+
 ## Core Entry Points
 
 - App entry: `lib/main.dart`
