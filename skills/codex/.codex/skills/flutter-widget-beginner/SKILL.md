@@ -195,3 +195,4 @@ Use these MCP tools when available:
 - Never replace an existing structure wholesale just because a cleaner structure is possible.
 - Prefer additive integration over structural replacement.
 - If the repo is not Flutter, stop after the scan and ask whether the user wants a Flutter project added at all.
+
