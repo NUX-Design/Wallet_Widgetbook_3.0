@@ -124,25 +124,6 @@ skill นี้ต้องทำงานแบบ:
 - ให้ skill scan แล้วตัดสินใจจากข้อเท็จจริง
 - เป็น default ที่เหมาะสุด
 
-### Q3. Output Shape
-
-เลือกว่าต้องการสร้างผลลัพธ์เป็น:
-
-- `app`: Flutter application ปกติที่มี `lib/main.dart`
-- `package-ui-library`: Flutter package สำหรับ reusable UI library มี public barrel ใน `lib/`, tests และ `example/` app สำหรับ preview/demo โดยใช้ `flutter create --template=package`
-
-เมื่อเลือก package mode ห้ามเปลี่ยน existing app เป็น package โดยอัตโนมัติ และต้องตรวจ `pubspec.yaml` ก่อนเสนอแผน
-
-### Q4. Consumer Naming
-
-เลือกชื่อที่ผู้ใช้จะเห็นใน project:
-
-- `generic` (แนะนำ): เช่น `AppTheme`, `PrimaryButton`, `lib/theme/`, `lib/widgets/`
-- `brand`: เช่น `AcmeTheme`, `AcmeButton`, `lib/acme_ui/`
-- `preserve-source-names`: คงชื่อจาก MCP เฉพาะเมื่อผู้ใช้ต้องการ
-
-เมื่อเลือก `generic` หรือ `brand` ต้อง adapt folder, filename, class, import และ public export ให้ไม่ผูกกับชื่อ source system เช่น `V3` หรือ `v3`
-
 ### Q3. Foundation Level
 
 คำถาม:
@@ -298,6 +279,181 @@ skill นี้ต้องทำงานแบบ:
 ความหมาย:
 - user อยากเปลี่ยนคำตอบบางข้อ เช่นลดจาก `full` เป็น `standard`
 - skill ควรถามเฉพาะข้อที่เกี่ยวข้องใหม่
+
+#### `stop-after-scan`
+
+ความหมาย:
+- จบที่ analysis report
+- ไม่แก้ไฟล์
+
+## 6. Decision Table
+
+### ถ้าเลือก `scan-only`
+
+ผลลัพธ์:
+- scan workspace
+- สรุป gap
+- เสนอ next steps
+- ไม่แก้ไฟล์
+
+### ถ้าเลือก `bootstrap-existing`
+
+ผลลัพธ์:
+- scan Flutter repo เดิม
+- identify missing foundation
+- เติมส่วนที่ขาดตาม `foundation_level`
+- ดึง starter widget จาก MCP
+- เพิ่ม preview/test/l10n/theme เท่าที่จำเป็น
+
+### ถ้าเลือก `bootstrap-new`
+
+ผลลัพธ์:
+- ถ้าไม่พบ Flutter project: สร้าง foundation ใหม่
+- ถ้าพบ Flutter project: หยุดและให้ user confirm ก่อนว่าต้องการสร้างใหม่จริงหรือเปลี่ยนเป็น `bootstrap-existing`
+
+### ถ้า `workspace_state_preference = auto-detect`
+
+ผลลัพธ์:
+- ให้ scan เป็นตัวชี้ขาด
+- ใช้ผลจริงใน workspace มาก่อน assumption ของระบบ
+
+### ถ้า `foundation_level = minimal`
+
+ผลลัพธ์ที่ควรสร้าง:
+- basic app structure
+- starter widget 1 ตัว
+- preview entrypoint 1 ตัว
+
+### ถ้า `foundation_level = standard`
+
+ผลลัพธ์ที่ควรสร้าง:
+- minimal ทั้งหมด
+- theme foundation
+- localization base
+- test harness base
+
+### ถ้า `foundation_level = full`
+
+ผลลัพธ์ที่ควรสร้าง:
+- standard ทั้งหมด
+- Widgetbook ถ้า repo เหมาะ
+- repo docs/guide ขั้นต้น
+- stronger folder conventions
+
+## 7. สิ่งที่ skill ควรสร้างในแต่ละระดับ
+
+### Minimal
+
+- `lib/main.dart` หรือ integrate กับ entrypoint เดิม
+- `lib/widgets/`
+- starter widget
+- preview file
+
+### Standard
+
+- ทุกอย่างใน Minimal
+- `lib/config/themes/`
+- `lib/l10n/`
+- `test/support/widget_test_harness.dart`
+
+### Full
+
+- ทุกอย่างใน Standard
+- Widgetbook setup ถ้า repo ต้องการ
+- additional docs/guide
+- stricter starter structure สำหรับ scale ต่อ
+
+## 8. MCP Tools Mapping
+
+skill นี้ควรใช้ MCP server ดังนี้:
+
+- `get_design_system_info`
+  ใช้ดึงกฎภาพรวมของ design-system
+
+- `get_codebase_patterns`
+  ใช้ดึง coding/structure patterns ที่เหมาะกับ repo ปลายทาง
+
+- `list_categories`
+  ใช้ดู inventory ระดับ category
+
+- `search_widgets`
+  ใช้เลือก starter widget
+
+- `get_widget_metadata`
+  ใช้ดู dependencies, previews, docs, assets
+
+- `get_widget_code`
+  ใช้ดึง source ของ widget ที่จะติดตั้ง
+
+- `get_widget_preview`
+  ใช้ดึง preview พร้อมใช้งาน
+
+- `get_flutter_widget_template`
+  ใช้ scaffold widget เปล่าถ้าจำเป็น
+
+- `generate_widgetbook_use_case`
+  ใช้เมื่อ scope ต้องการ Widgetbook
+
+## 9. Guardrails
+
+skill นี้ต้องไม่:
+
+- overwrite ไฟล์สำคัญแบบเงียบ ๆ
+- เดาว่า repo เป็น Flutter ถ้ายังไม่ได้ scan
+- ฝืน bootstrap Flutter ลง repo ที่เป็น non-Flutter โดยไม่ confirm
+- replace theme/l10n เดิมของ repo ทั้งชุดโดยอัตโนมัติ
+
+skill นี้ต้อง:
+
+- แจ้งสิ่งที่พบก่อน execute
+- แยกชัดว่าอะไรคือ `new file`, `edit existing`, `optional integration`
+- ใช้ `auto-detect` เป็น default ถ้า user ไม่ระบุสถานะ workspace
+
+## 10. Recommended Defaults
+
+ถ้า user ไม่ตอบเอง ให้ใช้ default เหล่านี้:
+
+- `goal = bootstrap-existing`
+- `workspace_state_preference = auto-detect`
+- `foundation_level = standard`
+- `starter_widget = auto`
+- `change_policy = ask-before-overwrite`
+
+เหตุผล:
+- balance ดีที่สุดระหว่างความปลอดภัยกับความ useful
+
+## 11. Example Interaction
+
+### รอบถาม
+
+1. รอบนี้ต้องการให้ skill ทำอะไร
+2. สภาพ workspace ตอนนี้เป็นแบบไหน หรืออยากให้ skill ตีความแบบไหน
+3. ต้องการ foundation ระดับไหน
+4. ต้องการให้เริ่มต้นด้วย widget อะไร
+5. ให้ skill แตะ repo ได้ระดับไหน
+
+### รอบสรุปหลัง scan
+
+ตัวอย่าง:
+
+- พบ `pubspec.yaml` และ `lib/main.dart`
+- พบว่า repo เป็น Flutter project อยู่แล้ว
+- ยังไม่มี `lib/l10n/`
+- ยังไม่มี test harness กลาง
+- มี theme layer บางส่วนแล้ว
+- มีความเหมาะสมที่จะเติมแบบ `bootstrap-existing + standard`
+
+จากนั้นถาม:
+- จะดำเนินการตามแผนนี้หรือไม่
+
+## 12. สิ่งที่ควรทำต่อจากสเปกนี้
+
+สเปกนี้พร้อมต่อยอดไปเป็น:
+
+1. `SKILL.md` ฉบับจริง
+2. question schema สำหรับ interactive runner
+3. decision engine ของ skill
+4. bootstrap implementation scripts
 
 #### `stop-after-scan`
 

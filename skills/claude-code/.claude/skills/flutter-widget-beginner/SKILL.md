@@ -1,6 +1,6 @@
 ---
 name: flutter-widget-beginner
-description: Scan the current workspace and bootstrap a Flutter app or publishable Flutter UI package with consumer-owned theme and widget names, ready to consume widgets from `flutter-widget-wallet-mcp`. Use when a repo may or may not already contain a Flutter project and the user wants guided setup with explicit scope questions before any edits.
+description: Scan the current workspace and bootstrap a Flutter widget foundation that is ready to consume widgets from `flutter-widget-wallet-mcp`. Use when a repo may or may not already contain a Flutter project and the user wants guided setup with explicit scope questions before any edits.
 ---
 
 # Flutter Widget Beginner
@@ -57,24 +57,7 @@ Options:
 - `auto-detect`
   Meaning: let the scan decide. This is the safest default.
 
-When `bootstrap-new` and `package-ui-library` are selected, also collect the package name, destination directory, public library barrel name, and the platforms required by the separate `example/` app.
-
-### 3. Output Shape
-
-Question:
-- `ต้องการให้ผลลัพธ์เป็น Flutter app หรือ Flutter Package UI library`
-
-Options:
-
-- `app`
-  Meaning: create a normal Flutter application with `lib/main.dart` for building and running a product app.
-
-- `package-ui-library`
-  Meaning: create a reusable Flutter package with public exports under `lib/`, package tests, basic package documentation, and a separate `example/` Flutter app for preview and manual testing. The package root is not treated as an application and does not depend on a root `main.dart`.
-
-For an existing project, scan `pubspec.yaml` to identify app versus package shape. Never convert an existing app into a package implicitly; summarize the migration and ask for confirmation.
-
-### 4. Foundation Level
+### 3. Foundation Level
 
 Question:
 - `ต้องการ foundation ระดับไหน`
@@ -94,25 +77,7 @@ Options:
   Meaning: strongest setup in one pass.
   Includes everything in `standard`, plus Widgetbook when appropriate, stricter folder conventions, and starter docs or setup guidance.
 
-### 5. Consumer Naming
-
-Question:
-- `ต้องการให้ Theme และ Widget ใช้ชื่อแบบไหนใน project`
-
-Options:
-
-- `generic`
-  Meaning: recommended. Use normal names such as `AppTheme`, `PrimaryButton`, `lib/theme/`, and `lib/widgets/`.
-
-- `brand`
-  Meaning: use the user's brand namespace and public class prefix, such as `AcmeTheme`, `AcmeButton`, and `lib/acme_ui/`.
-
-- `preserve-source-names`
-  Meaning: retain names returned by the MCP source. Use only when source-system naming is intentionally part of the consumer API.
-
-Collect the theme namespace, widget namespace, public class prefix, and public library/barrel name for `generic` or `brand`. These values control file paths, class names, imports, and exports.
-
-### 6. Starter Widget
+### 4. Starter Widget
 
 Question:
 - `ต้องการให้เริ่มต้นด้วย widget อะไร`
@@ -131,7 +96,7 @@ Options:
 - `auto`
   Meaning: choose the starter widget after scanning the repo and consulting MCP metadata; prefer a low-dependency widget with a ready preview.
 
-### 7. Change Policy
+### 5. Change Policy
 
 Question:
 - `ให้ skill แตะ repo ได้ระดับไหน`
@@ -208,25 +173,8 @@ Options:
 ### If `goal = bootstrap-new`
 
 - scaffold a new Flutter widget foundation only after confirming no existing Flutter project should be reused
-- for `output_shape = app`, create a normal Flutter application
-- for `output_shape = package-ui-library`, create a package root, its public library barrel, reusable widget source, tests, basic package docs, and a separate `example/` Flutter app for previews
-- wire `example/` to the package with a local path dependency
-- adapt source widget/theme names to the confirmed consumer naming before exposing them; do not leave V3 or source-system prefixes in the public API unless explicitly selected
 - create the minimal directories and files for the chosen `foundation_level`
 - install one starter widget from MCP as proof the flow works
-
-### Package UI Library Requirements
-
-When `output_shape = package-ui-library`:
-
-- use `flutter create --template=package` for the package root; do not use the app template
-- keep reusable widgets and theme code under `lib/`
-- create `lib/<package_name>.dart` as the public export barrel
-- use the confirmed generic or brand namespaces for folders, classes, imports, and exports
-- keep `main.dart`, preview screens, and manual demo wiring under `example/`
-- add package-oriented tests and run `dart pub publish --dry-run`
-- verify public exports and generated source do not contain source-system `V3`/`v3` names unless explicitly selected
-- do not silently convert an existing Flutter app into a package
 
 ## MCP Usage
 
