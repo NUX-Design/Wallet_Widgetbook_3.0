@@ -106,21 +106,26 @@ Skill นี้ห้ามแก้ไฟล์, bootstrap, install, migrate �
    - `existing-v3-foundation`: เป็น Flutter project และมี `lib/config/themes/v3/generated/` แล้ว
    - `existing-flutter-no-v3`: มี `pubspec.yaml` และ `lib/main.dart` แต่ยังไม่มี Theme V3 foundation
    - `no-flutter-yet`: ปลายทางยังไม่ใช่ Flutter project; ต้องเลือก `bootstrap-new` ก่อนจึงสร้าง project ได้
-3. **Target Widget Scope** — ชื่อ widget ที่จะเพิ่ม หรือ `auto` ให้ skill เลือกจาก MCP catalog (`search_v3_widgets`/`list_v3_widgets`) โดย priority คือ widget ที่ยังไม่มีใน `lib/widgets/v3/**` ของ target repo
-4. **Change Policy**
+3. **Output Shape** — `app` สร้าง Flutter app ปกติ หรือ `package-ui-library` สร้าง publishable Flutter package พร้อม public barrel และ `example/` app สำหรับ preview/demo; package mode ใช้ `flutter create --template=package` และ path dependency จาก `example/`
+4. **Target Widget Scope** — ชื่อ widget ที่จะเพิ่ม หรือ `auto` ให้ skill เลือกจาก MCP catalog (`search_v3_widgets`/`list_v3_widgets`) โดย priority คือ widget ที่ยังไม่มีใน namespace ของ target repo
+5. **Consumer Naming** — `generic` (แนะนำ), `brand`, หรือ `preserve-v3`; เมื่อเลือก `generic`/`brand` ให้เก็บ theme namespace, widget namespace, public class prefix และ public barrel name
+   - `generic`: ใช้ชื่อปกติ เช่น `AppTheme`, `PrimaryButton`, `lib/theme/`, `lib/widgets/`
+   - `brand`: ใช้ชื่อแบรนด์ เช่น `AcmeTheme`, `AcmeButton`, `lib/acme_ui/`
+   - `preserve-v3`: คงชื่อ V3 ของ source ไว้เฉพาะเมื่อผู้ใช้ต้องการ compatibility แบบนั้น
+6. **Change Policy**
    - `additive-only` (แนะนำ): สร้างเฉพาะไฟล์ที่ยังไม่มี; หาก path ชนให้หยุดและแจ้ง ห้าม overwrite
    - `allow-structure-setup`: สร้างโฟลเดอร์และ structural files ที่ V3 ต้องใช้ได้ แต่ห้าม overwrite ไฟล์เดิมโดยพลการ
    - `ask-before-overwrite`: หากต้องแก้หรือแทนที่ไฟล์เดิม ต้องขออนุญาตรายไฟล์ก่อน
 
-ก่อน confirm งาน existing project ต้องแสดงขอบเขตที่อนุญาตให้ผู้ใช้เห็นชัดเจน:
+ก่อน confirm งาน existing project ต้องแสดงขอบเขตที่อนุญาตให้ผู้ใช้เห็นชัดเจน โดยใช้ consumer namespace เมื่อเลือก `generic` หรือ `brand`:
 
 ```text
-lib/config/themes/v3/**
-lib/widgets/v3/**
-test/widgets/v3/**
+lib/config/themes/<consumer-theme-namespace>/**
+lib/widgets/<consumer-widget-namespace>/**
+test/widgets/<consumer-widget-namespace>/**
 ```
 
-พร้อมยืนยันว่าจะไม่แก้ legacy theme หรือ legacy widgets
+พร้อมยืนยันว่าจะไม่แก้ unrelated legacy theme หรือ legacy widgets
 
 เมื่อเลือก `bootstrap-new` ต้องอธิบายและเก็บข้อมูลเพิ่ม:
 
@@ -140,6 +145,11 @@ project name: wi_wallet_demo
 destination: /Users/<user>/Documents/wi_wallet_demo
 organization: com.wi.wallet
 platforms: android, ios
+output shape: package-ui-library
+consumer naming: generic
+theme namespace: theme
+widget namespace: widgets
+public prefix: App
 ```
 
 ถ้าผู้ใช้ต้องการเพียงตรวจ workspace ปัจจุบันแบบปลอดภัยที่สุด ให้แนะนำ:
@@ -240,9 +250,9 @@ Guardrail: ถ้าไม่พบ widget V3 ที่ตรง ให้แน
 
 ## Universal Guardrails (ทุก skill)
 
-- ห้าม migrate หรือ overwrite widget เดิมที่อยู่นอก `lib/widgets/v3/**` โดยอัตโนมัติ ไม่ว่า workflow ใด
+- ห้าม migrate หรือ overwrite widget เดิมที่อยู่นอก confirmed consumer namespace โดยอัตโนมัติ ไม่ว่า workflow ใด
 - ห้ามใช้ legacy theme (`ThemeColors.get()`, `theme_color.dart`) ภายในไฟล์ V3 ใด ๆ
-- ทำงานเฉพาะ path ที่มี `v3` ชัดเจน: `lib/widgets/v3/**`, `test/widgets/v3/**`, และอ่าน (ไม่แก้) `lib/config/themes/v3/**`
+- MCP V3 เป็น source provenance ไม่ใช่ชื่อบังคับของ consumer: เมื่อเลือก `generic`/`brand` ให้ adapt paths, filenames, classes, imports และ exports และห้าม expose `V3`/`v3` ใน public API; ถ้าเลือก `preserve-v3` จึงคงชื่อเดิมได้
 - เรียกเฉพาะ MCP tool ที่มี prefix `v3` หรือ `_v3_`; ห้ามเรียก legacy tool เป็น fallback เมื่อ V3 tool ไม่พบข้อมูล — ให้รายงานว่าไม่พบและแนะนำ `flutter-widget-v3-beginner`/`flutter-widget-v3-figma-to-code` แทน
 - ตรวจ Light/Dark, preview, tests, และ local guide (`V3_<WIDGET>_GUIDE.md` พร้อม `V3 Metadata` section) ก่อนถือว่างานเสร็จ
 - `flutter-widget-v3-beginner` ต้องใช้ flow `ask → scan → summarize → confirm → execute` เท่านั้น และห้ามแก้ไฟล์ก่อนยืนยัน scope

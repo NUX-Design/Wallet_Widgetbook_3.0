@@ -690,7 +690,7 @@ cp -r skills-v3/kiro/.kiro <TARGET_PROJECT_ROOT>/
 | Skill | Use it when | What it can do |
 |---|---|---|
 | `flutter-widget-v3-onboard` | You are new to the system or need to choose the correct V3 workflow | Explains the complete V3 architecture in the user's language, performs an optional read-only workspace orientation, links the relevant Wiki/source, and recommends the smallest next skill without changing files |
-| `flutter-widget-v3-beginner` | You are starting a new Flutter app, or an existing app has not adopted Theme V3 yet | Classifies the workspace, proposes a safe scope, creates a confirmed new Flutter project when requested, installs the allowlisted Theme V3 runtime, adds a starter widget, preview and tests, and verifies Light/Dark behavior |
+| `flutter-widget-v3-beginner` | You are starting a new Flutter app or reusable UI package, or an existing app has not adopted the MCP foundation yet | Classifies the workspace, supports app or package-ui-library output, adapts source Theme/Widget V3 into generic or brand-owned consumer names, adds a starter widget, preview and tests, and verifies Light/Dark behavior |
 | `flutter-widget-v3-search` | You know the UI intent but not the component name | Searches by category, keyword, behavior or design intent; compares the best candidates, semantic-token dependencies, preview availability and expected adaptation effort |
 | `flutter-widget-v3-install` | You have chosen a Widget V3 and want it in the current project | Retrieves metadata, Dart source and preview from MCP; installs the component into V3 paths; rewires it to the target project's `V3ThemeScope`; adds or refreshes its guide and targeted tests |
 | `flutter-widget-v3-adapt` | An imported component works but does not yet feel native to the host app | Aligns imports, constructor shape, naming, semantic tokens, preview data and code patterns with the target project's Theme V3 foundation while preserving behavior |
@@ -701,7 +701,7 @@ cp -r skills-v3/kiro/.kiro <TARGET_PROJECT_ROOT>/
 
 ### Use case: create a new Flutter project
 
-Start with `flutter-widget-v3-beginner` in confirmed `bootstrap-new` mode. The skill follows the mandatory `ask → scan → summarize → confirm → execute` flow, collects the project name, destination, organization and target platforms, checks that the destination is safe, runs `flutter create`, installs the Theme V3 foundation, adds a starter component with preview and tests, and runs verification.
+Start with `flutter-widget-v3-beginner` in confirmed `bootstrap-new` mode. The skill follows the mandatory `ask → scan → summarize → confirm → execute` flow, collects the output shape, consumer naming, project/package details and target platforms, checks that the destination is safe, runs the app or package template, installs the MCP foundation, adapts source names to the consumer API, adds a starter component with preview and tests, and runs verification.
 
 Example request:
 
