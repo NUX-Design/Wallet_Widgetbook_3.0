@@ -124,6 +124,25 @@ skill นี้ต้องทำงานแบบ:
 - ให้ skill scan แล้วตัดสินใจจากข้อเท็จจริง
 - เป็น default ที่เหมาะสุด
 
+### Q3. Output Shape
+
+เลือกว่าต้องการสร้างผลลัพธ์เป็น:
+
+- `app`: Flutter application ปกติที่มี `lib/main.dart`
+- `package-ui-library`: Flutter package สำหรับ reusable UI library มี public barrel ใน `lib/`, tests และ `example/` app สำหรับ preview/demo โดยใช้ `flutter create --template=package`
+
+เมื่อเลือก package mode ห้ามเปลี่ยน existing app เป็น package โดยอัตโนมัติ และต้องตรวจ `pubspec.yaml` ก่อนเสนอแผน
+
+### Q4. Consumer Naming
+
+เลือกชื่อที่ผู้ใช้จะเห็นใน project:
+
+- `generic` (แนะนำ): เช่น `AppTheme`, `PrimaryButton`, `lib/theme/`, `lib/widgets/`
+- `brand`: เช่น `AcmeTheme`, `AcmeButton`, `lib/acme_ui/`
+- `preserve-source-names`: คงชื่อจาก MCP เฉพาะเมื่อผู้ใช้ต้องการ
+
+เมื่อเลือก `generic` หรือ `brand` ต้อง adapt folder, filename, class, import และ public export ให้ไม่ผูกกับชื่อ source system เช่น `V3` หรือ `v3`
+
 ### Q3. Foundation Level
 
 คำถาม:
