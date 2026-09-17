@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import 'v3_icon_size.dart';
 import 'v3_icon_stroke.dart';
@@ -145,4 +146,53 @@ class V3LucideIcon extends StatelessWidget {
         return 'Lucide600';
     }
   }
+}
+
+/// Figma-backed `CreditCardPlus` adapter.
+///
+/// The asset geometry is exported from Figma node `1139:2375` and kept behind
+/// the shared adapter so notification widgets do not import an icon renderer.
+class V3LucideCreditCardPlusIcon extends StatelessWidget {
+  const V3LucideCreditCardPlusIcon({
+    super.key,
+    this.size = V3IconSize.medium,
+    this.stroke,
+  });
+
+  final V3IconSize size;
+  final V3IconStroke? stroke;
+
+  static const _figmaAsset = 'lib/assets/icons/v3/lucide/credit-card-plus.svg';
+
+  @override
+  Widget build(BuildContext context) {
+    return V3LucideIcon(
+      LucideIcons.creditCard,
+      size: size,
+      stroke: stroke,
+      svgAsset: _figmaAsset,
+    );
+  }
+}
+
+/// Figma-backed adapter for the referenced `chevron-right` component.
+class V3LucideChevronRightIcon extends StatelessWidget {
+  const V3LucideChevronRightIcon({
+    super.key,
+    this.size = V3IconSize.medium,
+    this.stroke,
+  });
+
+  final V3IconSize size;
+  final V3IconStroke? stroke;
+
+  static const _figmaAsset = 'lib/assets/icons/v3/lucide/chevron-right.svg';
+
+  @override
+  Widget build(BuildContext context) => V3LucideIcon(
+    LucideIcons.chevronRight,
+    size: size,
+    stroke: stroke,
+    svgAsset: _figmaAsset,
+  );
 }
